@@ -31,6 +31,9 @@ class MainViewModel @Inject constructor(
 
     private fun nextQuestion(){
         _currentIndex.value += 1
+        if (_currentIndex.value >= hardCoded.size){
+            _currentIndex.value = 0
+        }
     }
 
 }
