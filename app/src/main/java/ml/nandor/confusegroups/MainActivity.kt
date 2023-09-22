@@ -5,15 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ml.nandor.confusegroups.ui.theme.ConfuseGroupsTheme
@@ -40,94 +37,22 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Column() {
 
-                        ElevatedCard(
+                        CardFront()
+
+                        Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                                .aspectRatio(1.0f)
-                        ) {
-                            Text(
-                                text = "犬",
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp)
-                                    .wrapContentSize(),
-                                textAlign = TextAlign.Center,
-                                fontSize = 128.sp
-                            )
+                            .weight(1.0f)
+                        ){
+                            CardBackOption("Dog", GuessOptionState.GOOD)
+                            CardBackOption("Big")
                         }
 
                         Row(
                             modifier = Modifier
                             .weight(1.0f)
                         ){
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .weight(1.0f)
-                                    .padding(16.dp)
-                                    .fillMaxHeight(),
-                                colors = CardDefaults.cardColors(containerColor = Color.Green)
-                            ) {
-                                Text(
-                                    text = "Dog",
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(16.dp)
-                                        .wrapContentSize(),
-                                    textAlign = TextAlign.Center,
-                                    color = Color.Black,
-                                    fontSize = 32.sp)
-                            }
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .weight(1.0f)
-                                    .padding(16.dp)
-                                    .fillMaxHeight()
-                            ) {
-                                Text(                                text = "Big",
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(16.dp)
-                                        .wrapContentSize(),
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 32.sp)
-                            }
-                        }
-
-                        Row(
-                            modifier = Modifier
-                            .weight(1.0f)
-                        ){
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .weight(1.0f)
-                                    .padding(16.dp)
-                                    .fillMaxHeight()
-                            ) {
-                                Text(                                text = "Bow",
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(16.dp)
-                                        .wrapContentSize(),
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 32.sp)
-                            }
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .weight(1.0f)
-                                    .padding(16.dp)
-                                    .fillMaxHeight(),
-                                colors = CardDefaults.cardColors(containerColor = Color.Red)
-                            ) {
-                                Text(                                text = "Person",
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(16.dp)
-                                        .wrapContentSize(),
-                                    textAlign = TextAlign.Center,
-                                    color = Color.Black,
-                                    fontSize = 32.sp)
-                            }
+                            CardBackOption("Bow")
+                            CardBackOption("Person", GuessOptionState.BAD)
                         }
 
                     }
@@ -135,5 +60,77 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    @Composable
+    private fun CardFront() {
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .aspectRatio(1.0f)
+        ) {
+            Text(
+                text = "犬",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .wrapContentSize(),
+                textAlign = TextAlign.Center,
+                fontSize = 128.sp
+            )
+        }
+    }
+
+    enum class GuessOptionState{
+        BASE,
+        GOOD,
+        BAD
+    }
+
+    @Composable
+    private fun RowScope.CardBackOption(text: String, state: GuessOptionState = GuessOptionState.BASE) {
+        // Base state = color unmodified
+        if (state == GuessOptionState.BASE){
+            ElevatedCard(
+                modifier = Modifier.Companion
+                    .weight(1.0f)
+                    .padding(16.dp)
+                    .fillMaxHeight(),
+            ) {
+                Text(
+                    text = text,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                        .wrapContentSize(),
+                    textAlign = TextAlign.Center,
+                    fontSize = 32.sp
+                )
+            }
+        } else {
+            // this code is the duplicate of the base case, except where colors are set
+            ElevatedCard(
+                modifier = Modifier.Companion
+                    .weight(1.0f)
+                    .padding(16.dp)
+                    .fillMaxHeight(),
+                // set color
+                colors = CardDefaults.cardColors(containerColor = if (state == GuessOptionState.GOOD) Color.Green else Color.Red)
+            ) {
+                Text(
+                    text = text,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                        .wrapContentSize(),
+                    textAlign = TextAlign.Center,
+                    // set color
+                    color = Color.Black,
+                    fontSize = 32.sp
+                )
+            }
+        }
+
     }
 }
