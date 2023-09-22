@@ -1,6 +1,9 @@
 package ml.nandor.confusegroups
 
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -17,19 +20,17 @@ class MainViewModel @Inject constructor(
         CardData("水", 2, listOf("Ice", "Water", "Fire", "Flame"))  // Correct answer in slot 3
     )
 
-    private var index: Int = 0
+    private val _currentIndex = mutableStateOf(0)
+    val currentQuestion = derivedStateOf { hardCoded[_currentIndex.value]}
 
-    fun currentQuestion():CardData {
-        return hardCoded[index]
-    }
     fun checkAnswer(answer:String):Boolean{
-        val question = hardCoded[index]
+        val question = hardCoded[_currentIndex.value]
         nextQuestion()
         return answer == question.options[question.correct-1]
     }
 
     private fun nextQuestion(){
-        index += 1
+        _currentIndex.value += 1
     }
 
 }

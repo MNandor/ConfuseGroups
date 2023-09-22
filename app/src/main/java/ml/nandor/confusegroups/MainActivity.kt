@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -44,7 +45,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Column() {
 
-                        val question = viewModel.currentQuestion()
+                        val question = viewModel.currentQuestion.value
+
 
                         CardFront(question.front)
 
