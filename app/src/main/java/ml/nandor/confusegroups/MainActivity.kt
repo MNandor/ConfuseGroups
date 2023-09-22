@@ -46,6 +46,7 @@ class MainActivity : ComponentActivity() {
                     Column() {
 
                         val question = viewModel.currentQuestion.value
+                        val correctness = viewModel.cardCorrectness.value
 
 
                         CardFront(question.front)
@@ -54,16 +55,16 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                             .weight(1.0f)
                         ){
-                            CardBackOption(question.options[0], GuessOptionState.GOOD, viewModel)
-                            CardBackOption(question.options[1], GuessOptionState.BASE, viewModel)
+                            CardBackOption(question.options[0], correctness[0], viewModel)
+                            CardBackOption(question.options[1], correctness[1], viewModel)
                         }
 
                         Row(
                             modifier = Modifier
                             .weight(1.0f)
                         ){
-                            CardBackOption(question.options[2], GuessOptionState.BASE, viewModel)
-                            CardBackOption(question.options[3], GuessOptionState.BAD, viewModel)
+                            CardBackOption(question.options[2], correctness[2], viewModel)
+                            CardBackOption(question.options[3], correctness[3], viewModel)
                         }
 
                     }
@@ -93,17 +94,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    enum class GuessOptionState{
-        BASE,
-        GOOD,
-        BAD
-    }
-
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun RowScope.CardBackOption(text: String, state: GuessOptionState = GuessOptionState.BASE, viewModel: MainViewModel) {
+    private fun RowScope.CardBackOption(text: String, state: MainViewModel.CardCorrectness = MainViewModel.CardCorrectness.BASE, viewModel: MainViewModel) {
         // Base state = color unmodified
-        if (state == GuessOptionState.BASE){
+        if (state == MainViewModel.CardCorrectness.BASE){
             ElevatedCard(
                 modifier = Modifier.Companion
                     .weight(1.0f)
@@ -138,7 +133,7 @@ class MainActivity : ComponentActivity() {
                         }
                     ),
                 // set color
-                colors = CardDefaults.cardColors(containerColor = if (state == GuessOptionState.GOOD) Color.Green else Color.Red)
+                colors = CardDefaults.cardColors(containerColor = if (state == MainViewModel.CardCorrectness.GOOD) Color.Green else Color.Red)
             ) {
                 Text(
                     text = text,

@@ -5,7 +5,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,20 +23,62 @@ class MainViewModel @Inject constructor(
         CardData("水", 2, listOf("Ice", "Water", "Fire", "Flame"))  // Correct answer in slot 3
     )
 
+    enum class CardCorrectness{
+        BASE,
+        GOOD,
+        BAD
+    }
+
+    private val allCorrect = listOf(CardCorrectness.BASE, CardCorrectness.BASE, CardCorrectness.BASE, CardCorrectness.BASE)
+    private val _cardCorrectness = mutableStateOf(allCorrect)
+    val cardCorrectness = _cardCorrectness
+
     private val _currentIndex = mutableStateOf(0)
     val currentQuestion = derivedStateOf { hardCoded[_currentIndex.value]}
 
     fun checkAnswer(answer:String):Boolean{
         val question = hardCoded[_currentIndex.value]
-        nextQuestion()
-        return answer == question.options[question.correct-1]
+
+        if (answer == question.options[question.correct-1]){
+            nextQuestion(false)
+            return true
+        } else {
+            val cors:MutableList<CardCorrectness> = mutableListOf()
+
+            for (option in question.options){
+                if (option == answer)
+                    cors.add(CardCorrectness.BAD)
+                else if (option == question.options[question.correct-1])
+                    cors.add(CardCorrectness.GOOD)
+                else
+                    cors.add(CardCorrectness.BASE)
+
+                _cardCorrectness.value = cors
+            }
+
+            nextQuestion(true)
+
+            return false
+        }
     }
 
-    private fun nextQuestion(){
-        _currentIndex.value += 1
-        if (_currentIndex.value >= hardCoded.size){
-            _currentIndex.value = 0
+    private fun nextQuestion(delay:Boolean = false){
+        if (delay){
+            viewModelScope.launch {
+                delay(3000)
+                _currentIndex.value += 1
+                if (_currentIndex.value >= hardCoded.size) {
+                    _currentIndex.value = 0
+                }
+                _cardCorrectness.value = allCorrect
+            }
+        } else {
+            _currentIndex.value += 1
+            if (_currentIndex.value >= hardCoded.size) {
+                _currentIndex.value = 0
+            }
         }
+
     }
 
 }
