@@ -1,8 +1,12 @@
 package ml.nandor.confusegroups
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -40,22 +44,24 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Column() {
 
-                        CardFront()
+                        val question = viewModel.currentQuestion()
+
+                        CardFront(question.front)
 
                         Row(
                             modifier = Modifier
                             .weight(1.0f)
                         ){
-                            CardBackOption("Dog", GuessOptionState.GOOD)
-                            CardBackOption("Big")
+                            CardBackOption(question.options[0], GuessOptionState.GOOD, viewModel)
+                            CardBackOption(question.options[1], GuessOptionState.BASE, viewModel)
                         }
 
                         Row(
                             modifier = Modifier
                             .weight(1.0f)
                         ){
-                            CardBackOption("Bow")
-                            CardBackOption("Person", GuessOptionState.BAD)
+                            CardBackOption(question.options[2], GuessOptionState.BASE, viewModel)
+                            CardBackOption(question.options[3], GuessOptionState.BAD, viewModel)
                         }
 
                     }
@@ -66,7 +72,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun CardFront() {
+    private fun CardFront(text:String) {
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -74,7 +80,7 @@ class MainActivity : ComponentActivity() {
                 .aspectRatio(1.0f)
         ) {
             Text(
-                text = "犬",
+                text = text,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
@@ -91,15 +97,21 @@ class MainActivity : ComponentActivity() {
         BAD
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    private fun RowScope.CardBackOption(text: String, state: GuessOptionState = GuessOptionState.BASE) {
+    private fun RowScope.CardBackOption(text: String, state: GuessOptionState = GuessOptionState.BASE, viewModel: MainViewModel) {
         // Base state = color unmodified
         if (state == GuessOptionState.BASE){
             ElevatedCard(
                 modifier = Modifier.Companion
                     .weight(1.0f)
                     .padding(16.dp)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .combinedClickable (
+                        onClick = {
+                            viewModel.checkAnswer(text)
+                        }
+                    )
             ) {
                 Text(
                     text = text,
@@ -117,7 +129,12 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier.Companion
                     .weight(1.0f)
                     .padding(16.dp)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .combinedClickable (
+                        onClick = {
+                            viewModel.checkAnswer(text)
+                        }
+                    ),
                 // set color
                 colors = CardDefaults.cardColors(containerColor = if (state == GuessOptionState.GOOD) Color.Green else Color.Red)
             ) {
