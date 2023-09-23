@@ -1,7 +1,5 @@
-package ml.nandor.confusegroups
+package ml.nandor.confusegroups.presentation
 
-import android.util.Log
-import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ml.nandor.confusegroups.domain.CardData
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,7 +28,12 @@ class MainViewModel @Inject constructor(
         BAD
     }
 
-    private val allCorrect = listOf(CardCorrectness.BASE, CardCorrectness.BASE, CardCorrectness.BASE, CardCorrectness.BASE)
+    private val allCorrect = listOf(
+        CardCorrectness.BASE,
+        CardCorrectness.BASE,
+        CardCorrectness.BASE,
+        CardCorrectness.BASE
+    )
     private val _cardCorrectness = mutableStateOf(allCorrect)
     val cardCorrectness = _cardCorrectness
 

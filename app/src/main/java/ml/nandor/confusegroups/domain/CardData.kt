@@ -1,4 +1,4 @@
-package ml.nandor.confusegroups
+package ml.nandor.confusegroups.domain
 
 data class CardData(
     val front: String,
