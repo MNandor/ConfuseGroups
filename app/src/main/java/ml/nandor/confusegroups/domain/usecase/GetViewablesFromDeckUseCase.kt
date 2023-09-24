@@ -10,14 +10,20 @@ class GetViewablesFromDeckUseCase @Inject constructor(
     override fun doStuff(deckName: String?): List<PreparedViewableCard> {
 
         val allCards = repository.getCardsByDeckName(deckName)
+
+        if (deckName == null || allCards.size < 4){
+            throw(Exception("Empty deck"))
+        }
+
         val viewAbles = allCards.map {note ->
             val possiblesWrongs = allCards
                 .filter { it.question != note.question && it.answer != note.answer }
                 .map { it -> it.answer }
                 .toMutableList()
-            // todo error out instead
-            while (possiblesWrongs.size < 3)
-                possiblesWrongs.add("Placeholder")
+
+            if (possiblesWrongs.size < 3){
+                throw(Exception("Not enough options"))
+            }
 
             val answers = possiblesWrongs.shuffled().take(3).toMutableList()
 

@@ -1,5 +1,6 @@
 package ml.nandor.confusegroups.presentation
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -109,6 +110,10 @@ class MainViewModel @Inject constructor(
                 withContext(Dispatchers.Main) {
                     _viewableCards.value = it.data!!
                     _selectedDeck.value = deckName
+                }
+            } else if (it is Resource.Error){
+                withContext(Dispatchers.Main) {
+                    _selectedDeck.value = null
                 }
             }
         }.launchIn(viewModelScope)
