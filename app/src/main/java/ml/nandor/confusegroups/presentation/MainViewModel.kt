@@ -5,14 +5,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -21,9 +17,8 @@ import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
-import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import ml.nandor.confusegroups.domain.usecase.DeleteDeckUseCase
-import ml.nandor.confusegroups.domain.usecase.GetCardsFromDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.GetViewablesFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertCardUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
@@ -32,7 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getCardsFromDeckUseCase: GetCardsFromDeckUseCase,
+    private val getViewablesFromDeckUseCase: GetViewablesFromDeckUseCase,
     private val deleteDeckUseCase: DeleteDeckUseCase,
     private val listDecksUseCase: ListDecksUseCase,
     private val insertDeckUseCase: InsertDeckUseCase,
@@ -135,7 +130,7 @@ class MainViewModel @Inject constructor(
     init {
         updateDecks()
 
-        getCardsFromDeckUseCase(Unit).onEach {
+        getViewablesFromDeckUseCase(Unit).onEach {
             if (it is Resource.Success){
                 withContext(Dispatchers.Main) {
                     _hardCoded.value = it.data!!
