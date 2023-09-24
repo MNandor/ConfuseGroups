@@ -1,4 +1,4 @@
-package ml.nandor.confusegroups.domain
+package ml.nandor.confusegroups.domain.model
 
 data class PreparedViewableCard(
     val front: String,

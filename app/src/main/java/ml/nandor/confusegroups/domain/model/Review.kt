@@ -1,5 +1,9 @@
-package ml.nandor.confusegroups.domain
+package ml.nandor.confusegroups.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
 data class Review(
     // the front of the card. Unique identifier of AtomicNote question
     val question: String,
@@ -13,6 +17,7 @@ data class Review(
     // amount of days to wait before showing the card again
     val period: Double,
 
-    // unix timestamp, currently not used
+    // unix timestamp
+    @PrimaryKey
     val timeStamp: Int
 )

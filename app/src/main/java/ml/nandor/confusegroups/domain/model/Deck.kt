@@ -1,8 +1,13 @@
-package ml.nandor.confusegroups.domain
+package ml.nandor.confusegroups.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity //todo domain layer shouldn't depend on room
 data class Deck(
 
     // unique identifier of a deck
+    @PrimaryKey
     val name: String,
 
     // limits number of unseen cards per level
