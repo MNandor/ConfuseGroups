@@ -1,5 +1,6 @@
 package ml.nandor.confusegroups.presentation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,10 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun ReviewScreen(viewModel: MainViewModel) {
+    BackHandler(onBack = {
+        viewModel.selectDeck(null)
+    })
+
     Column() {
 
         val question = viewModel.currentQuestion.value
@@ -80,7 +85,7 @@ private fun RowScope.CardBackOption(text: String, state: MainViewModel.CardCorre
                 .weight(1.0f)
                 .padding(16.dp)
                 .fillMaxHeight()
-                .combinedClickable (
+                .combinedClickable(
                     onClick = {
                         viewModel.checkAnswer(text)
                     }
@@ -103,7 +108,7 @@ private fun RowScope.CardBackOption(text: String, state: MainViewModel.CardCorre
                 .weight(1.0f)
                 .padding(16.dp)
                 .fillMaxHeight()
-                .combinedClickable (
+                .combinedClickable(
                     onClick = {
                         viewModel.checkAnswer(text)
                     }

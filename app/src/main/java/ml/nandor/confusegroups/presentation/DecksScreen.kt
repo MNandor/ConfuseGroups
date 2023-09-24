@@ -1,8 +1,8 @@
 package ml.nandor.confusegroups.presentation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,19 +19,25 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun DecksScreen(viewModel: MainViewModel){
     Column() {
-        DeckItem("Main Deck")
-        DeckItem("+")
+        DeckItem("Main Deck", viewModel)
+        DeckItem("+", viewModel)
     }
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun DeckItem(text: String) {
+private fun DeckItem(text: String, viewModel: MainViewModel) {
     ElevatedCard(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
             .height(128.dp)
+            .combinedClickable (
+                onClick = {
+                    viewModel.selectDeck(text)
+                }
+            )
     ) {
         Text(
             text = text,

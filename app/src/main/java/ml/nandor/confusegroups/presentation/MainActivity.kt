@@ -40,8 +40,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // ReviewScreen(viewModel)
-                    DecksScreen(viewModel)
+                    if (viewModel.selectedDeck.value != null){
+                        ReviewScreen(viewModel)
+                    } else {
+                        DecksScreen(viewModel)
+                    }
 
                 }
             }

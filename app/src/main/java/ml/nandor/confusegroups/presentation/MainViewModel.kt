@@ -1,5 +1,6 @@
 package ml.nandor.confusegroups.presentation
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -83,6 +84,13 @@ class MainViewModel @Inject constructor(
             }
         }
 
+    }
+
+    private val _selectedDeck: MutableState<String?> = mutableStateOf(null)
+    val selectedDeck = _selectedDeck
+
+    fun selectDeck(deckName: String?){
+        _selectedDeck.value = deckName
     }
 
 }
