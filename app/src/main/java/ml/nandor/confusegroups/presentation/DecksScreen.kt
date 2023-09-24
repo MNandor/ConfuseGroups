@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -145,7 +146,7 @@ fun DeleteDeckPopup(viewModel: MainViewModel){
             },
             text = { Text("The deck, along with all of its cards will be deleted.") },
             confirmButton = {
-                Button(
+                TextButton(
                     onClick = {
                         viewModel.deleteDeck()
                     },
@@ -154,7 +155,7 @@ fun DeleteDeckPopup(viewModel: MainViewModel){
                 }
             },
             dismissButton = {
-                Button(
+                TextButton(
                     onClick = { viewModel.enterDeleteMode(null) },
                 ) {
                     Text("No, don't delete")
