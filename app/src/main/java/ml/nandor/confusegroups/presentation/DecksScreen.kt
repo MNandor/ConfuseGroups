@@ -1,10 +1,12 @@
 package ml.nandor.confusegroups.presentation
 
+import android.app.Dialog
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +20,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import ml.nandor.confusegroups.domain.model.Deck
 
 @Composable
@@ -50,7 +54,8 @@ fun DecksScreen(viewModel: MainViewModel){
             }
         }
         
-        DeleteDeckPopup(viewModel = viewModel)
+        DeleteDeckPopup(viewModel)
+        EditDeckSettingsPopup(viewModel)
     }
 
 }
@@ -89,7 +94,7 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(Icons.Filled.Edit, contentDescription = "Edit deck data")
                 }
-                IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { viewModel.enterEditMode(text) }) {
                     Icon(Icons.Filled.Settings, contentDescription = "Edit deck settings")
                 }
                 IconButton(onClick = { viewModel.enterDeleteMode(text) }) {
@@ -162,6 +167,54 @@ fun DeleteDeckPopup(viewModel: MainViewModel){
                 }
             }
         )
+    }
+}
+
+@Composable
+fun EditDeckSettingsPopup(viewModel: MainViewModel){
+    val deckName = viewModel.deckBeingEdited.value
+    val visible = deckName != null
+    if (visible){
+        Dialog(onDismissRequest = { viewModel.enterEditMode(null) }) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.6f)
+            ){
+                Column() {
+                    Text(deckName!!,
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .padding(4.dp)
+                    ){
+                        Text("New cards per level: ")
+                        Text(viewModel.editedDeckState.value?.newCardsPerLevel.toString())
+                    }
+                    Row(
+                        modifier = Modifier
+                            .padding(4.dp)
+                    ){
+                        Text("Success multiplier: ")
+                        Text(viewModel.editedDeckState.value?.successMultiplier.toString())
+                    }
+                    Row(
+                        modifier = Modifier
+                            .padding(4.dp)
+                    ){
+                        Text("Confuse exponent: ")
+                        Text(viewModel.editedDeckState.value?.confuseExponent.toString())
+                    }
+                }
+
+            }
+        }
     }
 }
 

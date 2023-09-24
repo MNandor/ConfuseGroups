@@ -105,7 +105,7 @@ class MainViewModel @Inject constructor(
         val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
         val name = (1..8).map { chars.random() }.joinToString(separator = "")
 
-        val deck = Deck(name = name, 0, 0.0, 0.0, 0)
+        val deck = Deck(name = name, 10, 2.0, 1.0, 0)
 
         viewModelScope.launch {
             repo.insertDeck(deck)
@@ -151,6 +151,18 @@ class MainViewModel @Inject constructor(
                 updateDecks()
             }
         }
+    }
+
+    private val _deckBeingEdited:MutableState<String?> = mutableStateOf(null)
+    val deckBeingEdited:State<String?> = _deckBeingEdited
+
+    private val _editedDeckState:MutableState<Deck?> = mutableStateOf(null)
+    val editedDeckState:State<Deck?> = _editedDeckState
+
+    fun enterEditMode(deckName: String?){
+        _deckBeingEdited.value = deckName
+
+        _editedDeckState.value = decks.value.find { it.name == deckName }
     }
 
 }
