@@ -18,6 +18,7 @@ import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
+import ml.nandor.confusegroups.domain.usecase.AddCardsFromTextUseCase
 import ml.nandor.confusegroups.domain.usecase.DeleteDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetViewablesFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertCardUseCase
@@ -33,7 +34,8 @@ class MainViewModel @Inject constructor(
     private val listDecksUseCase: ListDecksUseCase,
     private val insertDeckUseCase: InsertDeckUseCase,
     private val insertCardUseCase: InsertCardUseCase,
-    private val listCardsFromDeckUseCase: ListCardsFromDeckUseCase
+    private val listCardsFromDeckUseCase: ListCardsFromDeckUseCase,
+    private val addCardsFromTextUseCase: AddCardsFromTextUseCase
 ): ViewModel() {
 
     private val _viewableCards:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
@@ -212,4 +214,9 @@ class MainViewModel @Inject constructor(
     private val _inspectedDeckCards:MutableState<List<AtomicNote>> = mutableStateOf(listOf())
 
     val inspectedDeckCards:State<List<AtomicNote>> = _inspectedDeckCards
+
+    fun loadDeckFromText(text: String){
+        addCardsFromTextUseCase(Pair(_deckBeingAccessed.value!!, text)).launchIn(viewModelScope)
+
+    }
 }

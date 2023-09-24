@@ -304,11 +304,14 @@ fun AddToDeckPopup(viewModel: MainViewModel) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InspectDeckPopup(viewModel: MainViewModel) {
     val deckName = viewModel.deckBeingAccessed.value
     val visible = viewModel.deckActionBeingTaken.value == MainViewModel.DeckAction.INSPECTION
     val cards = viewModel.inspectedDeckCards.value
+
+    var inputText by remember{ mutableStateOf("") }
 
 
     if (visible) {
@@ -318,14 +321,56 @@ fun InspectDeckPopup(viewModel: MainViewModel) {
                     .fillMaxWidth()
                     .fillMaxHeight(0.6f)
             ) {
-                LazyColumn(
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    items(items = cards) { item ->
-                        Text(item.question+" - "+item.answer)
+                Column() {
+                    Text(
+                        deckName!!,
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp
+                    )
+                    LazyColumn(
+                        modifier = Modifier.padding(8.dp).fillMaxHeight(0.5f)
+                    ) {
+                        items(items = cards) { item ->
+                            Text(item.question+" - "+item.answer)
 
+                        }
                     }
+                    TextField(
+                        value = inputText,
+                        onValueChange = {inputText = it},
+                        label = { Text("Que1-Ans1;Que1-Ans2") }
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceAround
+                    ){
+                        TextButton(
+                            onClick = {
+                                inputText = ""
+                                  viewModel.enterDeckActionMode()
+                            },
+                        ) {
+                            Text("Close")
+                        }
+
+                        TextButton(
+                            onClick = {
+                                viewModel.loadDeckFromText(inputText)
+                                inputText = ""
+                              viewModel.enterDeckActionMode()
+                            },
+                        ) {
+                            Text("Add")
+                        }
+                    }
+
                 }
+
             }
         }
     }
