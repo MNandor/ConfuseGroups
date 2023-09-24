@@ -12,4 +12,7 @@ interface DataAccessObject {
 
     @Query("SELECT * FROM Deck")
     fun listDecks():List<Deck>
+
+    @Query("DELETE FROM deck WHERE name = :name")
+    fun deleteDeckByName(name: String)
 }

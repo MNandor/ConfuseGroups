@@ -1,6 +1,7 @@
 package ml.nandor.confusegroups.presentation
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -132,6 +133,22 @@ class MainViewModel @Inject constructor(
             // return to main thread to update state
             withContext(Dispatchers.Main) {
                 _decks.value = loadedDecks
+            }
+        }
+    }
+
+    private val _deckBeingDeleted:MutableState<String?> = mutableStateOf(null)
+    val deckBeingDeleted:State<String?> = _deckBeingDeleted
+    fun enterDeleteMode(deckName: String?){
+        _deckBeingDeleted.value = deckName
+    }
+
+    fun deleteDeck(){
+        if (deckBeingDeleted.value != null){
+            viewModelScope.launch {
+                repo.deleteDeckByName(deckBeingDeleted.value!!)
+                enterDeleteMode(null)
+                updateDecks()
             }
         }
     }

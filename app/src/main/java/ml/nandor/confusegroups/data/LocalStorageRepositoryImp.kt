@@ -15,4 +15,8 @@ class LocalStorageRepositoryImp @Inject constructor(
         return dao.listDecks()
     }
 
+    override fun deleteDeckByName(deckName: String) {
+        dao.deleteDeckByName(deckName)
+    }
+
 }

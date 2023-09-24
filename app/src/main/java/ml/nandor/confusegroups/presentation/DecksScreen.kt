@@ -16,9 +16,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,20 +32,24 @@ import ml.nandor.confusegroups.domain.model.Deck
 
 @Composable
 fun DecksScreen(viewModel: MainViewModel){
-    Column() {
-        val decks = viewModel.decks.value
-        val ddecks:MutableList<String?> = decks.map { it.name }.toMutableList()
-        ddecks.add(null)
-        LazyColumn {
-            items(items = ddecks){item ->
-                if (item == null){
-                    AddDeck(viewModel)
-                } else {
-                    DeckItem(item, viewModel)
-                }
+    Surface() {
+        Column() {
+            val decks = viewModel.decks.value
+            val ddecks: MutableList<String?> = decks.map { it.name }.toMutableList()
+            ddecks.add(null)
+            LazyColumn {
+                items(items = ddecks) { item ->
+                    if (item == null) {
+                        AddDeck(viewModel)
+                    } else {
+                        DeckItem(item, viewModel)
+                    }
 
+                }
             }
         }
+        
+        DeleteDeckPopup(viewModel = viewModel)
     }
 
 }
@@ -84,7 +91,7 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(Icons.Filled.Settings, contentDescription = "Edit deck settings")
                 }
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { viewModel.enterDeleteMode(text) }) {
                     Icon(Icons.Filled.Delete, contentDescription = "Delete deck")
                 }
             }
@@ -124,3 +131,36 @@ private fun AddDeck(viewModel: MainViewModel) {
 
     }
 }
+
+@Composable
+fun DeleteDeckPopup(viewModel: MainViewModel){
+    val deckName = viewModel.deckBeingDeleted.value
+    val visible = deckName != null
+
+    if (visible){
+        AlertDialog(
+            onDismissRequest = { viewModel.enterDeleteMode(null) },
+            title = {
+                Text(text = "Delete deck ${deckName}?")
+            },
+            text = { Text("The deck, along with all of its cards will be deleted.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteDeck()
+                    },
+                ) {
+                    Text("Yes, delete")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { viewModel.enterDeleteMode(null) },
+                ) {
+                    Text("No, don't delete")
+                }
+            }
+        )
+    }
+}
+
