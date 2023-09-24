@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ReviewScreen(viewModel: MainViewModel) {
+fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
     BackHandler(onBack = {
         viewModel.selectDeck(null)
     })
@@ -33,23 +33,22 @@ fun ReviewScreen(viewModel: MainViewModel) {
         val question = viewModel.currentQuestion.value
         val correctness = viewModel.cardCorrectness.value
 
-
         CardFront(question.front)
 
         Row(
             modifier = Modifier
                 .weight(1.0f)
         ) {
-            CardBackOption(question.options[0], correctness[0], viewModel)
-            CardBackOption(question.options[1], correctness[1], viewModel)
+            CardBackOption(question.options[0], correctness[0], viewModel, playNoise)
+            CardBackOption(question.options[1], correctness[1], viewModel, playNoise)
         }
 
         Row(
             modifier = Modifier
                 .weight(1.0f)
         ) {
-            CardBackOption(question.options[2], correctness[2], viewModel)
-            CardBackOption(question.options[3], correctness[3], viewModel)
+            CardBackOption(question.options[2], correctness[2], viewModel, playNoise)
+            CardBackOption(question.options[3], correctness[3], viewModel, playNoise)
         }
 
     }
@@ -77,7 +76,12 @@ private fun CardFront(text:String) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun RowScope.CardBackOption(text: String, state: MainViewModel.CardCorrectness = MainViewModel.CardCorrectness.BASE, viewModel: MainViewModel) {
+private fun RowScope.CardBackOption(
+    text: String,
+    state: MainViewModel.CardCorrectness = MainViewModel.CardCorrectness.BASE,
+    viewModel: MainViewModel,
+    playNoise: (Boolean) -> Int
+) {
     // Base state = color unmodified
     if (state == MainViewModel.CardCorrectness.BASE){
         ElevatedCard(
@@ -87,7 +91,8 @@ private fun RowScope.CardBackOption(text: String, state: MainViewModel.CardCorre
                 .fillMaxHeight()
                 .combinedClickable(
                     onClick = {
-                        viewModel.checkAnswer(text)
+                        val success = viewModel.checkAnswer(text)
+                        playNoise(success)
                     }
                 )
         ) {
