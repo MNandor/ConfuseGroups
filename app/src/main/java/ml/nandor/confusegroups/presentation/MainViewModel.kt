@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -21,13 +22,22 @@ import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
+import ml.nandor.confusegroups.domain.usecase.DeleteDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetCardsFromDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.InsertCardUseCase
+import ml.nandor.confusegroups.domain.usecase.InsertDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.ListDecksUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repo:LocalStorageRepository,
-    private val getCardsFromDeckUseCase: GetCardsFromDeckUseCase
+    private val getCardsFromDeckUseCase: GetCardsFromDeckUseCase,
+    private val deleteDeckUseCase: DeleteDeckUseCase,
+    private val listDecksUseCase: ListDecksUseCase,
+    private val insertDeckUseCase: InsertDeckUseCase,
+    private val insertCardUseCase: InsertCardUseCase,
+    private val listCardsFromDeckUseCase: ListCardsFromDeckUseCase
 ): ViewModel() {
 
     private val _hardCoded:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
@@ -108,11 +118,11 @@ class MainViewModel @Inject constructor(
 
         val deck = Deck(name = name, 10, 2.0, 1.0, 0)
 
-        viewModelScope.launch {
-            repo.insertDeck(deck)
-            updateDecks()
-        }
 
+        insertDeckUseCase(deck).onEach {
+            if (it is Resource.Success)
+                updateDecks()
+        }.launchIn(viewModelScope)
 
     }
 
@@ -135,15 +145,15 @@ class MainViewModel @Inject constructor(
     }
 
     private fun updateDecks(){
-        // not on main thread
-        viewModelScope.launch {
-            // access database
-            val loadedDecks = repo.listDecks()
-            // return to main thread to update state
-            withContext(Dispatchers.Main) {
-                _decks.value = loadedDecks
+        listDecksUseCase(Unit).onEach {
+            if (it is Resource.Success){
+                // return to main thread to update state
+                withContext(Dispatchers.Main) {
+                    _decks.value = it.data!!
+                }
             }
-        }
+
+        }.launchIn(viewModelScope)
     }
 
     private val _deckBeingAccessed:MutableState<String?> = mutableStateOf(null)
@@ -168,12 +178,14 @@ class MainViewModel @Inject constructor(
                 _editedDeckState.value = decks.value.find { it.name == deckName }
             }
             DeckAction.INSPECTION -> {
-                viewModelScope.launch {
-                    val cards = repo.getCardsByDeckName(deckName)
-                    withContext(Dispatchers.Main) {
-                        _inspectedDeckCards.value = cards
+                listCardsFromDeckUseCase(deckName).onEach {
+                    if (it is Resource.Success){
+                        withContext(Dispatchers.Main) {
+                            _inspectedDeckCards.value = it.data!!
+                        }
                     }
-                }
+                }.launchIn(viewModelScope)
+
             }
             else -> {}
         }
@@ -181,11 +193,12 @@ class MainViewModel @Inject constructor(
     }
     fun deleteDeck(){
         if (_deckBeingAccessed.value != null){
-            viewModelScope.launch {
-                repo.deleteDeckByName(_deckBeingAccessed.value!!)
-                enterDeckActionMode(null)
-                updateDecks()
-            }
+            deleteDeckUseCase(_deckBeingAccessed.value!!).onEach {
+                if (it is Resource.Success){
+                    updateDecks()
+                }
+            }.launchIn(viewModelScope)
+            enterDeckActionMode(null)
         }
     }
 
@@ -194,9 +207,7 @@ class MainViewModel @Inject constructor(
 
 
     fun addCard(card: AtomicNote){
-        viewModelScope.launch {
-            repo.insertCard(card)
-        }
+        insertCardUseCase(card).launchIn(viewModelScope)
     }
 
     private val _inspectedDeckCards:MutableState<List<AtomicNote>> = mutableStateOf(listOf())
