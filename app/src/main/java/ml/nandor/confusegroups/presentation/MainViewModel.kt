@@ -35,8 +35,8 @@ class MainViewModel @Inject constructor(
     private val listCardsFromDeckUseCase: ListCardsFromDeckUseCase
 ): ViewModel() {
 
-    private val _hardCoded:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
-    val hardCoded:State<List<PreparedViewableCard>> = _hardCoded
+    private val _viewableCards:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
+    val viewableCards:State<List<PreparedViewableCard>> = _viewableCards
     enum class CardCorrectness{
         BASE,
         GOOD,
@@ -53,10 +53,10 @@ class MainViewModel @Inject constructor(
     val cardCorrectness = _cardCorrectness
 
     private val _currentIndex = mutableStateOf(0)
-    val currentQuestion = derivedStateOf { hardCoded.value[_currentIndex.value]}
+    val currentQuestion = derivedStateOf { viewableCards.value[_currentIndex.value]}
 
     fun checkAnswer(answer:String):Boolean{
-        val question = hardCoded.value[_currentIndex.value]
+        val question = viewableCards.value[_currentIndex.value]
 
         if (answer == question.options[question.correct-1]){
             nextQuestion(false)
@@ -86,14 +86,14 @@ class MainViewModel @Inject constructor(
             viewModelScope.launch {
                 delay(3000)
                 _currentIndex.value += 1
-                if (_currentIndex.value >= hardCoded.value.size) {
+                if (_currentIndex.value >= viewableCards.value.size) {
                     _currentIndex.value = 0
                 }
                 _cardCorrectness.value = allCorrect
             }
         } else {
             _currentIndex.value += 1
-            if (_currentIndex.value >= hardCoded.value.size) {
+            if (_currentIndex.value >= viewableCards.value.size) {
                 _currentIndex.value = 0
             }
         }
@@ -104,7 +104,14 @@ class MainViewModel @Inject constructor(
     val selectedDeck = _selectedDeck
 
     fun selectDeck(deckName: String?){
-        _selectedDeck.value = deckName
+        getViewablesFromDeckUseCase(deckName).onEach {
+            if (it is Resource.Success){
+                withContext(Dispatchers.Main) {
+                    _viewableCards.value = it.data!!
+                    _selectedDeck.value = deckName
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun createDeck(){
@@ -129,14 +136,6 @@ class MainViewModel @Inject constructor(
     private val viewModelScope = CoroutineScope(Dispatchers.Default)
     init {
         updateDecks()
-
-        getViewablesFromDeckUseCase(Unit).onEach {
-            if (it is Resource.Success){
-                withContext(Dispatchers.Main) {
-                    _hardCoded.value = it.data!!
-                }
-            }
-        }.launchIn(viewModelScope)
     }
 
     private fun updateDecks(){

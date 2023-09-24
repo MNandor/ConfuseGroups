@@ -6,16 +6,32 @@ import javax.inject.Inject
 
 class GetViewablesFromDeckUseCase @Inject constructor(
     private val repository: LocalStorageRepository
-): UseCase<Unit, List<PreparedViewableCard>>() {
-    override fun doStuff(input: Unit): List<PreparedViewableCard> {
-        val hardCoded: List<PreparedViewableCard> = listOf(
-            PreparedViewableCard("人", 4, listOf("Dog", "Big", "Bow", "Person")),
-            PreparedViewableCard("日", 1, listOf("Day", "Eye", "Sun", "Month")), // Correct answer in slot 1
-            PreparedViewableCard("食", 1, listOf("Eat", "Drink", "Fly", "Hunger")), // Correct answer in slot 1
-            PreparedViewableCard("木", 3, listOf("Forest", "Book", "Tree", "Wood")), // Correct answer in slot 4
-            PreparedViewableCard("水", 2, listOf("Ice", "Water", "Fire", "Flame"))  // Correct answer in slot 3
-        )
+): UseCase<String?, List<PreparedViewableCard>>() {
+    override fun doStuff(deckName: String?): List<PreparedViewableCard> {
 
-        return hardCoded
+        val allCards = repository.getCardsByDeckName(deckName)
+        val viewAbles = allCards.map {note ->
+            val possiblesWrongs = allCards
+                .filter { it.question != note.question && it.answer != note.answer }
+                .map { it -> it.answer }
+                .toMutableList()
+            // todo error out instead
+            while (possiblesWrongs.size < 3)
+                possiblesWrongs.add("Placeholder")
+
+            val answers = possiblesWrongs.shuffled().take(3).toMutableList()
+
+            answers.add(note.answer)
+
+            val options = answers.shuffled()
+
+            val viewableCard = PreparedViewableCard(note.question, options.indexOf(note.answer)+1, options)
+
+            return@map viewableCard
+
+        }
+
+        return viewAbles
+
     }
 }
