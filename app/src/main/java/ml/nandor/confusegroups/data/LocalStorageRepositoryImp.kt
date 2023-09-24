@@ -24,4 +24,13 @@ class LocalStorageRepositoryImp @Inject constructor(
         dao.insertCard(card)
     }
 
+    override fun getCardsByDeckName(deckName: String?):List<AtomicNote> {
+        return if (deckName == null){
+            listOf()
+        } else {
+            dao.getCardsByDeckName(deckName)
+        }
+
+    }
+
 }

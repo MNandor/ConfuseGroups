@@ -178,4 +178,23 @@ class MainViewModel @Inject constructor(
             repo.insertCard(card)
         }
     }
+
+    private val _deckBeingInspected:MutableState<String?> = mutableStateOf(null)
+    val deckBeingInspected:State<String?> = _deckBeingInspected
+
+
+
+    private val _inspectedDeckCards:MutableState<List<AtomicNote>> = mutableStateOf(listOf())
+
+    val inspectedDeckCards:State<List<AtomicNote>> = _inspectedDeckCards
+    fun enterInspectMode(deckName: String?){
+        _deckBeingInspected.value = deckName
+
+        viewModelScope.launch {
+            val cards = repo.getCardsByDeckName(deckName)
+            withContext(Dispatchers.Main) {
+                _inspectedDeckCards.value = cards
+            }
+        }
+    }
 }

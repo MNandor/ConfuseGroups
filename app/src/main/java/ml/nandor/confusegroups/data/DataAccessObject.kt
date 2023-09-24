@@ -19,4 +19,7 @@ interface DataAccessObject {
 
     @Insert
     fun insertCard(card: AtomicNote)
+
+    @Query("SELECT * FROM AtomicNote WHERE deck = :deckName")
+    fun getCardsByDeckName(deckName: String):List<AtomicNote>
 }

@@ -65,6 +65,7 @@ fun DecksScreen(viewModel: MainViewModel){
         DeleteDeckPopup(viewModel)
         EditDeckSettingsPopup(viewModel)
         AddToDeckPopup(viewModel)
+        InspectDeckPopup(viewModel)
     }
 
 }
@@ -103,7 +104,7 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                 IconButton(onClick = { viewModel.enterAddMode(text) }) {
                     Icon(Icons.Filled.Add, contentDescription = "Add card to deck")
                 }
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { viewModel.enterInspectMode(text) }) {
                     Icon(Icons.Filled.Edit, contentDescription = "Edit deck data")
                 }
             IconButton(onClick = { viewModel.enterEditMode(text) }) {
@@ -271,7 +272,9 @@ fun AddToDeckPopup(viewModel: MainViewModel) {
                         label = { Text("Answer (Back):") }
                     )
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
                         horizontalArrangement = Arrangement.SpaceAround
                     ){
                         TextButton(
@@ -286,14 +289,41 @@ fun AddToDeckPopup(viewModel: MainViewModel) {
 
                         TextButton(
                             onClick = {
-                                val card = AtomicNote(deckName, question, answer)
-
+                                val card = AtomicNote(question = question, answer = answer, deck = deckName)
+                                viewModel.addCard(card)
                                 question = ""
                                 answer = ""
                             },
                         ) {
                         Text("Add")
                     }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun InspectDeckPopup(viewModel: MainViewModel) {
+    val deckName = viewModel.deckBeingInspected.value
+    val visible = deckName != null
+    val cards = viewModel.inspectedDeckCards.value
+
+
+    if (visible) {
+        Dialog(onDismissRequest = { viewModel.enterInspectMode(null) }) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.6f)
+            ) {
+                LazyColumn(
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    items(items = cards) { item ->
+                        Text(item.question+" - "+item.answer)
+
                     }
                 }
             }

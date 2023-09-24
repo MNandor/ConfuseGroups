@@ -9,4 +9,6 @@ interface LocalStorageRepository {
     fun deleteDeckByName(deckName: String)
 
     fun insertCard(card: AtomicNote)
+
+    fun getCardsByDeckName(deckName: String?):List<AtomicNote>
 }
