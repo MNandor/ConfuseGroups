@@ -1,10 +1,9 @@
-package ml.nandor.confusegroups.domain
+package ml.nandor.confusegroups.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
+import ml.nandor.confusegroups.domain.Resource
 import java.lang.Exception
-import javax.inject.Inject
 
 // let's put all the boilerplate in one class
 abstract class UseCase<Input, Output> {
@@ -14,7 +13,7 @@ abstract class UseCase<Input, Output> {
             val result = doStuff(input)
             Resource.Success(result)
         } catch (e: Exception){
-            Resource.Error(e.localizedMessage?: "Unknown error")
+            Resource.Error(e.localizedMessage ?: "Unknown error")
         }
         emit(result)
     }

@@ -101,16 +101,16 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ){
-                IconButton(onClick = { viewModel.enterAddMode(text) }) {
+                IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.ADDING) }) {
                     Icon(Icons.Filled.Add, contentDescription = "Add card to deck")
                 }
-                IconButton(onClick = { viewModel.enterInspectMode(text) }) {
+                IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.INSPECTION) }) {
                     Icon(Icons.Filled.Edit, contentDescription = "Edit deck data")
                 }
-            IconButton(onClick = { viewModel.enterEditMode(text) }) {
+            IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.EDITING) }) {
                     Icon(Icons.Filled.Settings, contentDescription = "Edit deck settings")
                 }
-                IconButton(onClick = { viewModel.enterDeleteMode(text) }) {
+                IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.DELETION) }) {
                     Icon(Icons.Filled.Delete, contentDescription = "Delete deck")
                 }
             }
@@ -153,12 +153,12 @@ private fun AddDeck(viewModel: MainViewModel) {
 
 @Composable
 fun DeleteDeckPopup(viewModel: MainViewModel){
-    val deckName = viewModel.deckBeingDeleted.value
-    val visible = deckName != null
+    val deckName = viewModel.deckBeingAccessed.value
+    val visible = viewModel.deckActionBeingTaken.value == MainViewModel.DeckAction.DELETION
 
     if (visible){
         AlertDialog(
-            onDismissRequest = { viewModel.enterDeleteMode(null) },
+            onDismissRequest = { viewModel.enterDeckActionMode() },
             title = {
                 Text(text = "Delete deck ${deckName}?")
             },
@@ -174,7 +174,7 @@ fun DeleteDeckPopup(viewModel: MainViewModel){
             },
             dismissButton = {
                 TextButton(
-                    onClick = { viewModel.enterDeleteMode(null) },
+                    onClick = { viewModel.enterDeckActionMode() },
                 ) {
                     Text("No, don't delete")
                 }
@@ -185,10 +185,10 @@ fun DeleteDeckPopup(viewModel: MainViewModel){
 
 @Composable
 fun EditDeckSettingsPopup(viewModel: MainViewModel){
-    val deckName = viewModel.deckBeingEdited.value
-    val visible = deckName != null
+    val deckName = viewModel.deckBeingAccessed.value
+    val visible = viewModel.deckActionBeingTaken.value == MainViewModel.DeckAction.EDITING
     if (visible){
-        Dialog(onDismissRequest = { viewModel.enterEditMode(null) }) {
+        Dialog(onDismissRequest = { viewModel.enterDeckActionMode() }) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -234,14 +234,14 @@ fun EditDeckSettingsPopup(viewModel: MainViewModel){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddToDeckPopup(viewModel: MainViewModel) {
-    val deckName = viewModel.deckBeingAddedTo.value
-    val visible = deckName != null
+    val deckName = viewModel.deckBeingAccessed.value
+    val visible = viewModel.deckActionBeingTaken.value == MainViewModel.DeckAction.ADDING
 
     var question by remember{ mutableStateOf("") }
     var answer by remember{ mutableStateOf("") }
 
     if (visible) {
-        Dialog(onDismissRequest = { viewModel.enterAddMode(null) }) {
+        Dialog(onDismissRequest = { viewModel.enterDeckActionMode(null) }) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -281,7 +281,7 @@ fun AddToDeckPopup(viewModel: MainViewModel) {
                             onClick = {
                                 question = ""
                                 answer = ""
-                                viewModel.enterAddMode(null)
+                                viewModel.enterDeckActionMode()
                             },
                         ) {
                             Text("Close")
@@ -306,13 +306,13 @@ fun AddToDeckPopup(viewModel: MainViewModel) {
 
 @Composable
 fun InspectDeckPopup(viewModel: MainViewModel) {
-    val deckName = viewModel.deckBeingInspected.value
-    val visible = deckName != null
+    val deckName = viewModel.deckBeingAccessed.value
+    val visible = viewModel.deckActionBeingTaken.value == MainViewModel.DeckAction.INSPECTION
     val cards = viewModel.inspectedDeckCards.value
 
 
     if (visible) {
-        Dialog(onDismissRequest = { viewModel.enterInspectMode(null) }) {
+        Dialog(onDismissRequest = { viewModel.enterDeckActionMode() }) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()

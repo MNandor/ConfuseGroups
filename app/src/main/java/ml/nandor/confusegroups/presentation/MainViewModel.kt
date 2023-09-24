@@ -146,40 +146,52 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private val _deckBeingDeleted:MutableState<String?> = mutableStateOf(null)
-    val deckBeingDeleted:State<String?> = _deckBeingDeleted
-    fun enterDeleteMode(deckName: String?){
-        _deckBeingDeleted.value = deckName
+    private val _deckBeingAccessed:MutableState<String?> = mutableStateOf(null)
+    val deckBeingAccessed:State<String?> = _deckBeingAccessed
+
+    enum class DeckAction{
+        DELETION,
+        EDITING,
+        INSPECTION,
+        ADDING
     }
 
+    private val _deckActionBeingTaken:MutableState<DeckAction?> = mutableStateOf(null)
+    val deckActionBeingTaken:State<DeckAction?> = _deckActionBeingTaken
+
+    fun enterDeckActionMode(deckName:String? = null, mode:DeckAction? = null){
+        _deckBeingAccessed.value = deckName
+        _deckActionBeingTaken.value = mode
+
+        when(mode){
+            DeckAction.EDITING -> {
+                _editedDeckState.value = decks.value.find { it.name == deckName }
+            }
+            DeckAction.INSPECTION -> {
+                viewModelScope.launch {
+                    val cards = repo.getCardsByDeckName(deckName)
+                    withContext(Dispatchers.Main) {
+                        _inspectedDeckCards.value = cards
+                    }
+                }
+            }
+            else -> {}
+        }
+
+    }
     fun deleteDeck(){
-        if (deckBeingDeleted.value != null){
+        if (_deckBeingAccessed.value != null){
             viewModelScope.launch {
-                repo.deleteDeckByName(deckBeingDeleted.value!!)
-                enterDeleteMode(null)
+                repo.deleteDeckByName(_deckBeingAccessed.value!!)
+                enterDeckActionMode(null)
                 updateDecks()
             }
         }
     }
 
-    private val _deckBeingEdited:MutableState<String?> = mutableStateOf(null)
-    val deckBeingEdited:State<String?> = _deckBeingEdited
-
     private val _editedDeckState:MutableState<Deck?> = mutableStateOf(null)
     val editedDeckState:State<Deck?> = _editedDeckState
 
-    fun enterEditMode(deckName: String?){
-        _deckBeingEdited.value = deckName
-
-        _editedDeckState.value = decks.value.find { it.name == deckName }
-    }
-
-    private val _deckBeingAddedTo:MutableState<String?> = mutableStateOf(null)
-    val deckBeingAddedTo:State<String?> = _deckBeingAddedTo
-    fun enterAddMode(deckName: String?){
-        _deckBeingAddedTo.value = deckName
-
-    }
 
     fun addCard(card: AtomicNote){
         viewModelScope.launch {
@@ -187,22 +199,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private val _deckBeingInspected:MutableState<String?> = mutableStateOf(null)
-    val deckBeingInspected:State<String?> = _deckBeingInspected
-
-
-
     private val _inspectedDeckCards:MutableState<List<AtomicNote>> = mutableStateOf(listOf())
 
     val inspectedDeckCards:State<List<AtomicNote>> = _inspectedDeckCards
-    fun enterInspectMode(deckName: String?){
-        _deckBeingInspected.value = deckName
-
-        viewModelScope.launch {
-            val cards = repo.getCardsByDeckName(deckName)
-            withContext(Dispatchers.Main) {
-                _inspectedDeckCards.value = cards
-            }
-        }
-    }
 }
