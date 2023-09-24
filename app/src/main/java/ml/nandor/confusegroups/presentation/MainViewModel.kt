@@ -5,15 +5,22 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
+import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-
+    private val repo:LocalStorageRepository
 ): ViewModel() {
     private val hardCoded: List<PreparedViewableCard> = listOf(
         PreparedViewableCard("人", 4, listOf("Dog", "Big", "Bow", "Person")),
@@ -91,6 +98,42 @@ class MainViewModel @Inject constructor(
 
     fun selectDeck(deckName: String?){
         _selectedDeck.value = deckName
+    }
+
+    fun createDeck(){
+        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
+        val name = (1..8).map { chars.random() }.joinToString(separator = "")
+
+        val deck = Deck(name = name, 0, 0.0, 0.0, 0)
+
+        viewModelScope.launch {
+            repo.insertDeck(deck)
+            updateDecks()
+        }
+
+
+    }
+
+    private val _decks:MutableState<List<Deck>> = mutableStateOf(listOf())
+    val decks = _decks
+
+
+    // Define a coroutinescope so we don't run on main thread
+    private val viewModelScope = CoroutineScope(Dispatchers.Default)
+    init {
+        updateDecks()
+    }
+
+    private fun updateDecks(){
+        // not on main thread
+        viewModelScope.launch {
+            // access database
+            val loadedDecks = repo.listDecks()
+            // return to main thread to update state
+            withContext(Dispatchers.Main) {
+                _decks.value = loadedDecks
+            }
+        }
     }
 
 }

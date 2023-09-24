@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
@@ -22,12 +24,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ml.nandor.confusegroups.domain.model.Deck
 
 @Composable
 fun DecksScreen(viewModel: MainViewModel){
     Column() {
-        DeckItem("Main Deck", viewModel)
-        DeckItem("+", viewModel)
+        val decks = viewModel.decks.value
+        val ddecks:MutableList<String?> = decks.map { it.name }.toMutableList()
+        ddecks.add(null)
+        LazyColumn {
+            items(items = ddecks){item ->
+                if (item == null){
+                    AddDeck(viewModel)
+                } else {
+                    DeckItem(item, viewModel)
+                }
+
+            }
+        }
     }
 
 }
@@ -72,6 +86,37 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
             }
         }
 
+
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun AddDeck(viewModel: MainViewModel) {
+    ElevatedCard(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .height(128.dp)
+            .combinedClickable(
+                onClick = {
+                    viewModel.createDeck()
+                }
+            )
+    ) {
+        Column(){
+            Text(
+                text = "+",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .wrapContentSize()
+                    .height(64.dp)
+                ,
+                textAlign = TextAlign.Center,
+                fontSize = 48.sp
+            )
+        }
 
     }
 }
