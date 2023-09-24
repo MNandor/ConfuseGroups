@@ -12,26 +12,26 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
+import ml.nandor.confusegroups.domain.usecase.GetCardsFromDeckUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repo:LocalStorageRepository
+    private val repo:LocalStorageRepository,
+    private val getCardsFromDeckUseCase: GetCardsFromDeckUseCase
 ): ViewModel() {
-    private val hardCoded: List<PreparedViewableCard> = listOf(
-        PreparedViewableCard("人", 4, listOf("Dog", "Big", "Bow", "Person")),
-        PreparedViewableCard("日", 1, listOf("Day", "Eye", "Sun", "Month")), // Correct answer in slot 1
-        PreparedViewableCard("食", 1, listOf("Eat", "Drink", "Fly", "Hunger")), // Correct answer in slot 1
-        PreparedViewableCard("木", 3, listOf("Forest", "Book", "Tree", "Wood")), // Correct answer in slot 4
-        PreparedViewableCard("水", 2, listOf("Ice", "Water", "Fire", "Flame"))  // Correct answer in slot 3
-    )
 
+    private val _hardCoded:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
+    val hardCoded:State<List<PreparedViewableCard>> = _hardCoded
     enum class CardCorrectness{
         BASE,
         GOOD,
@@ -48,10 +48,10 @@ class MainViewModel @Inject constructor(
     val cardCorrectness = _cardCorrectness
 
     private val _currentIndex = mutableStateOf(0)
-    val currentQuestion = derivedStateOf { hardCoded[_currentIndex.value]}
+    val currentQuestion = derivedStateOf { hardCoded.value[_currentIndex.value]}
 
     fun checkAnswer(answer:String):Boolean{
-        val question = hardCoded[_currentIndex.value]
+        val question = hardCoded.value[_currentIndex.value]
 
         if (answer == question.options[question.correct-1]){
             nextQuestion(false)
@@ -81,14 +81,14 @@ class MainViewModel @Inject constructor(
             viewModelScope.launch {
                 delay(3000)
                 _currentIndex.value += 1
-                if (_currentIndex.value >= hardCoded.size) {
+                if (_currentIndex.value >= hardCoded.value.size) {
                     _currentIndex.value = 0
                 }
                 _cardCorrectness.value = allCorrect
             }
         } else {
             _currentIndex.value += 1
-            if (_currentIndex.value >= hardCoded.size) {
+            if (_currentIndex.value >= hardCoded.value.size) {
                 _currentIndex.value = 0
             }
         }
@@ -124,6 +124,14 @@ class MainViewModel @Inject constructor(
     private val viewModelScope = CoroutineScope(Dispatchers.Default)
     init {
         updateDecks()
+
+        getCardsFromDeckUseCase(Unit).onEach {
+            if (it is Resource.Success){
+                withContext(Dispatchers.Main) {
+                    _hardCoded.value = it.data!!
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     private fun updateDecks(){
