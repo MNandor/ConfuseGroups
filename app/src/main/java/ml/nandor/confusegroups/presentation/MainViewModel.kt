@@ -8,19 +8,19 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import ml.nandor.confusegroups.domain.CardData
+import ml.nandor.confusegroups.domain.PreparedViewableCard
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
 
 ): ViewModel() {
-    private val hardCoded: List<CardData> = listOf(
-        CardData("人", 4, listOf("Dog", "Big", "Bow", "Person")),
-        CardData("日", 1, listOf("Day", "Eye", "Sun", "Month")), // Correct answer in slot 1
-        CardData("食", 1, listOf("Eat", "Drink", "Fly", "Hunger")), // Correct answer in slot 1
-        CardData("木", 3, listOf("Forest", "Book", "Tree", "Wood")), // Correct answer in slot 4
-        CardData("水", 2, listOf("Ice", "Water", "Fire", "Flame"))  // Correct answer in slot 3
+    private val hardCoded: List<PreparedViewableCard> = listOf(
+        PreparedViewableCard("人", 4, listOf("Dog", "Big", "Bow", "Person")),
+        PreparedViewableCard("日", 1, listOf("Day", "Eye", "Sun", "Month")), // Correct answer in slot 1
+        PreparedViewableCard("食", 1, listOf("Eat", "Drink", "Fly", "Hunger")), // Correct answer in slot 1
+        PreparedViewableCard("木", 3, listOf("Forest", "Book", "Tree", "Wood")), // Correct answer in slot 4
+        PreparedViewableCard("水", 2, listOf("Ice", "Water", "Fire", "Flame"))  // Correct answer in slot 3
     )
 
     enum class CardCorrectness{
