@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
@@ -22,17 +23,24 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 
 @Composable
@@ -56,6 +64,7 @@ fun DecksScreen(viewModel: MainViewModel){
         
         DeleteDeckPopup(viewModel)
         EditDeckSettingsPopup(viewModel)
+        AddToDeckPopup(viewModel)
     }
 
 }
@@ -91,6 +100,9 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ){
+                IconButton(onClick = { viewModel.enterAddMode(text) }) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add card to deck")
+                }
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(Icons.Filled.Edit, contentDescription = "Edit deck data")
                 }
@@ -218,3 +230,73 @@ fun EditDeckSettingsPopup(viewModel: MainViewModel){
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddToDeckPopup(viewModel: MainViewModel) {
+    val deckName = viewModel.deckBeingAddedTo.value
+    val visible = deckName != null
+
+    var question by remember{ mutableStateOf("") }
+    var answer by remember{ mutableStateOf("") }
+
+    if (visible) {
+        Dialog(onDismissRequest = { viewModel.enterAddMode(null) }) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.6f)
+            ) {
+                Column() {
+                    Text(
+                        deckName!!,
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp
+                    )
+
+                    TextField(modifier = Modifier
+                        .padding(4.dp)
+                        .fillMaxWidth(),
+                        value = question,
+                        onValueChange = { question = it },
+                        label = { Text("Question (Front):") }
+                    )
+                    TextField(modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                        value = answer,
+                        onValueChange = { answer = it },
+                        label = { Text("Answer (Back):") }
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceAround
+                    ){
+                        TextButton(
+                            onClick = {
+                                question = ""
+                                answer = ""
+                                viewModel.enterAddMode(null)
+                            },
+                        ) {
+                            Text("Close")
+                        }
+
+                        TextButton(
+                            onClick = {
+                                val card = AtomicNote(deckName, question, answer)
+
+                                question = ""
+                                answer = ""
+                            },
+                        ) {
+                        Text("Add")
+                    }
+                    }
+                }
+            }
+        }
+    }
+}

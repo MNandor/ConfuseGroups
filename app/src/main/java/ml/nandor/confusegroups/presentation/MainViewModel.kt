@@ -14,6 +14,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
@@ -165,4 +166,16 @@ class MainViewModel @Inject constructor(
         _editedDeckState.value = decks.value.find { it.name == deckName }
     }
 
+    private val _deckBeingAddedTo:MutableState<String?> = mutableStateOf(null)
+    val deckBeingAddedTo:State<String?> = _deckBeingAddedTo
+    fun enterAddMode(deckName: String?){
+        _deckBeingAddedTo.value = deckName
+
+    }
+
+    fun addCard(card: AtomicNote){
+        viewModelScope.launch {
+            repo.insertCard(card)
+        }
+    }
 }

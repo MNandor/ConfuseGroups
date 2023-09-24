@@ -1,5 +1,6 @@
 package ml.nandor.confusegroups.data
 
+import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import javax.inject.Inject
@@ -17,6 +18,10 @@ class LocalStorageRepositoryImp @Inject constructor(
 
     override fun deleteDeckByName(deckName: String) {
         dao.deleteDeckByName(deckName)
+    }
+
+    override fun insertCard(card: AtomicNote) {
+        dao.insertCard(card)
     }
 
 }
