@@ -106,14 +106,14 @@ class MainViewModel @Inject constructor(
                 delay(3000)
                 _currentIndex.value += 1
                 if (_currentIndex.value >= viewableCards.value.size) {
-                    _currentIndex.value = 0
+                    selectDeck(selectedDeck.value)
                 }
                 _cardCorrectness.value = allCorrect
             }
         } else {
             _currentIndex.value += 1
             if (_currentIndex.value >= viewableCards.value.size) {
-                _currentIndex.value = 0
+                selectDeck(selectedDeck.value)
             }
         }
 
@@ -135,6 +135,7 @@ class MainViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
     fun selectDeck(deckName: String?){
+        _currentIndex.value = 0
         updateDeckLevel(deckName)
         getViewablesFromDeckUseCase(deckName).onEach {
             if (it is Resource.Success){
