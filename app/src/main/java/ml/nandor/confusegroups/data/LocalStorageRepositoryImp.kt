@@ -42,4 +42,8 @@ class LocalStorageRepositoryImp @Inject constructor(
         return dao.getDeckByName(deckName)
     }
 
+    override fun insertReview(review: Review){
+        dao.insertReview(review)
+    }
+
 }

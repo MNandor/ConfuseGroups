@@ -41,4 +41,7 @@ interface DataAccessObject {
             "ON R.question = AtomicNote.question " +
             "WHERE AtomicNote.deck = :deckName")
     fun getMostRecentReviewsByDeckName(deckName:String):List<Review>
+
+    @Insert
+    fun insertReview(review: Review)
 }

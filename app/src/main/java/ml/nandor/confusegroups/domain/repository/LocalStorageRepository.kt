@@ -16,4 +16,6 @@ interface LocalStorageRepository {
     fun getMostRecentReviewsByDeckName(deckName: String):List<Review>
 
     fun getDeckByName(deckName: String):Deck
+
+    fun insertReview(review: Review)
 }

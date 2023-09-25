@@ -1,6 +1,5 @@
 package ml.nandor.confusegroups.presentation
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -18,12 +17,14 @@ import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
+import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.usecase.AddCardsFromTextUseCase
 import ml.nandor.confusegroups.domain.usecase.DeleteDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetLevelOfDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetViewablesFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertCardUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.InsertReviewUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListDecksUseCase
 import javax.inject.Inject
@@ -37,7 +38,8 @@ class MainViewModel @Inject constructor(
     private val insertCardUseCase: InsertCardUseCase,
     private val listCardsFromDeckUseCase: ListCardsFromDeckUseCase,
     private val addCardsFromTextUseCase: AddCardsFromTextUseCase,
-    private val getLevelOfDeckUseCase: GetLevelOfDeckUseCase
+    private val getLevelOfDeckUseCase: GetLevelOfDeckUseCase,
+    private val insertReviewUseCase: InsertReviewUseCase
 ): ViewModel() {
 
     private val _viewableCards:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
@@ -62,6 +64,18 @@ class MainViewModel @Inject constructor(
 
     fun checkAnswer(answer:String):Boolean{
         val question = viewableCards.value[_currentIndex.value]
+
+        val review = Review(
+            question = question.front,
+            answer = answer,
+            level = deckLevel.value,
+            streak = 0, // todo
+            timeStamp = System.currentTimeMillis()/1000
+        )
+
+        insertReviewUseCase(review).launchIn(viewModelScope)
+
+        updateDeckLevel(selectedDeck.value)
 
         if (answer == question.options[question.correct-1]){
             nextQuestion(false)
@@ -110,7 +124,7 @@ class MainViewModel @Inject constructor(
 
     private val _deckLevel: MutableState<Int> = mutableStateOf(0)
     val deckLevel = _deckLevel
-    fun selectDeck(deckName: String?){
+    private fun updateDeckLevel(deckName: String?){
         getLevelOfDeckUseCase(deckName).onEach {
             if (it is Resource.Success){
                 withContext(Dispatchers.Main) {
@@ -119,6 +133,9 @@ class MainViewModel @Inject constructor(
             }
 
         }.launchIn(viewModelScope)
+    }
+    fun selectDeck(deckName: String?){
+        updateDeckLevel(deckName)
         getViewablesFromDeckUseCase(deckName).onEach {
             if (it is Resource.Success){
                 withContext(Dispatchers.Main) {
@@ -229,6 +246,5 @@ class MainViewModel @Inject constructor(
 
     fun loadDeckFromText(text: String){
         addCardsFromTextUseCase(Pair(_deckBeingAccessed.value!!, text)).launchIn(viewModelScope)
-
     }
 }

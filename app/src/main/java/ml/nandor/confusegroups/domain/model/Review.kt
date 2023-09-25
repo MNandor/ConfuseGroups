@@ -20,5 +20,5 @@ data class Review(
 
     // unix timestamp
     @PrimaryKey
-    val timeStamp: Int
+    val timeStamp: Long
 )
