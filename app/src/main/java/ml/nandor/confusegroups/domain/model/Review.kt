@@ -14,8 +14,9 @@ data class Review(
     // virtual days used by the app. Does not correspond to real days
     val level: Int,
 
-    // amount of days to wait before showing the card again
-    val period: Double,
+    // number of times we got it right in the past
+    // 0 means it's a re-learning new card
+    val streak: Int,
 
     // unix timestamp
     @PrimaryKey

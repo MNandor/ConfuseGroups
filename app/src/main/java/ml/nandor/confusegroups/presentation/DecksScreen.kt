@@ -352,7 +352,7 @@ fun InspectDeckPopup(viewModel: MainViewModel) {
                         TextButton(
                             onClick = {
                                 inputText = ""
-                                  viewModel.enterDeckActionMode()
+                                viewModel.enterDeckActionMode()
                             },
                         ) {
                             Text("Close")

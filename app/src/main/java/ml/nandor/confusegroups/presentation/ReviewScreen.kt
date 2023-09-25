@@ -36,6 +36,10 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
         val question = viewModel.currentQuestion.value
         val correctness = viewModel.cardCorrectness.value
 
+        Row(){
+            Text(text = "Level: "+viewModel.deckLevel.value.toString())
+        }
+
         CardFront(question.front)
 
         Row(

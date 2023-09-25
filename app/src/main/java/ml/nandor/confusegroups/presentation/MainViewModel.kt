@@ -20,6 +20,7 @@ import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
 import ml.nandor.confusegroups.domain.usecase.AddCardsFromTextUseCase
 import ml.nandor.confusegroups.domain.usecase.DeleteDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.GetLevelOfDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetViewablesFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertCardUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertDeckUseCase
@@ -35,7 +36,8 @@ class MainViewModel @Inject constructor(
     private val insertDeckUseCase: InsertDeckUseCase,
     private val insertCardUseCase: InsertCardUseCase,
     private val listCardsFromDeckUseCase: ListCardsFromDeckUseCase,
-    private val addCardsFromTextUseCase: AddCardsFromTextUseCase
+    private val addCardsFromTextUseCase: AddCardsFromTextUseCase,
+    private val getLevelOfDeckUseCase: GetLevelOfDeckUseCase
 ): ViewModel() {
 
     private val _viewableCards:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
@@ -106,7 +108,17 @@ class MainViewModel @Inject constructor(
     private val _selectedDeck: MutableState<String?> = mutableStateOf(null)
     val selectedDeck = _selectedDeck
 
+    private val _deckLevel: MutableState<Int> = mutableStateOf(0)
+    val deckLevel = _deckLevel
     fun selectDeck(deckName: String?){
+        getLevelOfDeckUseCase(deckName).onEach {
+            if (it is Resource.Success){
+                withContext(Dispatchers.Main) {
+                    _deckLevel.value = it.data!!
+                }
+            }
+
+        }.launchIn(viewModelScope)
         getViewablesFromDeckUseCase(deckName).onEach {
             if (it is Resource.Success){
                 withContext(Dispatchers.Main) {

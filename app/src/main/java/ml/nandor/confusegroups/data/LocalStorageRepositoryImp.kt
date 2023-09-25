@@ -2,6 +2,7 @@ package ml.nandor.confusegroups.data
 
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
+import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import javax.inject.Inject
 
@@ -31,6 +32,14 @@ class LocalStorageRepositoryImp @Inject constructor(
             dao.getCardsByDeckName(deckName)
         }
 
+    }
+
+    override fun getMostRecentReviewsByDeckName(deckName: String): List<Review> {
+        return dao.getMostRecentReviewsByDeckName(deckName)
+    }
+
+    override fun getDeckByName(deckName: String): Deck {
+        return dao.getDeckByName(deckName)
     }
 
 }
