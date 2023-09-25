@@ -65,11 +65,13 @@ class MainViewModel @Inject constructor(
     fun checkAnswer(answer:String):Boolean{
         val question = viewableCards.value[_currentIndex.value]
 
+        val wasCorrect = answer == question.options[question.correct-1]
+
         val review = Review(
             question = question.front,
             answer = answer,
             level = deckLevel.value,
-            streak = 0, // todo
+            streak = if (wasCorrect) question.streakSoFar+1 else 0,
             timeStamp = System.currentTimeMillis()/1000
         )
 
@@ -77,7 +79,7 @@ class MainViewModel @Inject constructor(
 
         updateDeckLevel(selectedDeck.value)
 
-        if (answer == question.options[question.correct-1]){
+        if (wasCorrect){
             nextQuestion(false)
             return true
         } else {

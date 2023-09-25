@@ -22,6 +22,9 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         val reviews = repository.getMostRecentReviewsByDeckName(deckName)
 
+
+
+
         val viewAbles = allCards.map {note ->
             val possiblesWrongs = allCards
                 .filter { it.question != note.question && it.answer != note.answer }
@@ -38,7 +41,9 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
             val options = answers.shuffled()
 
-            val viewableCard = PreparedViewableCard(note.question, options.indexOf(note.answer)+1, options)
+            val streakSoFar = reviews.find { it.question == note.question }?.streak ?: 0
+
+            val viewableCard = PreparedViewableCard(note.question, options.indexOf(note.answer)+1, options, streakSoFar)
 
             return@map viewableCard
 
