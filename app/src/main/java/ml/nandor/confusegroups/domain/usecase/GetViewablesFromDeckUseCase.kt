@@ -84,9 +84,13 @@ class GetViewablesFromDeckUseCase @Inject constructor(
                 .sortedBy { it.second }
                 .map{it.first}
 
-            val answers = corres.take(3).toMutableList()
+            val answers = corres.take(2).toMutableList()
+
+            // always have a full random option
+            val fullRandom = possiblesWrongs.filter { !answers.contains(it) }.random()
 
             answers.add(note.answer)
+            answers.add(fullRandom)
 
             val options = answers.shuffled()
 
