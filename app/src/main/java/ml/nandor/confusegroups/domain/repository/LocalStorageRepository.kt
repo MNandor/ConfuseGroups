@@ -18,4 +18,6 @@ interface LocalStorageRepository {
     fun getDeckByName(deckName: String):Deck
 
     fun insertReview(review: Review)
+
+    fun listReviews():List<Review>
 }

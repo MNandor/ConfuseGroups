@@ -46,4 +46,8 @@ class LocalStorageRepositoryImp @Inject constructor(
         dao.insertReview(review)
     }
 
+    override fun listReviews(): List<Review> {
+        return dao.listReviews()
+    }
+
 }

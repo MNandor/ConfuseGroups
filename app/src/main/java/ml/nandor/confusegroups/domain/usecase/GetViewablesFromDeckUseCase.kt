@@ -3,9 +3,11 @@ package ml.nandor.confusegroups.domain.usecase
 import android.util.Log
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.pow
 
+// this is where the most important part of the app happens
 class GetViewablesFromDeckUseCase @Inject constructor(
     private val repository: LocalStorageRepository,
     private val getLevelOfDeckUseCase: GetLevelOfDeckUseCase,
@@ -14,6 +16,9 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         val allCards = repository.getCardsByDeckName(deckName)
 
+        Timber.d("With ${allCards.size} cards in deck $deckName")
+
+        // if we don't have enough cards for 4 Backs, we can't review
         if (deckName == null || allCards.size < 4){
             throw(Exception("Empty deck"))
         }
@@ -22,8 +27,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         val reviews = repository.getMostRecentReviewsByDeckName(deckName)
 
-
-
+        val allReviews = repository.listReviews()
 
         val viewAbles = allCards.map {note ->
             val possiblesWrongs = allCards

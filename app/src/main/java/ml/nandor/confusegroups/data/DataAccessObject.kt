@@ -44,4 +44,7 @@ interface DataAccessObject {
 
     @Insert
     fun insertReview(review: Review)
+
+    @Query("SELECT * from Review")
+    fun listReviews():List<Review>
 }
