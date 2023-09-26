@@ -81,6 +81,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
             Timber.tag("alg1math").d("${note.question}")
 
             val corres = possiblesWrongs
+                .shuffled()
                 .map { pos ->  Pair(pos, -determineCorrelation(note.question, pos, deck.confuseExponent, allReviews)) }
                 .sortedBy { it.second }
                 .map{it.first}
