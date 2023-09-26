@@ -17,7 +17,7 @@ data class Review(
     val level: Int,
 
     // number of times we got it right in the past
-    // 0 means it's a re-learning new card
+    // 0 means it's a re-learning or new card
     val streak: Int,
 
     // unix timestamp
