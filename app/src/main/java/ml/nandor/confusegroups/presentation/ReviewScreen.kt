@@ -43,6 +43,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ml.nandor.confusegroups.R
+import okio.utf8Size
 import timber.log.Timber
 
 @Composable
@@ -156,7 +157,7 @@ private fun LargeCardContent(text: String) {
                 .padding(16.dp)
                 .wrapContentSize(),
             textAlign = TextAlign.Center,
-            fontSize = 128.sp
+            fontSize = if (text.length < 6) 128.sp else 64.sp
         )
     }
 }
@@ -176,15 +177,7 @@ private fun CardOnlyOption(text:String, viewModel: MainViewModel, playNoise: (Bo
                 }
             )
     ) {
-        Text(
-            text = text,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .wrapContentSize(),
-            textAlign = TextAlign.Center,
-            fontSize = 128.sp
-        )
+        LargeCardContent(text = text)
     }
 }
 
