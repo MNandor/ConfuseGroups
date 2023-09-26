@@ -130,8 +130,9 @@ private fun CardFront(text:String) {
 //                modifier = Modifier.fillMaxSize()
 //            )
             AsyncImage(
-                model = "https://nandor.pro/img/reallifepfp.png",
-                contentDescription = "Sample Image"
+                model = "https://i.imgur.com/Hi9Wd81.png",
+                contentDescription = "Sample Image",
+                modifier = Modifier.fillMaxSize()
             )
         } else {
             Text(
