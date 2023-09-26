@@ -170,8 +170,11 @@ private fun RowScope.CardBackOption(
                 .fillMaxHeight()
                 .combinedClickable(
                     onClick = {
-                        val success = viewModel.checkAnswer(text)
-                        playNoise(success)
+                        if (viewModel.isClickable()){
+                            val success = viewModel.checkAnswer(text)
+                            playNoise(success)
+                        }
+
                     }
                 )
         ) {
@@ -191,12 +194,7 @@ private fun RowScope.CardBackOption(
             modifier = Modifier
                 .weight(1.0f)
                 .padding(16.dp)
-                .fillMaxHeight()
-                .combinedClickable(
-                    onClick = {
-                        viewModel.checkAnswer(text)
-                    }
-                ),
+                .fillMaxHeight(),
             // set color
             colors = CardDefaults.cardColors(containerColor = if (state == MainViewModel.CardCorrectness.GOOD) Color.Green else Color.Red)
         ) {

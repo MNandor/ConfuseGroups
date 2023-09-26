@@ -62,6 +62,8 @@ class MainViewModel @Inject constructor(
     private val _currentIndex = mutableStateOf(0)
     val currentQuestion = derivedStateOf { viewableCards.value[_currentIndex.value]}
 
+    private var isClickable = true
+    fun isClickable():Boolean = isClickable
     fun checkAnswer(answer:String):Boolean{
         val question = viewableCards.value[_currentIndex.value]
 
@@ -105,7 +107,9 @@ class MainViewModel @Inject constructor(
     private fun nextQuestion(delay:Boolean = false){
         if (delay){
             viewModelScope.launch {
+                isClickable = false
                 delay(3000)
+                isClickable = true
                 _currentIndex.value += 1
                 if (_currentIndex.value >= viewableCards.value.size) {
                     selectDeck(selectedDeck.value)
