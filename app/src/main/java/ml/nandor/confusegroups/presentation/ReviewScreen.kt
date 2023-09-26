@@ -129,8 +129,9 @@ private fun CardFront(text:String) {
 //                contentDescription = "Sample icon",
 //                modifier = Modifier.fillMaxSize()
 //            )
+            val link = text.split("(")[1].split(")")[0] // the exact purpose of a regex
             AsyncImage(
-                model = "https://i.imgur.com/Hi9Wd81.png",
+                model = link,
                 contentDescription = "Sample Image",
                 modifier = Modifier.fillMaxSize()
             )
