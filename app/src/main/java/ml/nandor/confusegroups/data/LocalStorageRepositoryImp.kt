@@ -4,6 +4,7 @@ import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
+import timber.log.Timber
 import javax.inject.Inject
 
 class LocalStorageRepositoryImp @Inject constructor(
@@ -44,6 +45,7 @@ class LocalStorageRepositoryImp @Inject constructor(
 
     override fun insertReview(review: Review){
         dao.insertReview(review)
+        Timber.d("Storing review ${review.question} - ${review.answer} with streak ${review.streak}")
     }
 
     override fun listReviews(): List<Review> {

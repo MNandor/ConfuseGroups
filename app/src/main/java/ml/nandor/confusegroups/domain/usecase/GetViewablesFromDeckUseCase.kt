@@ -69,29 +69,37 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         val filteredCards = reviewCards+newCards
 
+
+        Timber.tag("alg1math").d("***\n\n***")
         val viewAbles = reviewCards.map {note ->
             val possiblesWrongs = allCards
                 .filter { it.question != note.question && it.answer != note.answer }
                 .map { it -> it.answer }
                 .toMutableList()
 
-            if (possiblesWrongs.size < 3){
-                throw(Exception("Not enough options"))
-            }
+            Timber.tag("alg1math").d("${note.question}")
 
-            val answers = possiblesWrongs.shuffled().take(3).toMutableList()
+            val corres = possiblesWrongs
+                .map { pos ->  Pair(pos, -determineCorrelation(note.question, pos, deck.confuseExponent, allReviews)) }
+                .sortedBy { it.second }
+                .map{it.first}
+
+            val answers = corres.take(3).toMutableList()
 
             answers.add(note.answer)
 
             val options = answers.shuffled()
 
-            val streakSoFar = reviews.find { it.question == note.question }?.streak ?: 0
+            // known to be not null, otherwise it'd be a new card
+            val streakSoFar = reviews.find { it.question == note.question }!!.streak
 
             val viewableCard = PreparedViewableCard(note.question, options.indexOf(note.answer)+1, options, streakSoFar)
 
             return@map viewableCard
 
         }.shuffled()
+        Timber.tag("alg1math").d("***\n\n***")
+
 
         val newViewables = newCards.map{note ->
             val viewableCard = PreparedViewableCard(note.question, 1, listOf(note.answer), -1)
@@ -110,5 +118,23 @@ class GetViewablesFromDeckUseCase @Inject constructor(
     // Calculate the earliest level the card will appear on again
     private fun recentReviewToLevel(review: Review, deckMultiplier:Double):Int{
         return review.level+deckMultiplier.pow(review.streak).toInt()
+    }
+
+    private fun determineCorrelation(question: String, answer: String, exponent: Double, reviews: List<Review>):Double{
+
+        // currently ignoring reverse reviews
+        val relevants = reviews.filter { it.question == question }
+
+        val totalCount = relevants.size
+        val mistakeCount = relevants.filter { it.answer == answer }.size
+
+        // the magic formula that makes it all work
+        val base = (mistakeCount+0.5)/(totalCount+1)/2.0
+
+        val final = base.pow(exponent)
+
+        Timber.tag("alg1math").d("\t$answer - (${mistakeCount}/${totalCount}) - ${(final*100).toInt()}%")
+
+        return final
     }
 }
