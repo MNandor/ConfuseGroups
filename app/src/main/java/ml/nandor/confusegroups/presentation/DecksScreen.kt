@@ -341,7 +341,8 @@ fun InspectDeckPopup(viewModel: MainViewModel) {
                     TextField(
                         value = inputText,
                         onValueChange = {inputText = it},
-                        label = { Text("Que1-Ans1;Que1-Ans2") }
+                        label = { Text("Que1-Ans1;Que1-Ans2") },
+                        maxLines = 1,
                     )
                     Row(
                         modifier = Modifier
