@@ -92,21 +92,26 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
         CardFront(question.front)
 
         if (question.options.size == 4){
-            Row(
-                modifier = Modifier
-                    .weight(1.0f)
-            ) {
-                CardBackOption(question.options[0], correctness[0], viewModel, provideUserFeedback)
-                CardBackOption(question.options[1], correctness[1], viewModel, provideUserFeedback)
+            if (viewModel.comparisonQuestion.value == null){
+                Row(
+                    modifier = Modifier
+                        .weight(1.0f)
+                ) {
+                    CardBackOption(question.options[0], correctness[0], viewModel, provideUserFeedback)
+                    CardBackOption(question.options[1], correctness[1], viewModel, provideUserFeedback)
+                }
+
+                Row(
+                    modifier = Modifier
+                        .weight(1.0f)
+                ) {
+                    CardBackOption(question.options[2], correctness[2], viewModel, provideUserFeedback)
+                    CardBackOption(question.options[3], correctness[3], viewModel, provideUserFeedback)
+                }
+            } else {
+                CardComparisonBad(text = viewModel.comparisonQuestion.value!!, viewModel = viewModel)
             }
 
-            Row(
-                modifier = Modifier
-                    .weight(1.0f)
-            ) {
-                CardBackOption(question.options[2], correctness[2], viewModel, provideUserFeedback)
-                CardBackOption(question.options[3], correctness[3], viewModel, provideUserFeedback)
-            }
         } else {
             CardOnlyOption(text = question.options[0], viewModel, provideUserFeedback)
         }
@@ -178,6 +183,32 @@ private fun CardOnlyOption(text:String, viewModel: MainViewModel, playNoise: (Bo
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
+private fun CardComparisonBad(text:String, viewModel: MainViewModel) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .aspectRatio(1.0f)
+            .combinedClickable(
+                onClick = {
+                    viewModel.displayComparison(null)
+                }
+            )
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .wrapContentSize(),
+            textAlign = TextAlign.Center,
+            fontSize = 128.sp
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
 private fun RowScope.CardBackOption(
     text: String,
     state: MainViewModel.CardCorrectness = MainViewModel.CardCorrectness.BASE,
@@ -198,6 +229,9 @@ private fun RowScope.CardBackOption(
                             playNoise(success)
                         }
 
+                    },
+                    onLongClick = {
+                        viewModel.displayComparison(text)
                     }
                 )
         ) {

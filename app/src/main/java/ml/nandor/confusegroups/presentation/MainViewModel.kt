@@ -21,6 +21,7 @@ import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.usecase.AddCardsFromTextUseCase
 import ml.nandor.confusegroups.domain.usecase.DeleteDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetLevelOfDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.GetQuestionFromAnswerUseCase
 import ml.nandor.confusegroups.domain.usecase.GetViewablesFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertCardUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertDeckUseCase
@@ -39,7 +40,8 @@ class MainViewModel @Inject constructor(
     private val listCardsFromDeckUseCase: ListCardsFromDeckUseCase,
     private val addCardsFromTextUseCase: AddCardsFromTextUseCase,
     private val getLevelOfDeckUseCase: GetLevelOfDeckUseCase,
-    private val insertReviewUseCase: InsertReviewUseCase
+    private val insertReviewUseCase: InsertReviewUseCase,
+    private val getQuestionFromAnswerUseCase: GetQuestionFromAnswerUseCase
 ): ViewModel() {
 
     private val _viewableCards:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
@@ -118,12 +120,14 @@ class MainViewModel @Inject constructor(
                     selectDeck(selectedDeck.value)
                 }
                 _cardCorrectness.value = allCorrect
+                displayComparison(null)
             }
         } else {
             _currentIndex.value += 1
             if (_currentIndex.value >= viewableCards.value.size) {
                 selectDeck(selectedDeck.value)
             }
+            displayComparison(null)
         }
 
     }
@@ -256,5 +260,20 @@ class MainViewModel @Inject constructor(
 
     fun loadDeckFromText(text: String){
         addCardsFromTextUseCase(Pair(_deckBeingAccessed.value!!, text)).launchIn(viewModelScope)
+    }
+
+    private val _comparisonQuestion:MutableState<String?> = mutableStateOf(null)
+    val comparisonQuestion = _comparisonQuestion
+    fun displayComparison(answer: String?){
+        if (answer == null){
+            _comparisonQuestion.value = null
+            return
+        }
+
+        getQuestionFromAnswerUseCase(answer).onEach {
+            if (it is Resource.Success){
+                _comparisonQuestion.value = it.data
+            }
+        }.launchIn(viewModelScope)
     }
 }

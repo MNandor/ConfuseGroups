@@ -54,4 +54,8 @@ class LocalStorageRepositoryImp @Inject constructor(
         return dao.listReviews()
     }
 
+    override fun getNotesMatchingAnswers(answer: String): List<AtomicNote> {
+        return dao.getNotesMatchingAnswer(answer)
+    }
+
 }

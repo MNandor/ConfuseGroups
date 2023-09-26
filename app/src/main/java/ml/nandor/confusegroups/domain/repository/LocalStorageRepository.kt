@@ -20,4 +20,6 @@ interface LocalStorageRepository {
     fun insertReview(review: Review)
 
     fun listReviews():List<Review>
+
+    fun getNotesMatchingAnswers(answer: String):List<AtomicNote>
 }

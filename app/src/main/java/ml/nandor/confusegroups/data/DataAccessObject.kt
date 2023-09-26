@@ -47,4 +47,7 @@ interface DataAccessObject {
 
     @Query("SELECT * from Review")
     fun listReviews():List<Review>
+
+    @Query("SELECT * FROM AtomicNote WHERE answer = :answer")
+    fun getNotesMatchingAnswer(answer:String):List<AtomicNote>
 }

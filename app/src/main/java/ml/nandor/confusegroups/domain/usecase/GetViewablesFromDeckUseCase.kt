@@ -90,6 +90,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
             // always have a full random option
             val fullRandom = possiblesWrongs.filter { !answers.contains(it) }.random()
 
+
             answers.add(note.answer)
             answers.add(fullRandom)
 
