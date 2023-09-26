@@ -43,9 +43,33 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         val level = if (reviewDates.isEmpty()) 1 else reviewDates.map { it.second }.min()
 
-        Timber.d("The level is $level, which will show ${reviewDates.filter { it.second <= level }.size} cards")
+        val reviewCards = allCards.filter {card ->
+            val mostRecentReview = reviewDates.find { it.first.question == card.question}
 
-        val viewAbles = allCards.map {note ->
+            if (mostRecentReview == null){
+                return@filter false;
+            }
+
+            val cardLevel = mostRecentReview.second
+
+            return@filter cardLevel <= level
+
+        }.shuffled()
+
+        val newCards = allCards.filter {
+            card -> val mostRecentReview = reviewDates.find { it.first.question == card.question}
+
+            if (mostRecentReview == null)
+                return@filter true
+
+            return@filter false
+        }
+
+        Timber.d("The level is $level, which will show ${reviewCards.size} review cards and ${newCards.size} new cards")
+
+        val filteredCards = reviewCards+newCards
+
+        val viewAbles = filteredCards.map {note ->
             val possiblesWrongs = allCards
                 .filter { it.question != note.question && it.answer != note.answer }
                 .map { it -> it.answer }
@@ -70,20 +94,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         }
 
 
-        val final = viewAbles.filter {card ->
-            val mostRecentReview = reviewDates.find { it.first.question == card.front}
-
-            if (mostRecentReview == null){
-                return@filter true; //todo compare to deck new card limit
-            }
-
-            val cardLevel = mostRecentReview.second
-
-            return@filter cardLevel <= level
-
-        }.shuffled()
-
-        return final
+        return viewAbles
 
     }
 
