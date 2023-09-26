@@ -54,7 +54,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
             return@filter cardLevel <= level
 
-        }.shuffled()
+        }
 
         val newCards = allCards.filter {
             card -> val mostRecentReview = reviewDates.find { it.first.question == card.question}
@@ -65,7 +65,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
             return@filter false
         }
 
-        Timber.d("The level is $level, which will show ${reviewCards.size} review cards and ${newCards.size} new cards")
+        Timber.d("The level is $level, which will show ${reviewCards.size} review cards and ${newCards.size}/${deck.newCardsPerLevel} new cards")
 
         val filteredCards = reviewCards+newCards
 
@@ -91,13 +91,13 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
             return@map viewableCard
 
-        }
+        }.shuffled()
 
         val newViewables = newCards.map{note ->
             val viewableCard = PreparedViewableCard(note.question, 1, listOf(note.answer), -1)
 
             return@map viewableCard
-        }
+        }.shuffled().take(deck.newCardsPerLevel)
 
 
 

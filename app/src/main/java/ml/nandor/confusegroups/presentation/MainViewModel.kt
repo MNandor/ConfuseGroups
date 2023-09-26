@@ -157,7 +157,7 @@ class MainViewModel @Inject constructor(
         val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
         val name = (1..8).map { chars.random() }.joinToString(separator = "")
 
-        val deck = Deck(name = name, 10, 2.0, 1.0, 0)
+        val deck = Deck(name = name, 10, 1.5, 1.0, 0)
 
 
         insertDeckUseCase(deck).onEach {
