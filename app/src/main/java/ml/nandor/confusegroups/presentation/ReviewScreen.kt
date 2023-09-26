@@ -1,7 +1,11 @@
 package ml.nandor.confusegroups.presentation
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,19 +23,56 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Composable
 fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
+
+    val colorGood = Color.Green.copy(alpha=0.1f)
+    val colorBad = Color.Red.copy(alpha=0.1f)
+    val colorNeutral = Color.Transparent
+    val selectedColor = remember { mutableStateOf(colorNeutral) }
+    val backGroundColor = animateColorAsState(
+        targetValue = selectedColor.value,
+        animationSpec = tween(100, 0, )
+    )
+
+    val provideUserFeedback = {success:Boolean ->
+
+        if (success){
+            selectedColor.value = colorGood
+        } else {
+            selectedColor.value = colorBad
+        }
+        GlobalScope.launch {
+            delay( if(success) 300 else 3000 )
+            selectedColor.value = colorNeutral
+        }
+
+        playNoise(success)
+    }
+
     BackHandler(onBack = {
         viewModel.selectDeck(null)
     })
 
-    Column() {
+    Column(
+        Modifier.background(
+            color=backGroundColor.value
+        )
+    ) {
 
         val question = viewModel.currentQuestion.value
         val correctness = viewModel.cardCorrectness.value
@@ -47,19 +88,19 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                 modifier = Modifier
                     .weight(1.0f)
             ) {
-                CardBackOption(question.options[0], correctness[0], viewModel, playNoise)
-                CardBackOption(question.options[1], correctness[1], viewModel, playNoise)
+                CardBackOption(question.options[0], correctness[0], viewModel, provideUserFeedback)
+                CardBackOption(question.options[1], correctness[1], viewModel, provideUserFeedback)
             }
 
             Row(
                 modifier = Modifier
                     .weight(1.0f)
             ) {
-                CardBackOption(question.options[2], correctness[2], viewModel, playNoise)
-                CardBackOption(question.options[3], correctness[3], viewModel, playNoise)
+                CardBackOption(question.options[2], correctness[2], viewModel, provideUserFeedback)
+                CardBackOption(question.options[3], correctness[3], viewModel, provideUserFeedback)
             }
         } else {
-            CardOnlyOption(text = question.options[0], viewModel, playNoise)
+            CardOnlyOption(text = question.options[0], viewModel, provideUserFeedback)
         }
 
     }
