@@ -2,6 +2,7 @@ package ml.nandor.confusegroups.domain.usecase
 
 import android.util.Log
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
+import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import timber.log.Timber
 import javax.inject.Inject
@@ -16,10 +17,12 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         val allCards = repository.getCardsByDeckName(deckName)
 
-        Timber.d("With ${allCards.size} cards in deck $deckName")
+        Timber.d("***\n\n***")
+        Timber.d("With ${allCards.size} cards in deck $deckName...")
 
         // if we don't have enough cards for 4 Backs, we can't review
         if (deckName == null || allCards.size < 4){
+            Timber.d("We cancel the review")
             throw(Exception("Empty deck"))
         }
 
@@ -27,7 +30,20 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         val reviews = repository.getMostRecentReviewsByDeckName(deckName)
 
+        Timber.d("Of which ${reviews.size} cards have previous revies and ${allCards.size-reviews.size} do not")
+
         val allReviews = repository.listReviews()
+
+        Timber.d("In a total of ${allReviews.size} reviews")
+
+        val reviewDates = reviews.map {
+            Pair(it,
+                recentReviewToLevel(it, deck.successMultiplier))
+        }
+
+        val level = if (reviewDates.isEmpty()) 1 else reviewDates.map { it.second }.min()
+
+        Timber.d("The level is $level, which will show ${reviewDates.filter { it.second <= level }.size} cards")
 
         val viewAbles = allCards.map {note ->
             val possiblesWrongs = allCards
@@ -53,12 +69,6 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         }
 
-        val reviewDates = reviews.map {
-            Pair(it,
-                it.level+deck.successMultiplier.pow(it.streak).toInt())
-        }
-
-        val level = if (reviewDates.isEmpty()) 1 else reviewDates.map { it.second }.min()
 
         val final = viewAbles.filter {card ->
             val mostRecentReview = reviewDates.find { it.first.question == card.front}
@@ -67,7 +77,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
                 return@filter true; //todo compare to deck new card limit
             }
 
-            val cardLevel = mostRecentReview.first.level+deck.successMultiplier.pow(mostRecentReview.first.streak).toInt()
+            val cardLevel = mostRecentReview.second
 
             return@filter cardLevel <= level
 
@@ -75,5 +85,11 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         return final
 
+    }
+
+    // Given a review that is known to be most recent
+    // Calculate the earliest level the card will appear on again
+    private fun recentReviewToLevel(review: Review, deckMultiplier:Double):Int{
+        return review.level+deckMultiplier.pow(review.streak).toInt()
     }
 }
