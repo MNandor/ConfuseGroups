@@ -37,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -123,10 +124,14 @@ private fun CardFront(text:String) {
             .aspectRatio(1.0f)
     ) {
         if (imageRegex.matches(text)){
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                contentDescription = "Sample icon",
-                modifier = Modifier.fillMaxSize()
+//            Image(
+//                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+//                contentDescription = "Sample icon",
+//                modifier = Modifier.fillMaxSize()
+//            )
+            AsyncImage(
+                model = "https://nandor.pro/img/reallifepfp.png",
+                contentDescription = "Sample Image"
             )
         } else {
             Text(
