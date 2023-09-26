@@ -46,6 +46,7 @@ class LocalStorageRepositoryImp @Inject constructor(
     override fun insertReview(review: Review){
         dao.insertReview(review)
         Timber.d("Storing review ${review.question} - ${review.answer} with streak ${review.streak}")
+        Timber.d("Unpicked answers are: ${review.unpickedAnswers}")
     }
 
     override fun listReviews(): List<Review> {

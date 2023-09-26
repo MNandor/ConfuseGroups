@@ -74,7 +74,8 @@ class MainViewModel @Inject constructor(
             answer = answer,
             level = deckLevel.value,
             streak = if (wasCorrect) question.streakSoFar+1 else 0,
-            timeStamp = System.currentTimeMillis()/1000
+            timeStamp = System.currentTimeMillis()/1000,
+            unpickedAnswers = question.options.filter { it != answer }.joinToString(";")
         )
 
         insertReviewUseCase(review).launchIn(viewModelScope)
