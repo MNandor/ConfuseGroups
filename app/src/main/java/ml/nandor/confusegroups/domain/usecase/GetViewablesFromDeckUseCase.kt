@@ -6,6 +6,7 @@ import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.math.log2
 import kotlin.math.pow
 
 // this is where the most important part of the app happens
@@ -104,12 +105,15 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         }.shuffled()
         Timber.tag("alg1math").d("***\n\n***")
 
+        val newCount = if (deck.newCardsPerLevel == -1) log2(allCards.size.toDouble()).toInt() else deck.newCardsPerLevel
+
+        Timber.d("Limiting to $newCount new cards")
 
         val newViewables = newCards.map{note ->
             val viewableCard = PreparedViewableCard(note.question, 1, listOf(note.answer), -1)
 
             return@map viewableCard
-        }.shuffled().take(deck.newCardsPerLevel)
+        }.shuffled().take(newCount)
 
 
 

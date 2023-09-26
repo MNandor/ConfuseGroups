@@ -78,31 +78,33 @@ class MainViewModel @Inject constructor(
             unpickedAnswers = question.options.filter { it != answer }.joinToString(";")
         )
 
-        insertReviewUseCase(review).launchIn(viewModelScope)
+        insertReviewUseCase(review).onEach {
+            if (it is Resource.Success){
+                if (wasCorrect){
+                    nextQuestion(false)
+                } else {
+                    val cors:MutableList<CardCorrectness> = mutableListOf()
 
-        updateDeckLevel(selectedDeck.value)
+                    for (option in question.options){
+                        if (option == answer)
+                            cors.add(CardCorrectness.BAD)
+                        else if (option == question.options[question.correct-1])
+                            cors.add(CardCorrectness.GOOD)
+                        else
+                            cors.add(CardCorrectness.BASE)
 
-        if (wasCorrect){
-            nextQuestion(false)
-            return true
-        } else {
-            val cors:MutableList<CardCorrectness> = mutableListOf()
+                        _cardCorrectness.value = cors
+                    }
 
-            for (option in question.options){
-                if (option == answer)
-                    cors.add(CardCorrectness.BAD)
-                else if (option == question.options[question.correct-1])
-                    cors.add(CardCorrectness.GOOD)
-                else
-                    cors.add(CardCorrectness.BASE)
+                    nextQuestion(true)
+                }
 
-                _cardCorrectness.value = cors
+                updateDeckLevel(selectedDeck.value)
             }
 
-            nextQuestion(true)
+        }.launchIn(viewModelScope)
 
-            return false
-        }
+        return wasCorrect
     }
 
     private fun nextQuestion(delay:Boolean = false){
@@ -162,7 +164,7 @@ class MainViewModel @Inject constructor(
         val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
         val name = (1..8).map { chars.random() }.joinToString(separator = "")
 
-        val deck = Deck(name = name, 10, 1.5, 1.0, 0)
+        val deck = Deck(name = name, -1, 1.5, 1.0, 0)
 
 
         insertDeckUseCase(deck).onEach {
