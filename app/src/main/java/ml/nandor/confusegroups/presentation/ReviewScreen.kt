@@ -42,20 +42,24 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
 
         CardFront(question.front)
 
-        Row(
-            modifier = Modifier
-                .weight(1.0f)
-        ) {
-            CardBackOption(question.options[0], correctness[0], viewModel, playNoise)
-            CardBackOption(question.options[1], correctness[1], viewModel, playNoise)
-        }
+        if (question.options.size == 4){
+            Row(
+                modifier = Modifier
+                    .weight(1.0f)
+            ) {
+                CardBackOption(question.options[0], correctness[0], viewModel, playNoise)
+                CardBackOption(question.options[1], correctness[1], viewModel, playNoise)
+            }
 
-        Row(
-            modifier = Modifier
-                .weight(1.0f)
-        ) {
-            CardBackOption(question.options[2], correctness[2], viewModel, playNoise)
-            CardBackOption(question.options[3], correctness[3], viewModel, playNoise)
+            Row(
+                modifier = Modifier
+                    .weight(1.0f)
+            ) {
+                CardBackOption(question.options[2], correctness[2], viewModel, playNoise)
+                CardBackOption(question.options[3], correctness[3], viewModel, playNoise)
+            }
+        } else {
+            CardOnlyOption(text = question.options[0], viewModel, playNoise)
         }
 
     }
@@ -68,6 +72,33 @@ private fun CardFront(text:String) {
             .fillMaxWidth()
             .padding(16.dp)
             .aspectRatio(1.0f)
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .wrapContentSize(),
+            textAlign = TextAlign.Center,
+            fontSize = 128.sp
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun CardOnlyOption(text:String, viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .aspectRatio(1.0f)
+            .combinedClickable(
+                onClick = {
+                    val success = viewModel.checkAnswer(text)
+                    playNoise(success)
+                }
+            )
     ) {
         Text(
             text = text,

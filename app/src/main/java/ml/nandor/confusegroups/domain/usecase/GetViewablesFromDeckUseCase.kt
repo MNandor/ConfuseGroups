@@ -69,7 +69,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         val filteredCards = reviewCards+newCards
 
-        val viewAbles = filteredCards.map {note ->
+        val viewAbles = reviewCards.map {note ->
             val possiblesWrongs = allCards
                 .filter { it.question != note.question && it.answer != note.answer }
                 .map { it -> it.answer }
@@ -93,8 +93,16 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         }
 
+        val newViewables = newCards.map{note ->
+            val viewableCard = PreparedViewableCard(note.question, 1, listOf(note.answer), -1)
 
-        return viewAbles
+            return@map viewableCard
+        }
+
+
+
+
+        return viewAbles+newViewables
 
     }
 
