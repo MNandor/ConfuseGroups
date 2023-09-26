@@ -121,36 +121,43 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
 
 @Composable
 private fun CardFront(text:String) {
-    val imageRegex = "!\\[.*]\\(.*\\)".toRegex()
+    
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
             .aspectRatio(1.0f)
     ) {
-        if (imageRegex.matches(text)){
+        LargeCardContent(text)
+    }
+}
+
+@Composable
+private fun LargeCardContent(text: String) {
+    val imageRegex = "!\\[.*]\\(.*\\)".toRegex()
+    
+    if (imageRegex.matches(text)) {
 //            Image(
 //                painter = painterResource(id = R.drawable.ic_launcher_foreground),
 //                contentDescription = "Sample icon",
 //                modifier = Modifier.fillMaxSize()
 //            )
-            val link = text.split("(")[1].split(")")[0] // the exact purpose of a regex
-            AsyncImage(
-                model = link,
-                contentDescription = "Sample Image",
-                modifier = Modifier.fillMaxSize()
-            )
-        } else {
-            Text(
-                text = text,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .wrapContentSize(),
-                textAlign = TextAlign.Center,
-                fontSize = 128.sp
-            )
-        }
+        val link = text.split("(")[1].split(")")[0] // the exact purpose of a regex
+        AsyncImage(
+            model = link,
+            contentDescription = "Sample Image",
+            modifier = Modifier.fillMaxSize()
+        )
+    } else {
+        Text(
+            text = text,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .wrapContentSize(),
+            textAlign = TextAlign.Center,
+            fontSize = 128.sp
+        )
     }
 }
 
@@ -191,19 +198,11 @@ private fun CardComparisonBad(text:String, viewModel: MainViewModel) {
             .aspectRatio(1.0f)
             .combinedClickable(
                 onClick = {
-                    viewModel.displayComparison(null)
+                    viewModel.nextQuestion(false)
                 }
             )
     ) {
-        Text(
-            text = text,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .wrapContentSize(),
-            textAlign = TextAlign.Center,
-            fontSize = 128.sp
-        )
+        LargeCardContent(text = text)
     }
 }
 

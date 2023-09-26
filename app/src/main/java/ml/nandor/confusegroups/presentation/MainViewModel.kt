@@ -109,7 +109,7 @@ class MainViewModel @Inject constructor(
         return wasCorrect
     }
 
-    private fun nextQuestion(delay:Boolean = false){
+    fun nextQuestion(delay:Boolean = false){
         if (delay){
             viewModelScope.launch {
                 isClickable = false
