@@ -18,7 +18,7 @@ class AddCardsFromTextUseCase @Inject constructor(
         for (pair in data.split(";")){
             val qa = pair.split("-")
 
-            val card = AtomicNote(question = qa[0], answer = qa[1], deck = deck)
+            val card = AtomicNote(question = qa[0].trim(), answer = qa[1].trim(), deck = deck)
             repository.insertCard(card)
 
         }
