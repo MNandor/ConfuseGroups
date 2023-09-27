@@ -156,11 +156,16 @@ class MainViewModel @Inject constructor(
     fun selectDeck(deckName: String?){
         updateDeckLevel(deckName)
         getViewablesFromDeckUseCase(deckName).onEach {
+            if (it is Resource.Loading){
+                isClickable = false
+            }
+
             if (it is Resource.Success){
                 withContext(Dispatchers.Main) {
                     _currentIndex.value = 0
                     _viewableCards.value = it.data!!
                     _selectedDeck.value = deckName
+                    isClickable = true
                 }
             } else if (it is Resource.Error){
                 withContext(Dispatchers.Main) {
