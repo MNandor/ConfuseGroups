@@ -15,11 +15,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
+import ml.nandor.confusegroups.domain.model.Correlation
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
 import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.usecase.AddCardsFromTextUseCase
 import ml.nandor.confusegroups.domain.usecase.DeleteDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.GetAllCorrelationsUseCase
 import ml.nandor.confusegroups.domain.usecase.GetLevelOfDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetQuestionFromAnswerUseCase
 import ml.nandor.confusegroups.domain.usecase.GetViewablesFromDeckUseCase
@@ -41,7 +43,8 @@ class MainViewModel @Inject constructor(
     private val addCardsFromTextUseCase: AddCardsFromTextUseCase,
     private val getLevelOfDeckUseCase: GetLevelOfDeckUseCase,
     private val insertReviewUseCase: InsertReviewUseCase,
-    private val getQuestionFromAnswerUseCase: GetQuestionFromAnswerUseCase
+    private val getQuestionFromAnswerUseCase: GetQuestionFromAnswerUseCase,
+    private val getAllCorrelationsUseCase: GetAllCorrelationsUseCase
 ): ViewModel() {
 
     private val _viewableCards:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
@@ -277,6 +280,20 @@ class MainViewModel @Inject constructor(
             if (it is Resource.Success){
                 _comparisonQuestion.value = it.data
             }
+        }.launchIn(viewModelScope)
+    }
+
+    private val _comparisonDeck:MutableState<String?> = mutableStateOf(null)
+    val comparisonDeck:State<String?> = _comparisonDeck
+    private val _correlations:MutableState<List<Correlation>> = mutableStateOf(listOf())
+    val correlations:State<List<Correlation>> = _correlations
+    fun setComparisonDeck(deckName: String?){
+        _comparisonDeck.value = deckName
+        getAllCorrelationsUseCase(deckName).onEach {
+            if (it is Resource.Success){
+                _correlations.value = it.data!!
+            }
+
         }.launchIn(viewModelScope)
     }
 }

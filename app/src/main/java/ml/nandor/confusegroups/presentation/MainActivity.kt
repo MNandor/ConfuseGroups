@@ -42,9 +42,12 @@ class MainActivity : ComponentActivity() {
                     if (viewModel.selectedDeck.value != null){
                         ReviewScreen(viewModel, playNoise)
                     } else {
-                        DecksScreen(viewModel)
+                        if (viewModel.comparisonDeck.value == null){
+                            DecksScreen(viewModel)
+                        } else {
+                            ComparisonScreen(viewModel)
+                        }
                     }
-
                 }
             }
         }

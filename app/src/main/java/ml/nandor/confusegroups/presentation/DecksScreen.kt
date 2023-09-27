@@ -16,8 +16,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -107,7 +109,10 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                 IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.INSPECTION) }) {
                     Icon(Icons.Filled.Edit, contentDescription = "Edit deck data")
                 }
-            IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.EDITING) }) {
+                IconButton(onClick = { viewModel.setComparisonDeck(text) }) {
+                    Icon(Icons.Filled.DateRange, contentDescription = "Show deck mistakes")
+                }
+                IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.EDITING) }) {
                     Icon(Icons.Filled.Settings, contentDescription = "Edit deck settings")
                 }
                 IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.DELETION) }) {
