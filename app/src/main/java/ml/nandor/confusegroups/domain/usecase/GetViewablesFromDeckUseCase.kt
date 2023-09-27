@@ -135,11 +135,13 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         // currently ignoring reverse reviews
         val relevants = reviews.filter { it.question == question }
 
-        val totalCount = relevants.size
         val mistakeCount = relevants.filter { it.answer == answer }.size
+        val correctCount = relevants.filter { answer in it.unpickedAnswers.split(";") }.size
+
+        val totalCount = mistakeCount+correctCount
 
         // the magic formula that makes it all work
-        val base = (mistakeCount+0.5)/(totalCount+1)/2.0
+        val base = (mistakeCount+0.5)/(totalCount+1.0)/2.0
 
         val final = base.pow(exponent)
 
