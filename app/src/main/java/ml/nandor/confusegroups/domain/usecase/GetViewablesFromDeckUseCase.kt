@@ -70,6 +70,14 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         val filteredCards = reviewCards+newCards
 
+        Timber.tag("alg1time").d("***\n\n***")
+
+        // associate makes a map of key-value pairs
+        val reviewsByLeft = allCards.associate { it -> Pair(it.question, mutableListOf<Review>()) }
+
+        for (review in allReviews){
+            reviewsByLeft[review.question]?.add(review)
+        }
 
         Timber.tag("alg1math").d("***\n\n***")
         val viewAbles = reviewCards.map {note ->
@@ -82,7 +90,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
             val corres = possiblesWrongs
                 .shuffled()
-                .map { pos ->  Pair(pos, -determineCorrelation(note.question, pos, deck.confuseExponent, allReviews)) }
+                .map { pos ->  Pair(pos, -determineCorrelation(note.question, pos, deck.confuseExponent, reviewsByLeft[note.question]!!.toList())) }
                 .sortedBy { it.second }
                 .map{it.first}
 
@@ -106,6 +114,8 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         }.shuffled()
         Timber.tag("alg1math").d("***\n\n***")
+
+        Timber.tag("alg1time").d("***\n\n***")
 
         val newCount = if (deck.newCardsPerLevel == -1) log2(allCards.size.toDouble()).toInt() else deck.newCardsPerLevel
 
