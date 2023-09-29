@@ -30,15 +30,16 @@ class GetAllCorrelationsUseCase @Inject constructor(
             reviewsByLeft[review.question]?.add(review)
         }
 
-        for (leftCard in allCards){
+        allCards.forEachIndexed{index, leftCard ->
             for (rightCard in allCards){
-                if (leftCard == rightCard)
+                if (leftCard.answer == rightCard.answer)
                     continue
 
                 val corr = determineCorrelation(leftCard.question, rightCard.answer, 1.0, reviewsByLeft[leftCard.question]!!.toList())
 
                 correlations.add(Correlation(leftCard, rightCard, corr))
             }
+            Timber.d("${index}/${allCards.size}")
         }
 
         val final = correlations.sortedBy { -it.correlation }.take(100)
