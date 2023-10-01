@@ -155,7 +155,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
         val final = base.pow(exponent)
 
-        Timber.tag("alg1math").d("\t$answer - (${mistakeCount}/${totalCount}) - ${(final*100).toInt()}%")
+        //Timber.tag("alg1math").d("\t$answer - (${mistakeCount}/${totalCount}) - ${(final*100).toInt()}%")
 
         return final
     }

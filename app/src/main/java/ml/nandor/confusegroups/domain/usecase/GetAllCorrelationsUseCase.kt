@@ -25,6 +25,8 @@ class GetAllCorrelationsUseCase @Inject constructor(
 
         val correlations = mutableListOf<Correlation>()
 
+        val expontent = 1.0
+
         // associate makes a map of key-value pairs
         val reviewsByLeft = allCards.associate { it -> Pair(it.question, mutableListOf<Review>()) }
 
@@ -41,10 +43,11 @@ class GetAllCorrelationsUseCase @Inject constructor(
 
                 correlations.add(Correlation(leftCard, rightCard, corr))
             }
-            Timber.d("${index}/${allCards.size}")
+            if (index % 100 == 0)
+                Timber.d("${index}/${allCards.size}")
         }
 
-        val final = correlations.sortedBy { -it.correlation }.take(100)
+        val final = correlations.sortedBy { -it.correlation }.take(100).map { it->it.copy(correlation = it.correlation.pow(expontent)) }
 
         val endTime = System.currentTimeMillis()
 
@@ -67,10 +70,8 @@ class GetAllCorrelationsUseCase @Inject constructor(
         // the magic formula that makes it all work
         val base = (mistakeCount+0.5)/(totalCount+1.0)/2.0
 
-        val final = base.pow(exponent)
+        //val final = base.pow(exponent)
 
-        Timber.tag("alg1math").d("\t$answer - (${mistakeCount}/${totalCount}) - ${(final*100).toInt()}%")
-
-        return final
+        return base
     }
 }
