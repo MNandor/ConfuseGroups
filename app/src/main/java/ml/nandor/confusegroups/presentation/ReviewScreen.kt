@@ -121,7 +121,7 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
 }
 
 @Composable
-private fun CardFront(text:String) {
+fun CardFront(text:String) {
     
     ElevatedCard(
         modifier = Modifier
