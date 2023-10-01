@@ -17,6 +17,8 @@ class GetAllCorrelationsUseCase @Inject constructor(
 ): UseCase<String?, List<Correlation>>() {
     override fun doStuff(deckName: String?): List<Correlation> {
 
+        val startTime = System.currentTimeMillis()
+
         val allCards = repository.getCardsByDeckName(deckName)
 
         val allReviews = repository.listReviews()
@@ -44,6 +46,9 @@ class GetAllCorrelationsUseCase @Inject constructor(
 
         val final = correlations.sortedBy { -it.correlation }.take(100)
 
+        val endTime = System.currentTimeMillis()
+
+        Timber.d("${endTime-startTime}")
 
         return final
 
