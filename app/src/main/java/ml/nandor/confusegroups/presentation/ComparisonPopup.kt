@@ -1,5 +1,6 @@
 package ml.nandor.confusegroups.presentation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -26,8 +27,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ComparisonPopup() {
+fun ComparisonPopup(text: String, viewModel: MainViewModel) {
     var offset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
 
 
@@ -41,13 +43,19 @@ fun ComparisonPopup() {
         }
         .fillMaxWidth(0.3f)
         .aspectRatio(1.0f)
+        .combinedClickable (
+            onClick = {},
+            onLongClick = {
+                viewModel.removeComparisonPopup(text)
+            }
+        )
     ){
         Card(
             modifier = Modifier
                 .fillMaxSize()
 
         ) {
-            Text("Hello")
+            Text(text)
         }
     }
 

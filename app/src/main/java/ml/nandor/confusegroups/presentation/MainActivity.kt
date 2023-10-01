@@ -50,9 +50,11 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
+                    val popups = viewModel.comparisonPopups.value
                     Box {
-                        ComparisonPopup()
-                        ComparisonPopup()
+                        for (popup in popups){
+                            ComparisonPopup(text = popup, viewModel)
+                        }
                     }
 
                 }

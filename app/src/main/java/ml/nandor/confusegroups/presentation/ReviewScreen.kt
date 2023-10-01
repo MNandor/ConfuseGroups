@@ -90,7 +90,7 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
             Text(text = "Level: "+viewModel.deckLevel.value.toString())
         }
 
-        CardFront(question.front)
+        CardFront(question.front, viewModel)
 
         if (question.options.size == 4){
             if (viewModel.comparisonQuestion.value == null){
@@ -120,14 +120,20 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CardFront(text:String) {
+fun CardFront(text:String, viewModel: MainViewModel) {
     
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
             .aspectRatio(1.0f)
+            .combinedClickable(
+                onClick = {
+                    viewModel.addComparisonPopup(text)
+                }
+            )
     ) {
         LargeCardContent(text)
     }

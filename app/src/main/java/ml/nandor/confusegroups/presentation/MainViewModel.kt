@@ -321,4 +321,14 @@ class MainViewModel @Inject constructor(
 
         }.launchIn(viewModelScope)
     }
+
+    private val _comparisonPopups:MutableState<List<String>> = mutableStateOf(listOf())
+    val comparisonPopups:State<List<String>> = _comparisonPopups
+    fun addComparisonPopup(text: String){
+        _comparisonPopups.value = _comparisonPopups.value.toMutableList()+text
+    }
+
+    fun removeComparisonPopup(text: String){
+        _comparisonPopups.value = _comparisonPopups.value.filter { it != text }
+    }
 }
