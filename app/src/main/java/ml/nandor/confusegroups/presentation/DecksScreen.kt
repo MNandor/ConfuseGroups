@@ -110,7 +110,8 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                         .height(64.dp)
                         .align(Alignment.CenterVertically),
 
-                    text = viewModel.getDeckSize(text).toString()
+                    text = viewModel.getDeckSize(text).toString(),
+                    textAlign = TextAlign.Center
                 )
                 Text(
                     text = text,
@@ -132,7 +133,8 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                         .align(Alignment.CenterVertically)
                     ,
                     text = deckSize.toString(),
-                    color = if (deckSize > 3) Color.Unspecified else Color.Red
+                    color = if (deckSize > 3) Color.Unspecified else Color.Red,
+                    textAlign = TextAlign.Center
                 )
              }
             Row(
