@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -89,17 +90,41 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
             )
     ) {
         Column(){
-            Text(
-                text = text,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-                    .wrapContentSize()
-                    .height(64.dp)
-                ,
-                textAlign = TextAlign.Center,
-                fontSize = 32.sp
-            )
+            Row(modifier = Modifier
+                .fillMaxWidth()
+            ){
+                Text(
+                    modifier = Modifier
+                        .weight(0.15f).fillMaxWidth()
+                        .padding(top = 24.dp)
+                        .wrapContentSize()
+                        .height(64.dp)
+                        .align(Alignment.CenterVertically),
+
+                    text = viewModel.getDeckSize(text).toString()
+                )
+                Text(
+                    text = text,
+                    modifier = Modifier
+                        .weight(0.7f).fillMaxWidth()
+                        .padding(top = 16.dp)
+                        .wrapContentSize()
+                        .height(64.dp)
+                    ,
+                    textAlign = TextAlign.Center,
+                    fontSize = 32.sp
+                )
+                Text(
+                    modifier = Modifier
+                        .weight(0.15f).fillMaxWidth()
+                        .padding(top = 24.dp)
+                        //.wrapContentSize()
+                        .height(64.dp)
+                        .align(Alignment.CenterVertically)
+                    ,
+                    text = viewModel.getDeckSize(text).toString()
+                )
+             }
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),

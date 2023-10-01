@@ -2,6 +2,7 @@ package ml.nandor.confusegroups.data
 
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
+import ml.nandor.confusegroups.domain.model.DeckSize
 import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import timber.log.Timber
@@ -56,6 +57,10 @@ class LocalStorageRepositoryImp @Inject constructor(
 
     override fun getNotesMatchingAnswers(answer: String): List<AtomicNote> {
         return dao.getNotesMatchingAnswer(answer)
+    }
+
+    override fun getDeckSizes(): List<DeckSize> {
+        return dao.getDeckSizes()
     }
 
 }

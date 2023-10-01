@@ -2,6 +2,7 @@ package ml.nandor.confusegroups.domain.repository
 
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
+import ml.nandor.confusegroups.domain.model.DeckSize
 import ml.nandor.confusegroups.domain.model.Review
 
 interface LocalStorageRepository {
@@ -22,4 +23,6 @@ interface LocalStorageRepository {
     fun listReviews():List<Review>
 
     fun getNotesMatchingAnswers(answer: String):List<AtomicNote>
+
+    fun getDeckSizes(): List<DeckSize>
 }

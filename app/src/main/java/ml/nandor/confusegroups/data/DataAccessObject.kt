@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
+import ml.nandor.confusegroups.domain.model.DeckSize
 import ml.nandor.confusegroups.domain.model.Review
 
 @Dao
@@ -50,4 +51,7 @@ interface DataAccessObject {
 
     @Query("SELECT * FROM AtomicNote WHERE answer = :answer")
     fun getNotesMatchingAnswer(answer:String):List<AtomicNote>
+
+    @Query("SELECT name, count(*) FROM Deck LEFT JOIN AtomicNote ON deck.name = AtomicNote.deck GROUP BY deck.name")
+    fun getDeckSizes():List<DeckSize>
 }

@@ -22,6 +22,7 @@ import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.usecase.AddCardsFromTextUseCase
 import ml.nandor.confusegroups.domain.usecase.DeleteDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetAllCorrelationsUseCase
+import ml.nandor.confusegroups.domain.usecase.GetDeckSizesUseCase
 import ml.nandor.confusegroups.domain.usecase.GetLevelOfDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetQuestionFromAnswerUseCase
 import ml.nandor.confusegroups.domain.usecase.GetViewablesFromDeckUseCase
@@ -44,7 +45,8 @@ class MainViewModel @Inject constructor(
     private val getLevelOfDeckUseCase: GetLevelOfDeckUseCase,
     private val insertReviewUseCase: InsertReviewUseCase,
     private val getQuestionFromAnswerUseCase: GetQuestionFromAnswerUseCase,
-    private val getAllCorrelationsUseCase: GetAllCorrelationsUseCase
+    private val getAllCorrelationsUseCase: GetAllCorrelationsUseCase,
+    private val getDeckSizesUseCase: GetDeckSizesUseCase
 ): ViewModel() {
 
     private val _viewableCards:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
@@ -206,10 +208,28 @@ class MainViewModel @Inject constructor(
                 withContext(Dispatchers.Main) {
                     _decks.value = it.data!!
                 }
+
+                updateDeckSizes()
             }
 
         }.launchIn(viewModelScope)
     }
+
+    private fun updateDeckSizes(){
+        getDeckSizesUseCase(Unit).onEach {
+            if (it is Resource.Success){
+                withContext(Dispatchers.Main) {
+                    _deckSizes.value = it.data!!.associate { Pair(it.name, it.count) }
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun getDeckSize(deckName: String): Int {
+        return _deckSizes.value[deckName] ?: 0
+    }
+
+    private val _deckSizes = mutableStateOf<Map<String, Int>>(mapOf())
 
     private val _deckBeingAccessed:MutableState<String?> = mutableStateOf(null)
     val deckBeingAccessed:State<String?> = _deckBeingAccessed
