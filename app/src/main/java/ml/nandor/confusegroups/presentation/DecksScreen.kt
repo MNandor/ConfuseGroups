@@ -40,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -78,6 +79,8 @@ fun DecksScreen(viewModel: MainViewModel){
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun DeckItem(text: String, viewModel: MainViewModel) {
+    val deckSize = viewModel.getDeckSize(text)
+    val context = LocalContext.current
     ElevatedCard(
         modifier = Modifier
             .padding(16.dp)
@@ -85,7 +88,12 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
             .height(128.dp)
             .combinedClickable(
                 onClick = {
-                    viewModel.selectDeck(text)
+                    if (deckSize > 3) {
+                        viewModel.selectDeck(text)
+                    }
+                    else {
+                        Toast.makeText(context, "Minimum deck size is 4", Toast.LENGTH_SHORT).show()
+                    }
                 }
             )
     ) {
@@ -93,6 +101,7 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
             Row(modifier = Modifier
                 .fillMaxWidth()
             ){
+
                 Text(
                     modifier = Modifier
                         .weight(0.15f).fillMaxWidth()
@@ -122,7 +131,8 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                         .height(64.dp)
                         .align(Alignment.CenterVertically)
                     ,
-                    text = viewModel.getDeckSize(text).toString()
+                    text = deckSize.toString(),
+                    color = if (deckSize > 3) Color.Unspecified else Color.Red
                 )
              }
             Row(
