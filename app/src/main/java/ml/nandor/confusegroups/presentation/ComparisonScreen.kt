@@ -42,6 +42,18 @@ fun ComparisonScreen(viewModel: MainViewModel){
             ,
             fontSize = 32.sp
         )
+
+        if (viewModel.correlations.value.isEmpty()){
+            Text(
+                text = "Loading Correlations. This might take longer for larger decks.",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .wrapContentSize()
+                ,
+                fontSize = 16.sp
+            )
+        }
         
         LazyColumn {
             items(items = viewModel.correlations.value) {it ->

@@ -1,6 +1,7 @@
 package ml.nandor.confusegroups.presentation
 
 import android.app.Dialog
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +39,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -111,6 +113,7 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                 }
                 IconButton(onClick = { viewModel.setComparisonDeck(text) }) {
                     Icon(Icons.Filled.DateRange, contentDescription = "Show deck mistakes")
+
                 }
                 IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.EDITING) }) {
                     Icon(Icons.Filled.Settings, contentDescription = "Edit deck settings")
