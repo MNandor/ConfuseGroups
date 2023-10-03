@@ -63,4 +63,8 @@ class LocalStorageRepositoryImp @Inject constructor(
         return dao.getDeckSizes()
     }
 
+    override fun renameDeck(deckID: String, deckNewName: String){
+        dao.renameDeck(deckID, deckNewName)
+    }
+
 }

@@ -25,4 +25,6 @@ interface LocalStorageRepository {
     fun getNotesMatchingAnswers(answer: String):List<AtomicNote>
 
     fun getDeckSizes(): List<DeckSize>
+
+    fun renameDeck(deckID: String, deckNewName: String)
 }

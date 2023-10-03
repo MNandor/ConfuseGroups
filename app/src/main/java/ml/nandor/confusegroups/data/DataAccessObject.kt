@@ -54,4 +54,7 @@ interface DataAccessObject {
 
     @Query("SELECT name, count(*) FROM Deck LEFT JOIN AtomicNote ON deck.name = AtomicNote.deck GROUP BY deck.name")
     fun getDeckSizes():List<DeckSize>
+
+    @Query("UPDATE DECK SET displayName = :deckNewName WHERE name = :deckID")
+    fun renameDeck(deckID: String, deckNewName: String)
 }

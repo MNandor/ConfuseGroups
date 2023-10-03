@@ -31,6 +31,7 @@ import ml.nandor.confusegroups.domain.usecase.InsertDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertReviewUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListDecksUseCase
+import ml.nandor.confusegroups.domain.usecase.RenameDeckUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,7 +47,8 @@ class MainViewModel @Inject constructor(
     private val insertReviewUseCase: InsertReviewUseCase,
     private val getQuestionFromAnswerUseCase: GetQuestionFromAnswerUseCase,
     private val getAllCorrelationsUseCase: GetAllCorrelationsUseCase,
-    private val getDeckSizesUseCase: GetDeckSizesUseCase
+    private val getDeckSizesUseCase: GetDeckSizesUseCase,
+    private val renameDeckUseCase: RenameDeckUseCase
 ): ViewModel() {
 
     private val _viewableCards:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
@@ -238,7 +240,8 @@ class MainViewModel @Inject constructor(
         DELETION,
         EDITING,
         INSPECTION,
-        ADDING
+        ADDING,
+        RENAME
     }
 
     private val _deckActionBeingTaken:MutableState<DeckAction?> = mutableStateOf(null)
@@ -330,5 +333,13 @@ class MainViewModel @Inject constructor(
 
     fun removeComparisonPopup(text: String){
         _comparisonPopups.value = _comparisonPopups.value.filter { it != text }
+    }
+
+    fun renameDeck(deckName:String, deckDisplayName: String){
+        renameDeckUseCase(Pair(deckName, deckDisplayName)).onEach {
+            if (it is Resource.Success){
+                updateDecks()
+            }
+        }.launchIn(viewModelScope)
     }
 }

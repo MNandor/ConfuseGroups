@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -72,6 +73,7 @@ fun DecksScreen(viewModel: MainViewModel){
         EditDeckSettingsPopup(viewModel)
         AddToDeckPopup(viewModel)
         InspectDeckPopup(viewModel)
+        RenameDeckPopup(viewModel)
     }
 
 }
@@ -150,7 +152,9 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                 }
                 IconButton(onClick = { viewModel.setComparisonDeck(text) }) {
                     Icon(Icons.Filled.DateRange, contentDescription = "Show deck mistakes")
-
+                }
+                IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.RENAME) }) {
+                    Icon(Icons.Filled.Person, contentDescription = "Rename deck")
                 }
                 IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.EDITING) }) {
                     Icon(Icons.Filled.Settings, contentDescription = "Edit deck settings")
@@ -415,6 +419,55 @@ fun InspectDeckPopup(viewModel: MainViewModel) {
                         }
                     }
 
+                }
+
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RenameDeckPopup(viewModel: MainViewModel) {
+    val deckName = viewModel.deckBeingAccessed.value
+    val deckDisplayName = viewModel.decks.value.find { it.name == deckName }?.displayName ?: "UNNAMED"
+    val visible = viewModel.deckActionBeingTaken.value == MainViewModel.DeckAction.RENAME
+
+    var inputText by remember{ mutableStateOf("") }
+
+
+    if (visible) {
+        Dialog(onDismissRequest = { viewModel.enterDeckActionMode() }) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.6f)
+            ) {
+                Column() {
+                    Text(
+                        deckName!!,
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp
+                    )
+                    TextField(
+                        value = inputText,
+                        onValueChange = {inputText = it},
+                        label = { Text(deckDisplayName) },
+                        maxLines = 1,
+                        modifier = Modifier.padding(16.dp)
+                    )
+
+                    TextButton(
+                        onClick = {
+                            viewModel.renameDeck(deckName, inputText)
+                            viewModel.enterDeckActionMode()
+                        },
+                    ) {
+                        Text("Rename Deck")
+                    }
                 }
 
             }
