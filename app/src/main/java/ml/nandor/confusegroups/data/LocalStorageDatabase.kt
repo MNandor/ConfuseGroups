@@ -33,7 +33,7 @@ abstract class LocalStorageDatabase: RoomDatabase() {
             }
         }
 
-        private val MIGRATION_1_2: Migration = object : Migration(2, 3) {
+        private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     "CREATE TABLE IF NOT EXISTS ManualConfusion " +
@@ -43,11 +43,11 @@ abstract class LocalStorageDatabase: RoomDatabase() {
             }
         }
 
-        private val MIGRATION_2_3: Migration = object : Migration(1, 2) {
+        private val MIGRATION_2_3: Migration = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     "ALTER TABLE Deck " +
-                            "ADD displayName TEXT;"
+                            "ADD COLUMN displayName TEXT;"
                 )
             }
         }

@@ -16,7 +16,13 @@ class LocalStorageRepositoryImp @Inject constructor(
     }
 
     override fun listDecks(): List<Deck> {
-        return dao.listDecks()
+        try {
+            Timber.d("Hello")
+            return dao.listDecks()
+        } catch (e: Exception){
+            Timber.d(e.message)
+            return dao.listDecks()
+        }
     }
 
     override fun deleteDeckByName(deckName: String) {
