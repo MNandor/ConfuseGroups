@@ -11,7 +11,7 @@ import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.ManualConfusion
 import ml.nandor.confusegroups.domain.model.Review
 
-@Database(entities = [Deck::class, AtomicNote::class, Review::class, ManualConfusion::class], version = 2, exportSchema = false)
+@Database(entities = [Deck::class, AtomicNote::class, Review::class, ManualConfusion::class], version = 3, exportSchema = false)
 abstract class LocalStorageDatabase: RoomDatabase() {
     abstract fun dao(): DataAccessObject
 
@@ -25,7 +25,7 @@ abstract class LocalStorageDatabase: RoomDatabase() {
                     context.applicationContext,
                     LocalStorageDatabase::class.java,
                     "local_database"
-                ).addMigrations(MIGRATION_1_2)
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .build()
                 INSTANCE = instance
 
@@ -33,13 +33,22 @@ abstract class LocalStorageDatabase: RoomDatabase() {
             }
         }
 
-        private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+        private val MIGRATION_1_2: Migration = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     "CREATE TABLE IF NOT EXISTS ManualConfusion " +
                             "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                             "leftCard TEXT NOT NULL, " +
                             "rightCard TEXT NOT NULL)")
+            }
+        }
+
+        private val MIGRATION_2_3: Migration = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "ALTER TABLE Deck " +
+                            "ADD displayName TEXT;"
+                )
             }
         }
     }

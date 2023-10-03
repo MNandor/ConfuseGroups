@@ -23,5 +23,7 @@ data class Deck(
 
     // how many successMultipliers to divide by on a failure
     // currently unused because we reset to 1 level (so this value is practically infinite)
-    val failExponent:Int
+    val failExponent:Int,
+
+    val displayName: String? = null
 )
