@@ -83,6 +83,9 @@ fun DecksScreen(viewModel: MainViewModel){
 private fun DeckItem(text: String, viewModel: MainViewModel) {
     val deckSize = viewModel.getDeckSize(text)
     val context = LocalContext.current
+
+    val deckDisplayName = viewModel.decks.value.find { it.name == text }?.displayName ?: "[[$text]]"
+
     ElevatedCard(
         modifier = Modifier
             .padding(16.dp)
@@ -116,7 +119,7 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = text,
+                    text = deckDisplayName,
                     modifier = Modifier
                         .weight(0.7f).fillMaxWidth()
                         .padding(top = 16.dp)
