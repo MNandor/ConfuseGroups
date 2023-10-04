@@ -381,7 +381,7 @@ class MainViewModel @Inject constructor(
 
     val allCardsForManualFiltered = derivedStateOf {
         _allCardsForManual.value.filter{
-            (it.question+" - "+it.answer).contains(_manualRightSearchTerm.value) &&
+            (it.question+" - "+it.answer).lowercase().contains(_manualRightSearchTerm.value.lowercase()) &&
             it.question != manualCardLeft.value &&
             _manualConfusions.value.find { itt -> it.question == itt.leftCard && manualCardLeft.value == itt.rightCard } == null &&
             _manualConfusions.value.find { itt -> it.question == itt.rightCard && manualCardLeft.value == itt.leftCard } == null
