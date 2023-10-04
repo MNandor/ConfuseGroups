@@ -29,4 +29,5 @@ interface LocalStorageRepository {
 
     fun renameDeck(deckID: String, deckNewName: String)
     fun insertManualConfusion(manualConfusion: ManualConfusion)
+    fun listManualConfusions(): List<ManualConfusion>
 }

@@ -33,6 +33,7 @@ import ml.nandor.confusegroups.domain.usecase.InsertManualConfusionUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertReviewUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListDecksUseCase
+import ml.nandor.confusegroups.domain.usecase.ListManualConfusionsUseCase
 import ml.nandor.confusegroups.domain.usecase.RenameDeckUseCase
 import timber.log.Timber
 import javax.inject.Inject
@@ -52,7 +53,8 @@ class MainViewModel @Inject constructor(
     private val getAllCorrelationsUseCase: GetAllCorrelationsUseCase,
     private val getDeckSizesUseCase: GetDeckSizesUseCase,
     private val renameDeckUseCase: RenameDeckUseCase,
-    private val insertManualConfusionUseCase: InsertManualConfusionUseCase
+    private val insertManualConfusionUseCase: InsertManualConfusionUseCase,
+    private val listManualConfusionsUseCase: ListManualConfusionsUseCase
 ): ViewModel() {
 
     private val _viewableCards:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
@@ -205,6 +207,7 @@ class MainViewModel @Inject constructor(
     private val viewModelScope = CoroutineScope(Dispatchers.Default)
     init {
         updateDecks()
+        updateManualConfusions()
     }
 
     private fun updateDecks(){
@@ -366,7 +369,9 @@ class MainViewModel @Inject constructor(
     val allCardsForManualFiltered = derivedStateOf {
         _allCardsForManual.value.filter{
             (it.question+" - "+it.answer).contains(_manualRightSearchTerm.value) &&
-            it.question != manualCardLeft.value
+            it.question != manualCardLeft.value &&
+            _manualConfusions.value.find { itt -> it.question == itt.leftCard && manualCardLeft.value == itt.rightCard } == null &&
+            _manualConfusions.value.find { itt -> it.question == itt.rightCard && manualCardLeft.value == itt.leftCard } == null
         }
     }
 
@@ -378,7 +383,19 @@ class MainViewModel @Inject constructor(
 
     fun addManualConfusion(left: String, right:String){
         insertManualConfusionUseCase(ManualConfusion(leftCard = left, rightCard = right)).onEach {
+            updateManualConfusions()
+        }.launchIn(viewModelScope)
+    }
 
+    private val _manualConfusions:MutableState<List<ManualConfusion>> = mutableStateOf(listOf())
+    private fun updateManualConfusions(){
+        listManualConfusionsUseCase(Unit).onEach {
+            if (it is Resource.Success){
+                withContext(Dispatchers.Main){
+                    _manualConfusions.value = it.data!!
+                }
+                Timber.d(it.data!!.toString())
+            }
         }.launchIn(viewModelScope)
     }
 }

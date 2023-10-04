@@ -61,4 +61,7 @@ interface DataAccessObject {
 
     @Insert
     fun insertManualConfusion(manualConfusion: ManualConfusion)
+
+    @Query("SELECT * FROM ManualConfusion")
+    fun listManualConfusions(): List<ManualConfusion>
 }

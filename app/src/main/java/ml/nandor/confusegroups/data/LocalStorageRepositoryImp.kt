@@ -78,4 +78,8 @@ class LocalStorageRepositoryImp @Inject constructor(
         dao.insertManualConfusion(manualConfusion)
     }
 
+    override fun listManualConfusions(): List<ManualConfusion> {
+        return dao.listManualConfusions()
+    }
+
 }
