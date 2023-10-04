@@ -202,6 +202,9 @@ private fun CardComparisonBad(text:String, viewModel: MainViewModel) {
             .combinedClickable(
                 onClick = {
                     viewModel.nextQuestion(false)
+                },
+                onLongClick = {
+                    viewModel.setManualLeft(text)
                 }
             )
     ) {
