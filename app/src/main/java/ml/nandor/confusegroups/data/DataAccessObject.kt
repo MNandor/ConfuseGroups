@@ -6,6 +6,7 @@ import androidx.room.Query
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.DeckSize
+import ml.nandor.confusegroups.domain.model.ManualConfusion
 import ml.nandor.confusegroups.domain.model.Review
 
 @Dao
@@ -57,4 +58,7 @@ interface DataAccessObject {
 
     @Query("UPDATE DECK SET displayName = :deckNewName WHERE name = :deckID")
     fun renameDeck(deckID: String, deckNewName: String)
+
+    @Insert
+    fun insertManualConfusion(manualConfusion: ManualConfusion)
 }

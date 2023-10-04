@@ -17,6 +17,7 @@ import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Correlation
 import ml.nandor.confusegroups.domain.model.Deck
+import ml.nandor.confusegroups.domain.model.ManualConfusion
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
 import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.usecase.AddCardsFromTextUseCase
@@ -28,6 +29,7 @@ import ml.nandor.confusegroups.domain.usecase.GetQuestionFromAnswerUseCase
 import ml.nandor.confusegroups.domain.usecase.GetViewablesFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertCardUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.InsertManualConfusionUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertReviewUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListDecksUseCase
@@ -49,7 +51,8 @@ class MainViewModel @Inject constructor(
     private val getQuestionFromAnswerUseCase: GetQuestionFromAnswerUseCase,
     private val getAllCorrelationsUseCase: GetAllCorrelationsUseCase,
     private val getDeckSizesUseCase: GetDeckSizesUseCase,
-    private val renameDeckUseCase: RenameDeckUseCase
+    private val renameDeckUseCase: RenameDeckUseCase,
+    private val insertManualConfusionUseCase: InsertManualConfusionUseCase
 ): ViewModel() {
 
     private val _viewableCards:MutableState<List<PreparedViewableCard>> = mutableStateOf(listOf())
@@ -371,5 +374,11 @@ class MainViewModel @Inject constructor(
     val manualRightSearchTerm:State<String> = _manualRightSearchTerm
     fun setManualRightSearchTerm(searchTerm: String){
         _manualRightSearchTerm.value = searchTerm
+    }
+
+    fun addManualConfusion(left: String, right:String){
+        insertManualConfusionUseCase(ManualConfusion(leftCard = left, rightCard = right)).onEach {
+
+        }.launchIn(viewModelScope)
     }
 }

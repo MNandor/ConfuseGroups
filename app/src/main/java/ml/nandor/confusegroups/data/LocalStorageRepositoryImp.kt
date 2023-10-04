@@ -3,6 +3,7 @@ package ml.nandor.confusegroups.data
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.DeckSize
+import ml.nandor.confusegroups.domain.model.ManualConfusion
 import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import timber.log.Timber
@@ -71,6 +72,10 @@ class LocalStorageRepositoryImp @Inject constructor(
 
     override fun renameDeck(deckID: String, deckNewName: String){
         dao.renameDeck(deckID, deckNewName)
+    }
+
+    override fun insertManualConfusion(manualConfusion: ManualConfusion) {
+        dao.insertManualConfusion(manualConfusion)
     }
 
 }
