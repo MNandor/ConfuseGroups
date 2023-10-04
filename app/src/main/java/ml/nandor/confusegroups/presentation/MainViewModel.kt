@@ -430,8 +430,12 @@ class MainViewModel @Inject constructor(
 
         val finalList = mappedList.toList().sortedBy { it.second }
 
-        Timber.d(finalList.toString())
+        val groupCounts = finalList.map { it.second }.toSet().toList().map { c -> Pair(c, finalList.count { it.second == c }) }.filter { it.second > 1 }.map { it.first }
 
-        return@derivedStateOf finalList
+        val finalerList = finalList.filter { it.second in groupCounts }
+
+        Timber.d(finalerList.toString())
+
+        return@derivedStateOf finalerList
     }
 }

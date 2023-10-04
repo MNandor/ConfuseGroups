@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -51,7 +52,13 @@ fun ManualConfusionsScreen(viewModel: MainViewModel){
                     last = it.second
                     Spacer(modifier = Modifier.height(16.dp))
                 }
-                Text("${it.first} - ${it.second}")
+
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(4.dp)
+                ){
+                    Text("${it.first} - ${it.second}", fontSize = 24.sp, modifier = Modifier.padding(8.dp))
+                }
+
             }
         }
     }
