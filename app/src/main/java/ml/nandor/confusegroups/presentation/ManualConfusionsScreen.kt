@@ -5,6 +5,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +30,7 @@ fun ManualConfusionsScreen(viewModel: MainViewModel){
     val deckName = viewModel.comparisonDeck2.value!!
 
     BackHandler(onBack = {
-        viewModel.setComparisonDeck(null)
+        viewModel.setComparisonDeck2(null)
     })
 
     Column() {
@@ -43,8 +44,13 @@ fun ManualConfusionsScreen(viewModel: MainViewModel){
             fontSize = 32.sp
         )
 
+        var last:Int? = null
         LazyColumn {
             items(items = viewModel.allCardsGrouped.value) {it ->
+                if (it.second != last){
+                    last = it.second
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
                 Text("${it.first} - ${it.second}")
             }
         }
