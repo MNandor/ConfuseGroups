@@ -54,7 +54,7 @@ fun ComparisonScreen(viewModel: MainViewModel){
                 fontSize = 16.sp
             )
         }
-        
+
         LazyColumn {
             items(items = viewModel.correlations.value) {it ->
                 OutlinedCard (

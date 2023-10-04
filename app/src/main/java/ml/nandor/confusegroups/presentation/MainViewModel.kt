@@ -332,6 +332,12 @@ class MainViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    private val _comparisonDeck2:MutableState<String?> = mutableStateOf(null)
+    val comparisonDeck2:State<String?> = _comparisonDeck2
+    fun setComparisonDeck2(deckName: String?){
+        _comparisonDeck2.value = deckName
+    }
+
     private val _comparisonPopups:MutableState<List<String>> = mutableStateOf(listOf())
     val comparisonPopups:State<List<String>> = _comparisonPopups
     fun addComparisonPopup(text: String){
@@ -397,5 +403,28 @@ class MainViewModel @Inject constructor(
                 Timber.d(it.data!!.toString())
             }
         }.launchIn(viewModelScope)
+    }
+
+    val allCardsGrouped = derivedStateOf {
+
+        var mappedList = _allCardsForManual.value.mapIndexed { index, item -> Pair(item.question, index)}.toMap()
+
+        Timber.d(mappedList.toString())
+
+        for (confusion in _manualConfusions.value){
+            if (mappedList[confusion.leftCard] != mappedList[confusion.rightCard]){
+                val idToChange = mappedList[confusion.rightCard]!!
+                val newId = mappedList[confusion.leftCard]!!
+                mappedList = mappedList.mapValues { if (it.value == idToChange) newId else it.value }
+            }
+        }
+
+        Timber.d(mappedList.toString())
+
+        val finalList = mappedList.toList().sortedBy { it.second }
+
+        Timber.d(finalList.toString())
+
+        return@derivedStateOf finalList
     }
 }

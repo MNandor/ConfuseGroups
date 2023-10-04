@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import ml.nandor.confusegroups.R
 import ml.nandor.confusegroups.ui.theme.ConfuseGroupsTheme
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -43,10 +44,12 @@ class MainActivity : ComponentActivity() {
                     if (viewModel.selectedDeck.value != null){
                         ReviewScreen(viewModel, playNoise)
                     } else {
-                        if (viewModel.comparisonDeck.value == null){
-                            DecksScreen(viewModel)
-                        } else {
+                        if (viewModel.comparisonDeck2.value != null) {
+                            ManualConfusionsScreen(viewModel = viewModel)
+                        } else if (viewModel.comparisonDeck.value != null){
                             ComparisonScreen(viewModel)
+                        } else {
+                            DecksScreen(viewModel)
                         }
                     }
 

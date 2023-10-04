@@ -156,6 +156,9 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                 IconButton(onClick = { viewModel.setComparisonDeck(text) }) {
                     Icon(Icons.Filled.DateRange, contentDescription = "Show deck mistakes")
                 }
+                IconButton(onClick = { viewModel.setComparisonDeck2(text) }) {
+                    Icon(Icons.Filled.DateRange, contentDescription = "Show deck mistakes")
+                }
                 IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.RENAME) }) {
                     Icon(Icons.Filled.Person, contentDescription = "Rename deck")
                 }
