@@ -336,6 +336,13 @@ class MainViewModel @Inject constructor(
     val comparisonDeck2:State<String?> = _comparisonDeck2
     fun setComparisonDeck2(deckName: String?){
         _comparisonDeck2.value = deckName
+        listCardsFromDeckUseCase(_comparisonDeck2.value).onEach {
+            if (it is Resource.Success){
+                withContext(Dispatchers.Main) {
+                    _allCardsForManual.value = it.data!!
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     private val _comparisonPopups:MutableState<List<String>> = mutableStateOf(listOf())
