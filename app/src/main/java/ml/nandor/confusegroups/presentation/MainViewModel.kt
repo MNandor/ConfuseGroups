@@ -360,7 +360,12 @@ class MainViewModel @Inject constructor(
 
     private val _allCardsForManual:MutableState<List<AtomicNote>> = mutableStateOf(listOf())
 
-    val allCardsForManualFiltered = derivedStateOf { _allCardsForManual.value.filter{it.question.contains(_manualRightSearchTerm.value)} }
+    val allCardsForManualFiltered = derivedStateOf {
+        _allCardsForManual.value.filter{
+            (it.question+" - "+it.answer).contains(_manualRightSearchTerm.value) &&
+            it.question != manualCardLeft.value
+        }
+    }
 
     private val _manualRightSearchTerm:MutableState<String> = mutableStateOf("")
     val manualRightSearchTerm:State<String> = _manualRightSearchTerm
