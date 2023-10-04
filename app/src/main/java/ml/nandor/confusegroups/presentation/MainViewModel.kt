@@ -343,4 +343,10 @@ class MainViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
+
+    private val _manualCardLeft:MutableState<String?> = mutableStateOf(null)
+    val manualCardLeft:State<String?> = _manualCardLeft
+    fun setManualLeft(cardName: String?){
+        _manualCardLeft.value = cardName
+    }
 }

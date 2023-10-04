@@ -132,7 +132,11 @@ fun CardFront(text:String, viewModel: MainViewModel) {
             .combinedClickable(
                 onClick = {
                     viewModel.addComparisonPopup(text)
+                },
+                onLongClick = {
+                    viewModel.setManualLeft(text)
                 }
+
             )
     ) {
         LargeCardContent(text)
