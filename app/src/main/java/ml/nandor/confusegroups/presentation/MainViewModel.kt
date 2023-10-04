@@ -348,5 +348,12 @@ class MainViewModel @Inject constructor(
     val manualCardLeft:State<String?> = _manualCardLeft
     fun setManualLeft(cardName: String?){
         _manualCardLeft.value = cardName
+        setManualRightSearchTerm("")
+    }
+
+    private val _manualRightSearchTerm:MutableState<String> = mutableStateOf("")
+    val manualRightSearchTerm:State<String> = _manualRightSearchTerm
+    fun setManualRightSearchTerm(searchTerm: String){
+        _manualRightSearchTerm.value = searchTerm
     }
 }

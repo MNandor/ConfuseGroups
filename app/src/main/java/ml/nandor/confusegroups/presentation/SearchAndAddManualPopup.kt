@@ -45,7 +45,7 @@ fun SearchAndAddManualPopup(viewModel: MainViewModel) {
     val cardLeft = viewModel.manualCardLeft.value
     val visible = cardLeft != null
 
-    var searchString by remember{ mutableStateOf("") }
+    var searchString = viewModel.manualRightSearchTerm.value
 
     if (visible){
         Dialog(onDismissRequest = { viewModel.setManualLeft(null) }){
@@ -67,7 +67,7 @@ fun SearchAndAddManualPopup(viewModel: MainViewModel) {
                         .padding(4.dp)
                         .fillMaxWidth(),
                         value = searchString,
-                        onValueChange = { searchString = it },
+                        onValueChange = { it:String -> viewModel.setManualRightSearchTerm(it) },
                         label = { Text("Search for other cards") }
                     )
 
