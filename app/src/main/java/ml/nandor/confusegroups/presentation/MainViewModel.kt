@@ -349,7 +349,18 @@ class MainViewModel @Inject constructor(
     fun setManualLeft(cardName: String?){
         _manualCardLeft.value = cardName
         setManualRightSearchTerm("")
+        listCardsFromDeckUseCase(selectedDeck.value).onEach {
+            if (it is Resource.Success){
+                withContext(Dispatchers.Main) {
+                    _allCardsForManual.value = it.data!!
+                }
+            }
+        }.launchIn(viewModelScope)
     }
+
+    private val _allCardsForManual:MutableState<List<AtomicNote>> = mutableStateOf(listOf())
+
+    val allCardsForManualFiltered = derivedStateOf { _allCardsForManual.value.filter{it.question.contains(_manualRightSearchTerm.value)} }
 
     private val _manualRightSearchTerm:MutableState<String> = mutableStateOf("")
     val manualRightSearchTerm:State<String> = _manualRightSearchTerm

@@ -46,6 +46,7 @@ fun SearchAndAddManualPopup(viewModel: MainViewModel) {
     val visible = cardLeft != null
 
     var searchString = viewModel.manualRightSearchTerm.value
+    val searchResults = viewModel.allCardsForManualFiltered.value
 
     if (visible){
         Dialog(onDismissRequest = { viewModel.setManualLeft(null) }){
@@ -78,6 +79,8 @@ fun SearchAndAddManualPopup(viewModel: MainViewModel) {
                     ) {
                         Text("Add Manual Confuse Group")
                     }
+
+                    Text(text = searchResults.toString())
                 }
             }
         }
