@@ -6,7 +6,9 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -15,8 +17,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,16 +38,48 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchAndAddManualPopup(viewModel: MainViewModel) {
 
     val cardLeft = viewModel.manualCardLeft.value
     val visible = cardLeft != null
 
+    var searchString by remember{ mutableStateOf("") }
+
     if (visible){
         Dialog(onDismissRequest = { viewModel.setManualLeft(null) }){
-            Text(text = cardLeft!!)
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.6f)
+            ) {
+                Column() {
+                    Text(
+                        cardLeft!!,
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp
+                    )
+                    TextField(modifier = Modifier
+                        .padding(4.dp)
+                        .fillMaxWidth(),
+                        value = searchString,
+                        onValueChange = { searchString = it },
+                        label = { Text("Search for other cards") }
+                    )
+
+                    TextButton(
+                        onClick = {
+                            viewModel.setManualLeft(null)
+                        },
+                    ) {
+                        Text("Add Manual Confuse Group")
+                    }
+                }
+            }
         }
     }
 
