@@ -438,4 +438,14 @@ class MainViewModel @Inject constructor(
 
         return@derivedStateOf finalerList
     }
+
+    fun getManualRelationsCount(question: String): Int{
+        val pair = allCardsGrouped.value.find { it.first == question }
+        if (pair == null)
+            return 0;
+
+        val count = allCardsGrouped.value.filter { it.second == pair.second }.size
+
+        return count -1;
+    }
 }

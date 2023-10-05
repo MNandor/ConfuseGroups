@@ -24,6 +24,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -139,7 +140,10 @@ fun CardFront(text:String, viewModel: MainViewModel) {
 
             )
     ) {
-        LargeCardContent(text)
+        Surface() {
+            Text(viewModel.getManualRelationsCount(text).toString())
+            LargeCardContent(text)
+        }
     }
 }
 

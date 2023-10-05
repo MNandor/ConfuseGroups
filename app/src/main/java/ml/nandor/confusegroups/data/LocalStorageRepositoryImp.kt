@@ -31,6 +31,7 @@ class LocalStorageRepositoryImp @Inject constructor(
     }
 
     override fun insertCard(card: AtomicNote) {
+
         Timber.d("Inserting note ${card.question} - ${card.answer}")
         dao.insertCard(card)
     }
