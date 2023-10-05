@@ -1,6 +1,5 @@
 package ml.nandor.confusegroups.domain.usecase
 
-import android.util.Log
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
 import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository

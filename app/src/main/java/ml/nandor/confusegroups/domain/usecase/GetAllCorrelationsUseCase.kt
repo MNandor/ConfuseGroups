@@ -1,13 +1,10 @@
 package ml.nandor.confusegroups.domain.usecase
 
-import android.util.Log
 import ml.nandor.confusegroups.domain.model.Correlation
-import ml.nandor.confusegroups.domain.model.PreparedViewableCard
 import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.math.log2
 import kotlin.math.pow
 
 // this is where the most important part of the app happens

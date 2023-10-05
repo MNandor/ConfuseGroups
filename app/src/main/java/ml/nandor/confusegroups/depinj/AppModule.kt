@@ -1,13 +1,11 @@
 package ml.nandor.confusegroups.depinj
 
 import android.content.Context
-import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import ml.nandor.confusegroups.data.DataAccessObject
 import ml.nandor.confusegroups.data.LocalStorageDatabase
 import ml.nandor.confusegroups.data.LocalStorageRepositoryImp
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository

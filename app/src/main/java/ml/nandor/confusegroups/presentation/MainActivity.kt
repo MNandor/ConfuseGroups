@@ -13,7 +13,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import ml.nandor.confusegroups.R
 import ml.nandor.confusegroups.ui.theme.ConfuseGroupsTheme
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
