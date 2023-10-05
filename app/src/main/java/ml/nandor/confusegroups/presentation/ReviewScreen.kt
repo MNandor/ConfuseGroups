@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -127,21 +128,28 @@ fun CardFront(text:String, viewModel: MainViewModel) {
     ) {
         Surface() {
             Text(viewModel.getManualRelationsCount(text).toString())
-            LargeCardContent(text)
+            CardContent(text)
         }
     }
 }
 
+
 @Composable
-private fun LargeCardContent(text: String) {
+private fun CardContent(text:String, color:Color = Color.Unspecified, isSmall:Boolean = false){
+
     val imageRegex = "!\\[.*]\\(.*\\)".toRegex()
-    
+
+    val sizeRange = if (isSmall){
+        FontSizeRange(16.sp, 32.sp)
+    } else {
+        if (text.length < 5)
+            FontSizeRange(64.sp, 128.sp)
+        else
+            FontSizeRange(32.sp, 64.sp)
+    }
+
     if (imageRegex.matches(text)) {
-//            Image(
-//                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-//                contentDescription = "Sample icon",
-//                modifier = Modifier.fillMaxSize()
-//            )
+
         val link = text.split("(")[1].split(")")[0] // the exact purpose of a regex
         AsyncImage(
             model = link,
@@ -149,14 +157,16 @@ private fun LargeCardContent(text: String) {
             modifier = Modifier.fillMaxSize()
         )
     } else {
-        Text(
+        AutoResizeText(
             text = text,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
                 .wrapContentSize(),
             textAlign = TextAlign.Center,
-            fontSize = if (text.length < 6) 128.sp else 64.sp
+            color = color,
+            fontSizeRange = sizeRange,
+            maxLines = 5,
         )
     }
 }
@@ -176,7 +186,7 @@ private fun CardOnlyOption(text:String, viewModel: MainViewModel, playNoise: (Bo
                 }
             )
     ) {
-        LargeCardContent(text = text)
+        CardContent(text = text)
     }
 }
 
@@ -197,7 +207,7 @@ private fun CardComparisonBad(text:String, viewModel: MainViewModel) {
                 }
             )
     ) {
-        LargeCardContent(text = text)
+        CardContent(text = text)
     }
 }
 
@@ -229,15 +239,7 @@ private fun RowScope.CardBackOption(
                     }
                 )
         ) {
-            Text(
-                text = text,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .wrapContentSize(),
-                textAlign = TextAlign.Center,
-                fontSize = 32.sp
-            )
+            CardContent(text = text, isSmall = true)
         }
     } else {
         // this code is the duplicate of the base case, except where colors are set
@@ -249,17 +251,7 @@ private fun RowScope.CardBackOption(
             // set color
             colors = CardDefaults.cardColors(containerColor = if (state == MainViewModel.CardCorrectness.GOOD) Color.Green else Color.Red)
         ) {
-            Text(
-                text = text,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .wrapContentSize(),
-                textAlign = TextAlign.Center,
-                // set color
-                color = Color.Black,
-                fontSize = 32.sp
-            )
+            CardContent(text = text, color = Color.Black, isSmall = true)
         }
     }
 
