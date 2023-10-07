@@ -1,9 +1,11 @@
 package ml.nandor.confusegroups.presentation
 
+import android.graphics.BitmapFactory
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
@@ -24,6 +26,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -32,6 +36,8 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.io.File
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -152,13 +158,31 @@ private fun CardContent(text:String, color:Color = Color.Unspecified, isSmall:Bo
     }
 
     if (matcher.find()) {
-            val firstMatch = matcher.group(1) //local files
-            val secondMatch = matcher.group(2) //url
-        AsyncImage(
-            model = secondMatch,
-            contentDescription = "Sample Image",
-            modifier = Modifier.fillMaxSize()
-        )
+        val firstMatch = matcher.group(1) //local files
+        val secondMatch = matcher.group(2) //url
+
+        val file = File("/storage/emulated/0/ConfuseGroups/"+firstMatch)
+
+        if (!firstMatch.isNullOrEmpty() && file.isFile){
+
+            Timber.d("${file}, ${file.isFile}, ${file.path}")
+
+            val bmp = BitmapFactory.decodeFile(file.path)
+
+            Image(
+                bitmap = bmp.asImageBitmap(),
+                contentDescription = "Sample Image",
+                modifier = Modifier.fillMaxSize()
+            )
+
+        } else if (!secondMatch.isNullOrEmpty()) {
+            AsyncImage(
+                model = secondMatch,
+                contentDescription = "Sample Image",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
     } else {
         AutoResizeText(
             text = text,
