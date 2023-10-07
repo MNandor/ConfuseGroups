@@ -32,6 +32,8 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 @Composable
 fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
@@ -137,7 +139,8 @@ fun CardFront(text:String, viewModel: MainViewModel) {
 @Composable
 private fun CardContent(text:String, color:Color = Color.Unspecified, isSmall:Boolean = false){
 
-    val imageRegex = "!\\[.*]\\(.*\\)".toRegex()
+    val pattern = "\\!\\[(.*?)\\]\\((.*?)\\)"
+    val matcher: Matcher = Pattern.compile(pattern).matcher(text)
 
     val sizeRange = if (isSmall){
         FontSizeRange(16.sp, 32.sp)
@@ -148,11 +151,11 @@ private fun CardContent(text:String, color:Color = Color.Unspecified, isSmall:Bo
             FontSizeRange(32.sp, 64.sp)
     }
 
-    if (imageRegex.matches(text)) {
-
-        val link = text.split("(")[1].split(")")[0] // the exact purpose of a regex
+    if (matcher.find()) {
+            val firstMatch = matcher.group(1) //local files
+            val secondMatch = matcher.group(2) //url
         AsyncImage(
-            model = link,
+            model = secondMatch,
             contentDescription = "Sample Image",
             modifier = Modifier.fillMaxSize()
         )
