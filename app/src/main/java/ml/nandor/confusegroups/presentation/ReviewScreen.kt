@@ -1,5 +1,6 @@
 package ml.nandor.confusegroups.presentation
 
+import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
@@ -8,7 +9,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
@@ -27,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,24 +48,29 @@ import java.util.regex.Pattern
 @Composable
 fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
 
-    val colorGood = Color.Green.copy(alpha=0.1f)
-    val colorBad = Color.Red.copy(alpha=0.1f)
+    val colorGood = Color.Green.copy(alpha = 0.1f)
+    val colorBad = Color.Red.copy(alpha = 0.1f)
     val colorNeutral = Color.Transparent
     val selectedColor = remember { mutableStateOf(colorNeutral) }
     val backGroundColor = animateColorAsState(
         targetValue = selectedColor.value,
-        animationSpec = tween(100, 0, )
+        animationSpec = tween(100, 0)
     )
 
-    val provideUserFeedback = {success:Boolean ->
+    val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
 
-        if (success){
+    val question = viewModel.currentQuestion.value
+    val correctness = viewModel.cardCorrectness.value
+
+    val provideUserFeedback = { success: Boolean ->
+
+        if (success) {
             selectedColor.value = colorGood
         } else {
             selectedColor.value = colorBad
         }
         GlobalScope.launch {
-            delay( if(success) 300 else 3000 )
+            delay(if (success) 300 else 3000)
             selectedColor.value = colorNeutral
         }
 
@@ -72,53 +81,147 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
         viewModel.selectDeck(null)
     })
 
-    Column(
-        Modifier.background(
-            color=backGroundColor.value
-        )
-    ) {
+    if (isPortrait) {
+        Column(
+            Modifier.background(
+                color = backGroundColor.value
+            )
+        ) {
 
-        val question = viewModel.currentQuestion.value
-        val correctness = viewModel.cardCorrectness.value
+            Row(
 
-        Row(){
-            Text(text = "Level: "+viewModel.deckLevel.value.toString())
-        }
-
-        CardFront(question.front, viewModel)
-
-        if (question.options.size == 4){
-            if (viewModel.comparisonQuestion.value == null){
-                Row(
-                    modifier = Modifier
-                        .weight(1.0f)
-                ) {
-                    CardBackOption(question.options[0], correctness[0], viewModel, provideUserFeedback)
-                    CardBackOption(question.options[1], correctness[1], viewModel, provideUserFeedback)
-                }
-
-                Row(
-                    modifier = Modifier
-                        .weight(1.0f)
-                ) {
-                    CardBackOption(question.options[2], correctness[2], viewModel, provideUserFeedback)
-                    CardBackOption(question.options[3], correctness[3], viewModel, provideUserFeedback)
-                }
-            } else {
-                CardComparisonBad(text = viewModel.comparisonQuestion.value!!, viewModel = viewModel)
+            ) {
+                Text(text = "Level: " + viewModel.deckLevel.value.toString())
             }
 
-        } else {
-            CardOnlyOption(text = question.options[0], viewModel, provideUserFeedback)
-        }
+            CardFront(question.front, viewModel)
 
+            if (question.options.size == 4) {
+                if (viewModel.comparisonQuestion.value == null) {
+                    Row(
+                        modifier = Modifier
+                            .weight(1.0f)
+                    ) {
+                        CardBackOption(
+                            question.options[0],
+                            correctness[0],
+                            viewModel,
+                            provideUserFeedback
+                        )
+                        CardBackOption(
+                            question.options[1],
+                            correctness[1],
+                            viewModel,
+                            provideUserFeedback
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .weight(1.0f)
+                    ) {
+                        CardBackOption(
+                            question.options[2],
+                            correctness[2],
+                            viewModel,
+                            provideUserFeedback
+                        )
+                        CardBackOption(
+                            question.options[3],
+                            correctness[3],
+                            viewModel,
+                            provideUserFeedback
+                        )
+                    }
+                } else {
+                    CardComparisonBad(
+                        text = viewModel.comparisonQuestion.value!!,
+                        viewModel = viewModel
+                    )
+                }
+
+            } else {
+                CardOnlyOption(text = question.options[0], viewModel, provideUserFeedback)
+            }
+
+        }
+    } else {
+        Row(
+            Modifier.background(
+                color = backGroundColor.value
+            )
+        ) {
+
+            Row(
+
+            ) {
+                Text(text = "Level: " + viewModel.deckLevel.value.toString())
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .aspectRatio(1.0f)
+            ) {
+                CardFront(question.front, viewModel)
+            }
+
+            if (question.options.size == 4) {
+                if (viewModel.comparisonQuestion.value == null) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1.0f)
+                    ) {
+                        CardOptionWrapper(
+                            question.options[0],
+                            correctness[0],
+                            viewModel,
+                            provideUserFeedback
+                        )
+                        CardOptionWrapper(
+                            question.options[1],
+                            correctness[1],
+                            viewModel,
+                            provideUserFeedback
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1.0f)
+                    ) {
+                        CardOptionWrapper(
+                            question.options[2],
+                            correctness[2],
+                            viewModel,
+                            provideUserFeedback
+                        )
+                        CardOptionWrapper(
+                            question.options[3],
+                            correctness[3],
+                            viewModel,
+                            provideUserFeedback
+                        )
+                    }
+                } else {
+                    CardComparisonBad(
+                        text = viewModel.comparisonQuestion.value!!,
+                        viewModel = viewModel
+                    )
+                }
+
+            } else {
+                CardOnlyOption(text = question.options[0], viewModel, provideUserFeedback)
+            }
+        }
     }
+
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CardFront(text:String, viewModel: MainViewModel) {
-    
+fun CardFront(text: String, viewModel: MainViewModel) {
+
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -143,12 +246,12 @@ fun CardFront(text:String, viewModel: MainViewModel) {
 
 
 @Composable
-private fun CardContent(text:String, color:Color = Color.Unspecified, isSmall:Boolean = false){
+private fun CardContent(text: String, color: Color = Color.Unspecified, isSmall: Boolean = false) {
 
     val pattern = "\\!\\[(.*?)\\]\\((.*?)\\)"
     val matcher: Matcher = Pattern.compile(pattern).matcher(text)
 
-    val sizeRange = if (isSmall){
+    val sizeRange = if (isSmall) {
         FontSizeRange(16.sp, 32.sp)
     } else {
         if (text.length < 5)
@@ -161,9 +264,9 @@ private fun CardContent(text:String, color:Color = Color.Unspecified, isSmall:Bo
         val firstMatch = matcher.group(1) //local files
         val secondMatch = matcher.group(2) //url
 
-        val file = File("/storage/emulated/0/ConfuseGroups/"+firstMatch)
+        val file = File("/storage/emulated/0/ConfuseGroups/" + firstMatch)
 
-        if (!firstMatch.isNullOrEmpty() && file.isFile){
+        if (!firstMatch.isNullOrEmpty() && file.isFile) {
 
             Timber.d("${file}, ${file.isFile}, ${file.path}")
 
@@ -200,7 +303,7 @@ private fun CardContent(text:String, color:Color = Color.Unspecified, isSmall:Bo
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun CardOnlyOption(text:String, viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
+private fun CardOnlyOption(text: String, viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -219,7 +322,7 @@ private fun CardOnlyOption(text:String, viewModel: MainViewModel, playNoise: (Bo
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun CardComparisonBad(text:String, viewModel: MainViewModel) {
+private fun CardComparisonBad(text: String, viewModel: MainViewModel) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -238,6 +341,20 @@ private fun CardComparisonBad(text:String, viewModel: MainViewModel) {
     }
 }
 
+@Composable
+private fun ColumnScope.CardOptionWrapper(
+    text: String,
+    state: MainViewModel.CardCorrectness = MainViewModel.CardCorrectness.BASE,
+    viewModel: MainViewModel,
+    playNoise: (Boolean) -> Int
+) {
+    Row(
+        modifier = Modifier.weight(1.0f)
+    ) {
+        CardBackOption(text, state, viewModel, playNoise)
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun RowScope.CardBackOption(
@@ -247,7 +364,7 @@ private fun RowScope.CardBackOption(
     playNoise: (Boolean) -> Int
 ) {
     // Base state = color unmodified
-    if (state == MainViewModel.CardCorrectness.BASE){
+    if (state == MainViewModel.CardCorrectness.BASE) {
         ElevatedCard(
             modifier = Modifier
                 .weight(1.0f)
