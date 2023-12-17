@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ml.nandor.confusegroups.Util
 import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Correlation
@@ -186,8 +187,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun createDeck(){
-        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
-        val name = (1..8).map { chars.random() }.joinToString(separator = "")
+        val name = Util.getDeckName()
 
         val deck = Deck(name = name, -1, 1.5, 1.0, 0)
 
