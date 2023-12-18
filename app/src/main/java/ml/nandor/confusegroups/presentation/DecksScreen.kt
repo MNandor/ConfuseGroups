@@ -87,7 +87,7 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
-            .height(128.dp)
+            .height(164.dp)
             .combinedClickable(
                 onClick = {
                     if (deckSize > 3) {
@@ -147,18 +147,24 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                 IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.ADDING) }) {
                     Icon(Icons.Filled.Add, contentDescription = "Add card to deck")
                 }
-                IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.INSPECTION) }) {
-                    Icon(Icons.Filled.Edit, contentDescription = "Edit deck data")
-                }
                 IconButton(onClick = { viewModel.setComparisonDeck(text) }) {
-                    Icon(Icons.Filled.DateRange, contentDescription = "Show deck mistakes")
-                }
-                IconButton(onClick = { viewModel.setComparisonDeck2(text) }) {
                     Icon(Icons.Filled.DateRange, contentDescription = "Show deck mistakes")
                 }
                 IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.RENAME) }) {
                     Icon(Icons.Filled.Person, contentDescription = "Rename deck")
                 }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ){
+                IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.INSPECTION) }) {
+                    Icon(Icons.Filled.Edit, contentDescription = "Edit deck data")
+                }
+//                IconButton(onClick = { viewModel.setComparisonDeck2(text) }) {
+//                    Icon(Icons.Filled.DateRange, contentDescription = "Show deck mistakes")
+//                }
                 IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.EDITING) }) {
                     Icon(Icons.Filled.Settings, contentDescription = "Edit deck settings")
                 }
