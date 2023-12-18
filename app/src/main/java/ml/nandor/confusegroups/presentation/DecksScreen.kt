@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import ml.nandor.confusegroups.Util
 import ml.nandor.confusegroups.domain.model.AtomicNote
 
 @Composable
@@ -340,7 +341,7 @@ fun AddToDeckPopup(viewModel: MainViewModel) {
 
                         TextButton(
                             onClick = {
-                                val card = AtomicNote(question = question, answer = answer, deck = deckName)
+                                val card = AtomicNote(question = Util.getCardName(), answer = answer, deck = deckName, questionDisplay = question)
                                 viewModel.addCard(card)
                                 question = ""
                                 answer = ""

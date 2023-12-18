@@ -11,6 +11,6 @@ object Util {
 
     fun getCardName(): String {
         // literally the same but longer to avoid collision
-        return getCardName() + getCardName() + getCardName()
+        return getDeckName() + getDeckName() + getDeckName()
     }
 }

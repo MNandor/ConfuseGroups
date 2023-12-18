@@ -1,5 +1,6 @@
 package ml.nandor.confusegroups.domain.usecase
 
+import ml.nandor.confusegroups.Util
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import javax.inject.Inject
@@ -16,7 +17,9 @@ class AddCardsFromTextUseCase @Inject constructor(
         for (pair in data.split(";")){
             val qa = pair.split("-")
 
-            val card = AtomicNote(question = qa[0].trim(), answer = qa[1].trim(), deck = deck)
+            val question = qa[0].trim()
+
+            val card = AtomicNote(Util.getCardName(), answer = qa[1].trim(), deck = deck, question)
             repository.insertCard(card)
 
         }

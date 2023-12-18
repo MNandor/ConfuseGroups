@@ -8,5 +8,6 @@ data class AtomicNote(
     @PrimaryKey
     val question: String,
     val answer: String,
-    val deck: String
+    val deck: String,
+    val questionDisplay: String? // visually, what shows up as a question
 )
