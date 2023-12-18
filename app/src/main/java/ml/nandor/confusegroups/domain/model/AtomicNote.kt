@@ -1,13 +1,15 @@
 package ml.nandor.confusegroups.domain.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
 data class AtomicNote(
-    @PrimaryKey
-    val question: String,
+    @PrimaryKey @ColumnInfo(name = "question")
+    val id: String,
     val answer: String,
     val deck: String,
-    val questionDisplay: String? // visually, what shows up as a question
+    @ColumnInfo(name = "questionDisplay")
+    val question: String? // visually, what shows up as a question
 )

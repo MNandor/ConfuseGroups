@@ -44,7 +44,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         val level = if (reviewDates.isEmpty()) 1 else reviewDates.map { it.second }.min()
 
         val reviewCards = allCards.filter {card ->
-            val mostRecentReview = reviewDates.find { it.first.question == card.question}
+            val mostRecentReview = reviewDates.find { it.first.question == card.id}
 
             if (mostRecentReview == null){
                 return@filter false;
@@ -57,7 +57,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         }
 
         val newCards = allCards.filter {
-            card -> val mostRecentReview = reviewDates.find { it.first.question == card.question}
+            card -> val mostRecentReview = reviewDates.find { it.first.question == card.id}
 
             if (mostRecentReview == null)
                 return@filter true
@@ -72,7 +72,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         Timber.tag("alg1time").d("***\n\n***")
 
         // associate makes a map of key-value pairs
-        val reviewsByLeft = allCards.associate { it -> Pair(it.question, mutableListOf<Review>()) }
+        val reviewsByLeft = allCards.associate { it -> Pair(it.id, mutableListOf<Review>()) }
 
         for (review in allReviews){
             reviewsByLeft[review.question]?.add(review)
@@ -81,15 +81,15 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         Timber.tag("alg1math").d("***\n\n***")
         val viewAbles = reviewCards.map {note ->
             val possiblesWrongs = allCards
-                .filter { it.question != note.question && it.answer != note.answer }
+                .filter { it.id != note.id && it.answer != note.answer }
                 .map { it -> it.answer }
                 .toMutableList()
 
-            Timber.tag("alg1math").d("${note.question}")
+            Timber.tag("alg1math").d("${note.id}")
 
             val corres = possiblesWrongs
                 .shuffled()
-                .map { pos ->  Pair(pos, -determineCorrelation(note.question, pos, deck.confuseExponent, reviewsByLeft[note.question]!!.toList())) }
+                .map { pos ->  Pair(pos, -determineCorrelation(note.id, pos, deck.confuseExponent, reviewsByLeft[note.id]!!.toList())) }
                 .sortedBy { it.second }
                 .map{it.first}
 
@@ -105,9 +105,9 @@ class GetViewablesFromDeckUseCase @Inject constructor(
             val options = answers.shuffled()
 
             // known to be not null, otherwise it'd be a new card
-            val streakSoFar = reviews.find { it.question == note.question }!!.streak
+            val streakSoFar = reviews.find { it.question == note.id }!!.streak
 
-            val viewableCard = PreparedViewableCard(note.question, options.indexOf(note.answer)+1, options, streakSoFar, note.questionDisplay?:"{${note.question}}")
+            val viewableCard = PreparedViewableCard(options.indexOf(note.answer)+1, options, streakSoFar, note)
 
             return@map viewableCard
 
@@ -121,7 +121,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         Timber.d("Limiting to $newCount new cards")
 
         val newViewables = newCards.map{note ->
-            val viewableCard = PreparedViewableCard(note.question, 1, listOf(note.answer), -1, note.questionDisplay?:"{${note.question}}")
+            val viewableCard = PreparedViewableCard(1, listOf(note.answer), -1, note)
 
             return@map viewableCard
         }.shuffled().take(newCount)

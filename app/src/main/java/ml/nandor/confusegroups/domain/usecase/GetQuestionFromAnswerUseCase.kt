@@ -9,6 +9,6 @@ class GetQuestionFromAnswerUseCase @Inject constructor(
     override fun doStuff(input: String): String {
         val notes = repository.getNotesMatchingAnswers(input)
 
-        return notes.first().question
+        return notes.first().id
     }
 }

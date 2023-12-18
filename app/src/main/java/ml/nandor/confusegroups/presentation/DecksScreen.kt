@@ -347,7 +347,7 @@ fun AddToDeckPopup(viewModel: MainViewModel) {
 
                         TextButton(
                             onClick = {
-                                val card = AtomicNote(question = Util.getCardName(), answer = answer, deck = deckName, questionDisplay = question)
+                                val card = AtomicNote(id = Util.getCardName(), answer = answer, deck = deckName, question = question)
                                 viewModel.addCard(card)
                                 question = ""
                                 answer = ""
@@ -392,7 +392,7 @@ fun InspectDeckPopup(viewModel: MainViewModel) {
                         modifier = Modifier.padding(8.dp).fillMaxHeight(0.5f)
                     ) {
                         items(items = cards) { item ->
-                            Text(item.question+" - "+item.answer)
+                            Text(item.id+" - "+item.answer)
 
                         }
                     }

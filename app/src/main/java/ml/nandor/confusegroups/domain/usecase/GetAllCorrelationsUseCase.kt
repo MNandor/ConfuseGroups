@@ -25,7 +25,7 @@ class GetAllCorrelationsUseCase @Inject constructor(
         val expontent = 1.0
 
         // associate makes a map of key-value pairs
-        val reviewsByLeft = allCards.associate { it -> Pair(it.question, mutableListOf<Review>()) }
+        val reviewsByLeft = allCards.associate { it -> Pair(it.id, mutableListOf<Review>()) }
 
         for (review in allReviews){
             reviewsByLeft[review.question]?.add(review)
@@ -36,7 +36,7 @@ class GetAllCorrelationsUseCase @Inject constructor(
                 if (leftCard.answer == rightCard.answer)
                     continue
 
-                val corr = determineCorrelation(leftCard.question, rightCard.answer, 1.0, reviewsByLeft[leftCard.question]!!.toList())
+                val corr = determineCorrelation(leftCard.id, rightCard.answer, 1.0, reviewsByLeft[leftCard.id]!!.toList())
 
                 correlations.add(Correlation(leftCard, rightCard, corr))
             }

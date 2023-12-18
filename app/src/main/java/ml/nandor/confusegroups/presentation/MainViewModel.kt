@@ -81,17 +81,17 @@ class MainViewModel @Inject constructor(
     private var isClickable = true
     fun isClickable():Boolean = isClickable
     fun checkAnswer(answer:String):Boolean{
-        val question = viewableCards.value[_currentIndex.value]
+        val card = viewableCards.value[_currentIndex.value]
 
-        val wasCorrect = answer == question.options[question.correct-1]
+        val wasCorrect = answer == card.options[card.correct-1]
 
         val review = Review(
-            question = question.front,
+            question = card.note.id, //alright this needs to be changed
             answer = answer,
             level = deckLevel.value,
-            streak = if (wasCorrect) question.streakSoFar+1 else 0,
+            streak = if (wasCorrect) card.streakSoFar+1 else 0,
             timeStamp = System.currentTimeMillis()/1000,
-            unpickedAnswers = question.options.filter { it != answer }.joinToString(";")
+            unpickedAnswers = card.options.filter { it != answer }.joinToString(";")
         )
 
         insertReviewUseCase(review).onEach {
@@ -101,10 +101,10 @@ class MainViewModel @Inject constructor(
                 } else {
                     val cors:MutableList<CardCorrectness> = mutableListOf()
 
-                    for (option in question.options){
+                    for (option in card.options){
                         if (option == answer)
                             cors.add(CardCorrectness.BAD)
-                        else if (option == question.options[question.correct-1])
+                        else if (option == card.options[card.correct-1])
                             cors.add(CardCorrectness.GOOD)
                         else
                             cors.add(CardCorrectness.BASE)
@@ -381,10 +381,10 @@ class MainViewModel @Inject constructor(
 
     val allCardsForManualFiltered = derivedStateOf {
         _allCardsForManual.value.filter{
-            (it.question+" - "+it.answer).lowercase().contains(_manualRightSearchTerm.value.lowercase()) &&
-            it.question != manualCardLeft.value &&
-            _manualConfusions.value.find { itt -> it.question == itt.leftCard && manualCardLeft.value == itt.rightCard } == null &&
-            _manualConfusions.value.find { itt -> it.question == itt.rightCard && manualCardLeft.value == itt.leftCard } == null
+            (it.id+" - "+it.answer).lowercase().contains(_manualRightSearchTerm.value.lowercase()) &&
+            it.id != manualCardLeft.value &&
+            _manualConfusions.value.find { itt -> it.id == itt.leftCard && manualCardLeft.value == itt.rightCard } == null &&
+            _manualConfusions.value.find { itt -> it.id == itt.rightCard && manualCardLeft.value == itt.leftCard } == null
         }
     }
 
@@ -414,7 +414,7 @@ class MainViewModel @Inject constructor(
 
     val allCardsGrouped = derivedStateOf {
 
-        var mappedList = _allCardsForManual.value.mapIndexed { index, item -> Pair(item.question, index)}.toMap()
+        var mappedList = _allCardsForManual.value.mapIndexed { index, item -> Pair(item.id, index)}.toMap()
 
         Timber.d(mappedList.toString())
 

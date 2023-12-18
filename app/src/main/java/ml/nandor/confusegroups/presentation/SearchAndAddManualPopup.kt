@@ -69,14 +69,14 @@ fun SearchAndAddManualPopup(viewModel: MainViewModel) {
                                 modifier = Modifier.padding(4.dp)
                             ) {
                                 Text(
-                                    text = "  ${item.question} - ${item.answer}",
+                                    text = "  ${item.id} - ${item.answer}",
                                     modifier = Modifier
                                         .padding(4.dp)
                                         .fillMaxWidth()
                                         .combinedClickable(
                                             onClick = {
-                                                Timber.d("$cardLeft - ${item.question}")
-                                                viewModel.addManualConfusion(cardLeft, item.question)
+                                                Timber.d("$cardLeft - ${item.id}")
+                                                viewModel.addManualConfusion(cardLeft, item.id)
                                             }
                                         )
                                 )

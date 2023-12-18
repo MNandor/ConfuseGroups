@@ -31,9 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -59,7 +57,7 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
 
     val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
 
-    val question = viewModel.currentQuestion.value
+    val card = viewModel.currentQuestion.value
     val correctness = viewModel.cardCorrectness.value
 
     val provideUserFeedback = { success: Boolean ->
@@ -94,22 +92,22 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                 Text(text = "Level: " + viewModel.deckLevel.value.toString())
             }
 
-            CardFront(question.front, viewModel, question.visualQuestion)
+            CardFront(card.note.id, viewModel, card.note.question?:"missing front")
 
-            if (question.options.size == 4) {
+            if (card.options.size == 4) {
                 if (viewModel.comparisonQuestion.value == null) {
                     Row(
                         modifier = Modifier
                             .weight(1.0f)
                     ) {
                         CardBackOption(
-                            question.options[0],
+                            card.options[0],
                             correctness[0],
                             viewModel,
                             provideUserFeedback
                         )
                         CardBackOption(
-                            question.options[1],
+                            card.options[1],
                             correctness[1],
                             viewModel,
                             provideUserFeedback
@@ -121,13 +119,13 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                             .weight(1.0f)
                     ) {
                         CardBackOption(
-                            question.options[2],
+                            card.options[2],
                             correctness[2],
                             viewModel,
                             provideUserFeedback
                         )
                         CardBackOption(
-                            question.options[3],
+                            card.options[3],
                             correctness[3],
                             viewModel,
                             provideUserFeedback
@@ -141,7 +139,7 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                 }
 
             } else {
-                CardOnlyOption(text = question.options[0], viewModel, provideUserFeedback)
+                CardOnlyOption(text = card.options[0], viewModel, provideUserFeedback)
             }
 
         }
@@ -163,23 +161,23 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                     .fillMaxHeight()
                     .aspectRatio(1.0f)
             ) {
-                CardFront(question.front, viewModel, question.visualQuestion)
+                CardFront(card.note.id, viewModel, card.note.question?:"missing front")
             }
 
-            if (question.options.size == 4) {
+            if (card.options.size == 4) {
                 if (viewModel.comparisonQuestion.value == null) {
                     Column(
                         modifier = Modifier
                             .weight(1.0f)
                     ) {
                         CardOptionWrapper(
-                            question.options[0],
+                            card.options[0],
                             correctness[0],
                             viewModel,
                             provideUserFeedback
                         )
                         CardOptionWrapper(
-                            question.options[1],
+                            card.options[1],
                             correctness[1],
                             viewModel,
                             provideUserFeedback
@@ -191,13 +189,13 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                             .weight(1.0f)
                     ) {
                         CardOptionWrapper(
-                            question.options[2],
+                            card.options[2],
                             correctness[2],
                             viewModel,
                             provideUserFeedback
                         )
                         CardOptionWrapper(
-                            question.options[3],
+                            card.options[3],
                             correctness[3],
                             viewModel,
                             provideUserFeedback
@@ -211,7 +209,7 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                 }
 
             } else {
-                CardOnlyOption(text = question.options[0], viewModel, provideUserFeedback)
+                CardOnlyOption(text = card.options[0], viewModel, provideUserFeedback)
             }
         }
     }

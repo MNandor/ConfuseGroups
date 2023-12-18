@@ -75,8 +75,8 @@ fun ComparisonScreen(viewModel: MainViewModel){
                         modifier = Modifier
                             .weight(1.0f)
                     ) {
-                        SimpleSmallCard(it.leftCard.question)
-                        SimpleSmallCard(it.rightCard.question)
+                        SimpleSmallCard(it.leftCard.id)
+                        SimpleSmallCard(it.rightCard.id)
                     }
 
                     Row(
