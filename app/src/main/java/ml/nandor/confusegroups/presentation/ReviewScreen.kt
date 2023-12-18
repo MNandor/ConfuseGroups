@@ -94,7 +94,7 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                 Text(text = "Level: " + viewModel.deckLevel.value.toString())
             }
 
-            CardFront(question.front, viewModel)
+            CardFront(question.front, viewModel, question.visualQuestion)
 
             if (question.options.size == 4) {
                 if (viewModel.comparisonQuestion.value == null) {
@@ -163,7 +163,7 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                     .fillMaxHeight()
                     .aspectRatio(1.0f)
             ) {
-                CardFront(question.front, viewModel)
+                CardFront(question.front, viewModel, question.visualQuestion)
             }
 
             if (question.options.size == 4) {
@@ -220,7 +220,7 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CardFront(text: String, viewModel: MainViewModel) {
+fun CardFront(text: String, viewModel: MainViewModel, displayText: String) {
 
     ElevatedCard(
         modifier = Modifier
@@ -239,7 +239,7 @@ fun CardFront(text: String, viewModel: MainViewModel) {
     ) {
         Surface() {
             Text(viewModel.getManualRelationsCount(text).toString())
-            CardContent(text)
+            CardContent(displayText)
         }
     }
 }

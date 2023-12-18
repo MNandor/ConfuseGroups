@@ -107,7 +107,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
             // known to be not null, otherwise it'd be a new card
             val streakSoFar = reviews.find { it.question == note.question }!!.streak
 
-            val viewableCard = PreparedViewableCard(note.question, options.indexOf(note.answer)+1, options, streakSoFar)
+            val viewableCard = PreparedViewableCard(note.question, options.indexOf(note.answer)+1, options, streakSoFar, note.questionDisplay?:"{${note.question}}")
 
             return@map viewableCard
 
@@ -121,7 +121,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         Timber.d("Limiting to $newCount new cards")
 
         val newViewables = newCards.map{note ->
-            val viewableCard = PreparedViewableCard(note.question, 1, listOf(note.answer), -1)
+            val viewableCard = PreparedViewableCard(note.question, 1, listOf(note.answer), -1, note.questionDisplay?:"{${note.question}}")
 
             return@map viewableCard
         }.shuffled().take(newCount)

@@ -4,5 +4,6 @@ data class PreparedViewableCard(
     val front: String,
     val correct: Int,
     val options: List<String>,
-    val streakSoFar: Int
+    val streakSoFar: Int,
+    val visualQuestion: String
 )
