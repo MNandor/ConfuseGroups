@@ -47,7 +47,7 @@ fun ManualConfusionsScreen(viewModel: MainViewModel){
                     Text("Group ${it.second}")
                 }
 
-                NoteInAList(it)
+                NoteInAList(it.first)
 
             }
         }

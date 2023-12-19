@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import ml.nandor.confusegroups.presentation.item.NoteInAList
 import timber.log.Timber
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -68,18 +69,10 @@ fun SearchAndAddManualPopup(viewModel: MainViewModel) {
                             ElevatedCard(
                                 modifier = Modifier.padding(4.dp)
                             ) {
-                                Text(
-                                    text = "  ${item.id} - ${item.answer}",
-                                    modifier = Modifier
-                                        .padding(4.dp)
-                                        .fillMaxWidth()
-                                        .combinedClickable(
-                                            onClick = {
-                                                Timber.d("$cardLeft - ${item.id}")
-                                                viewModel.addManualConfusion(cardLeft, item.id)
-                                            }
-                                        )
-                                )
+                                NoteInAList(item, callback = {
+                                    Timber.d("$cardLeft - ${item.id}")
+                                    viewModel.addManualConfusion(cardLeft, item.id)
+                                })
                             }
                         }
                     }
