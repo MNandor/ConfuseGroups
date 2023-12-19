@@ -145,10 +145,10 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                 horizontalArrangement = Arrangement.Center
             ){
                 IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.ADDING) }) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add card to deck")
+                    Icon(Icons.Filled.Add, contentDescription = "Add one card to deck")
                 }
                 IconButton(onClick = { viewModel.setComparisonDeck(text) }) {
-                    Icon(Icons.Filled.DateRange, contentDescription = "Show deck mistakes")
+                    Icon(Icons.Filled.DateRange, contentDescription = "Show correlations")
                 }
                 IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.RENAME) }) {
                     Icon(Icons.Filled.Person, contentDescription = "Rename deck")
@@ -162,9 +162,9 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                 IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.INSPECTION) }) {
                     Icon(Icons.Filled.Edit, contentDescription = "Edit deck data")
                 }
-//                IconButton(onClick = { viewModel.setComparisonDeck2(text) }) {
-//                    Icon(Icons.Filled.DateRange, contentDescription = "Show deck mistakes")
-//                }
+                IconButton(onClick = { viewModel.setComparisonDeck2(text) }) {
+                    Icon(Icons.Filled.DateRange, contentDescription = "Show confusegroups")
+                }
                 IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.EDITING) }) {
                     Icon(Icons.Filled.Settings, contentDescription = "Edit deck settings")
                 }
