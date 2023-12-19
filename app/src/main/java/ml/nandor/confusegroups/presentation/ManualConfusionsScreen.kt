@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ml.nandor.confusegroups.domain.model.AtomicNote
+import ml.nandor.confusegroups.presentation.item.NoteInAList
 
 @Composable
 fun ManualConfusionsScreen(viewModel: MainViewModel){
@@ -42,15 +44,14 @@ fun ManualConfusionsScreen(viewModel: MainViewModel){
                 if (it.second != last){
                     last = it.second
                     Spacer(modifier = Modifier.height(16.dp))
+                    Text("Group ${it.second}")
                 }
 
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(4.dp)
-                ){
-                    Text("${it.first} - ${it.second}", fontSize = 24.sp, modifier = Modifier.padding(8.dp))
-                }
+                NoteInAList(it)
 
             }
         }
     }
 }
+
+

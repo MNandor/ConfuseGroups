@@ -414,33 +414,36 @@ class MainViewModel @Inject constructor(
 
     val allCardsGrouped = derivedStateOf {
 
-        var mappedList = _allCardsForManual.value.mapIndexed { index, item -> Pair(item.id, index)}.toMap()
+        var idsAndGroupIndices = _allCardsForManual.value.mapIndexed { index, item -> Pair(item.id, index)}.toMap()
 
-        Timber.d(mappedList.toString())
+        Timber.d(idsAndGroupIndices.toString())
 
         for (confusion in _manualConfusions.value){
-            if (mappedList[confusion.leftCard] != mappedList[confusion.rightCard]){
-                val idToChange = mappedList[confusion.rightCard]!!
-                val newId = mappedList[confusion.leftCard]!!
-                mappedList = mappedList.mapValues { if (it.value == idToChange) newId else it.value }
+            if (idsAndGroupIndices[confusion.leftCard] != idsAndGroupIndices[confusion.rightCard]){
+                val idToChange = idsAndGroupIndices[confusion.rightCard]!!
+                val newId = idsAndGroupIndices[confusion.leftCard]!!
+                idsAndGroupIndices = idsAndGroupIndices.mapValues { if (it.value == idToChange) newId else it.value }
             }
         }
 
-        Timber.d(mappedList.toString())
+        Timber.d(idsAndGroupIndices.toString())
 
-        val finalList = mappedList.toList().sortedBy { it.second }
+        val finalList = idsAndGroupIndices.toList().sortedBy { it.second }
 
+        // just filter those that don't belong to any confusegroups
         val groupCounts = finalList.map { it.second }.toSet().toList().map { c -> Pair(c, finalList.count { it.second == c }) }.filter { it.second > 1 }.map { it.first }
-
         val finalerList = finalList.filter { it.second in groupCounts }
+
+        // terrible code, will be rewritten
+        val finalFinalList = finalerList.map { Pair(_allCardsForManual.value.find { itt -> itt.id == it.first }!!, it.second) }
 
         Timber.d(finalerList.toString())
 
-        return@derivedStateOf finalerList
+        return@derivedStateOf finalFinalList
     }
 
     fun getManualRelationsCount(question: String): Int{
-        val pair = allCardsGrouped.value.find { it.first == question }
+        val pair = allCardsGrouped.value.find { it.first.id == question }
         if (pair == null)
             return 0;
 
