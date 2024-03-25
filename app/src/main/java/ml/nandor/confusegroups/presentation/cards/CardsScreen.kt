@@ -1,5 +1,6 @@
 package ml.nandor.confusegroups.presentation.cards
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,9 +36,12 @@ fun CardsScreen(commonViewModel: CommonViewModel){
 
     val localViewModel: CardsViewModel = hiltViewModel()
 
-    commonViewModel.comparisonDeck3.value?.let { localViewModel.loadCardsFromDatabase(it) }
+    commonViewModel.selectedDeck.value?.let { localViewModel.loadCardsFromDatabase(it) }
 
 
+    BackHandler(onBack = {
+        commonViewModel.deselectDeck()
+    })
 
     Surface() {
         Column() {

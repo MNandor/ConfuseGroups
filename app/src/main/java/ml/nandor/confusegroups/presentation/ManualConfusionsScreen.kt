@@ -22,10 +22,10 @@ import ml.nandor.confusegroups.presentation.item.NoteInAList
 @Composable
 fun ManualConfusionsScreen(viewModel: MainViewModel, commonViewModel:CommonViewModel){
 
-    val deckName = commonViewModel.comparisonDeck2.value!!
+    val deckName = commonViewModel.selectedDeck.value!!
 
     BackHandler(onBack = {
-        commonViewModel.setComparisonDeck2(null)
+        commonViewModel.deselectDeck()
     })
 
     Column() {

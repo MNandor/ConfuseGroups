@@ -49,18 +49,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if (commonViewModel.selectedDeck.value != null){
-                        ReviewScreen(viewModel, playNoise)
-                    } else {
-                        if (commonViewModel.comparisonDeck2.value != null) {
-                            ManualConfusionsScreen(viewModel = viewModel, commonViewModel)
-                        } else if (commonViewModel.comparisonDeck.value != null) {
-                            ComparisonScreen(viewModel, commonViewModel)
-                        } else if (commonViewModel.comparisonDeck3.value != null){
-                            CardsScreen(commonViewModel)
-                        } else {
-                            DecksScreen(commonViewModel)
-                        }
+                    when(commonViewModel.selectedMode.value){
+                        CommonViewModel.DeckOpenMode.NONE -> DecksScreen(commonViewModel)
+                        CommonViewModel.DeckOpenMode.REVIEW -> ReviewScreen(viewModel, playNoise)
+                        CommonViewModel.DeckOpenMode.CORRELATIONS -> ComparisonScreen(viewModel, commonViewModel)
+                        CommonViewModel.DeckOpenMode.CONFUSEGROUPS -> ManualConfusionsScreen(viewModel = viewModel, commonViewModel)
+                        CommonViewModel.DeckOpenMode.VIEWCARDS -> CardsScreen(commonViewModel)
+
                     }
 
                     val popups = viewModel.comparisonPopups.value

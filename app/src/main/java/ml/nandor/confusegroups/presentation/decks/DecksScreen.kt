@@ -98,7 +98,7 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
             .combinedClickable(
                 onClick = {
                     if (deckSize > 3) {
-                        commonViewModel.selectDeck(text)
+                        commonViewModel.selectDeck(text, CommonViewModel.DeckOpenMode.REVIEW)
                     } else {
                         Toast
                             .makeText(context, "Minimum deck size is 4", Toast.LENGTH_SHORT)
@@ -160,7 +160,7 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                 ) }) {
                     Icon(Icons.Filled.Add, contentDescription = "Add one card to deck")
                 }
-                IconButton(onClick = { commonViewModel.setComparisonDeck(text) }) {
+                IconButton(onClick = { commonViewModel.selectDeck(text, CommonViewModel.DeckOpenMode.CORRELATIONS) }) {
                     Icon(Icons.Filled.DateRange, contentDescription = "Show correlations")
                 }
                 IconButton(onClick = { viewModel.enterDeckActionMode(text,
@@ -169,7 +169,7 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                     Icon(Icons.Filled.Person, contentDescription = "Rename deck")
                 }
                 IconButton(onClick = {
-                    commonViewModel.setComparisonDeck3(text)
+                    commonViewModel.selectDeck(text, CommonViewModel.DeckOpenMode.VIEWCARDS)
                 }) {
                     Icon(Icons.Filled.Menu, contentDescription = "View Cards")
                 }
@@ -184,7 +184,7 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                 ) }) {
                     Icon(Icons.Filled.Edit, contentDescription = "Edit deck data")
                 }
-                IconButton(onClick = { commonViewModel.setComparisonDeck2(text) }) {
+                IconButton(onClick = { commonViewModel.selectDeck(text, CommonViewModel.DeckOpenMode.CONFUSEGROUPS) }) {
                     Icon(Icons.Filled.DateRange, contentDescription = "Show confusegroups")
                 }
                 IconButton(onClick = { viewModel.enterDeckActionMode(text,

@@ -24,10 +24,10 @@ import ml.nandor.confusegroups.presentation.common.CommonViewModel
 @Composable
 fun ComparisonScreen(viewModel: MainViewModel, commonViewModel: CommonViewModel){
 
-    val deckName = commonViewModel.comparisonDeck.value!!
+    val deckName = commonViewModel.selectedDeck.value!!
 
     BackHandler(onBack = {
-        commonViewModel.setComparisonDeck(null)
+        commonViewModel.deselectDeck()
     })
 
     Column() {
