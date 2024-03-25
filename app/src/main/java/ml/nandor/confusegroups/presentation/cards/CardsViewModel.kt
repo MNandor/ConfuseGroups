@@ -20,11 +20,14 @@ import ml.nandor.confusegroups.domain.usecase.InsertDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListDecksUseCase
 import ml.nandor.confusegroups.domain.usecase.RenameDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.UpdateCardUseCase
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class CardsViewModel @Inject constructor(
     private val listCardsFromDeckUseCase: ListCardsFromDeckUseCase,
+    private val updateCardUseCase: UpdateCardUseCase
 ): ViewModel() {
 
     // Define a coroutinescope so we don't run on main thread
@@ -33,13 +36,24 @@ class CardsViewModel @Inject constructor(
     private val _deckCards: MutableState<List<AtomicNote>> = mutableStateOf(listOf())
     val deckCards: State<List<AtomicNote>> = _deckCards
 
+    var currentDeck = ""
     fun loadCardsFromDatabase(deckName: String){
+        currentDeck = deckName
         listCardsFromDeckUseCase(deckName).onEach {
             if (it is Resource.Success){
                 withContext(Dispatchers.Main) {
                     _deckCards.value = it.data!!
                 }
             }
+        }.launchIn(viewModelScope)
+    }
+
+    fun updateCardValues(id: String, question: String?, answer: String){
+        Timber.d("Updating card [[$id]]")
+        val note = AtomicNote(id, answer, "", question)
+        updateCardUseCase(note).onEach {
+            Timber.d("Updated card [[$id]]")
+            loadCardsFromDatabase(currentDeck)
         }.launchIn(viewModelScope)
     }
 

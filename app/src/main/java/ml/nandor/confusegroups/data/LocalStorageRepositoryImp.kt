@@ -83,4 +83,8 @@ class LocalStorageRepositoryImp @Inject constructor(
         return dao.listManualConfusions()
     }
 
+    override fun updateCard(card: AtomicNote){
+        return dao.updateCard(card.question, card.answer, card.id)
+    }
+
 }

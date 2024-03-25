@@ -3,6 +3,7 @@ package ml.nandor.confusegroups.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.DeckSize
@@ -65,4 +66,7 @@ interface DataAccessObject {
 
     @Query("SELECT * FROM ManualConfusion")
     fun listManualConfusions(): List<ManualConfusion>
+
+    @Query("UPDATE AtomicNote SET questionDisplay = :question, answer = :answer WHERE question = :id")
+    fun updateCard(question: String?, answer: String, id: String)
 }
