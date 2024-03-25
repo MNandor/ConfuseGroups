@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
@@ -166,6 +167,11 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                     DecksViewModel.DeckAction.RENAME
                 ) }) {
                     Icon(Icons.Filled.Person, contentDescription = "Rename deck")
+                }
+                IconButton(onClick = {
+                    commonViewModel.setComparisonDeck3(text)
+                }) {
+                    Icon(Icons.Filled.Menu, contentDescription = "View Cards")
                 }
             }
             Row(

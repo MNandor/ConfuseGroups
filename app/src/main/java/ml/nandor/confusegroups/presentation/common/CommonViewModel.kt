@@ -68,5 +68,19 @@ class CommonViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    private val _comparisonDeck3:MutableState<String?> = mutableStateOf(null)
+    val comparisonDeck3: State<String?> = _comparisonDeck3
+    fun setComparisonDeck3(deckName: String?){
+        Timber.d("Selected deck $deckName for card listing!")
+        _comparisonDeck3.value = deckName
+        listCardsFromDeckUseCase(_comparisonDeck2.value).onEach {
+            if (it is Resource.Success){
+                withContext(Dispatchers.Main) {
+                    // _allCardsForManual.value = it.data!!
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
 
 }

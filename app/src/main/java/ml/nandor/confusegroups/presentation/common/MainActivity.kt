@@ -19,6 +19,7 @@ import ml.nandor.confusegroups.presentation.MainViewModel
 import ml.nandor.confusegroups.presentation.ManualConfusionsScreen
 import ml.nandor.confusegroups.presentation.ReviewScreen
 import ml.nandor.confusegroups.presentation.SearchAndAddManualPopup
+import ml.nandor.confusegroups.presentation.cards.CardsScreen
 import ml.nandor.confusegroups.ui.theme.ConfuseGroupsTheme
 
 @AndroidEntryPoint
@@ -53,8 +54,10 @@ class MainActivity : ComponentActivity() {
                     } else {
                         if (commonViewModel.comparisonDeck2.value != null) {
                             ManualConfusionsScreen(viewModel = viewModel, commonViewModel)
-                        } else if (commonViewModel.comparisonDeck.value != null){
+                        } else if (commonViewModel.comparisonDeck.value != null) {
                             ComparisonScreen(viewModel, commonViewModel)
+                        } else if (commonViewModel.comparisonDeck3.value != null){
+                            CardsScreen(commonViewModel)
                         } else {
                             DecksScreen(commonViewModel)
                         }
