@@ -42,18 +42,11 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getViewablesFromDeckUseCase: GetViewablesFromDeckUseCase,
-    private val deleteDeckUseCase: DeleteDeckUseCase,
     private val listDecksUseCase: ListDecksUseCase,
-    private val insertDeckUseCase: InsertDeckUseCase,
-    private val insertCardUseCase: InsertCardUseCase,
-    private val listCardsFromDeckUseCase: ListCardsFromDeckUseCase,
-    private val addCardsFromTextUseCase: AddCardsFromTextUseCase,
     private val getLevelOfDeckUseCase: GetLevelOfDeckUseCase,
     private val insertReviewUseCase: InsertReviewUseCase,
     private val getQuestionFromAnswerUseCase: GetQuestionFromAnswerUseCase,
-    private val getAllCorrelationsUseCase: GetAllCorrelationsUseCase,
     private val getDeckSizesUseCase: GetDeckSizesUseCase,
-    private val renameDeckUseCase: RenameDeckUseCase,
     private val insertManualConfusionUseCase: InsertManualConfusionUseCase,
     private val listManualConfusionsUseCase: ListManualConfusionsUseCase
 ): ViewModel() {
@@ -115,7 +108,7 @@ class MainViewModel @Inject constructor(
                     nextQuestion(true)
                 }
 
-                updateDeckLevel(selectedDeck.value)
+//                updateDeckLevel(selectedDeck.value)
             }
 
         }.launchIn(viewModelScope)
@@ -131,7 +124,7 @@ class MainViewModel @Inject constructor(
                 isClickable = true
 
                 if (_currentIndex.value >= viewableCards.value.size-1) {
-                    selectDeck(selectedDeck.value)
+//                    selectDeck(selectedDeck.value)
                 } else {
                     _currentIndex.value += 1
                 }
@@ -140,7 +133,7 @@ class MainViewModel @Inject constructor(
             }
         } else {
             if (_currentIndex.value >= viewableCards.value.size-1) {
-                selectDeck(selectedDeck.value)
+//                selectDeck(selectedDeck.value)
             } else {
                 _currentIndex.value += 1
             }
@@ -149,8 +142,7 @@ class MainViewModel @Inject constructor(
 
     }
 
-    private val _selectedDeck: MutableState<String?> = mutableStateOf(null)
-    val selectedDeck = _selectedDeck
+
 
     private val _deckLevel: MutableState<Int> = mutableStateOf(0)
     val deckLevel = _deckLevel
@@ -175,29 +167,18 @@ class MainViewModel @Inject constructor(
                 withContext(Dispatchers.Main) {
                     _currentIndex.value = 0
                     _viewableCards.value = it.data!!
-                    _selectedDeck.value = deckName
+
                     isClickable = true
                 }
             } else if (it is Resource.Error){
                 withContext(Dispatchers.Main) {
-                    _selectedDeck.value = null
+
                 }
             }
         }.launchIn(viewModelScope)
     }
 
-    fun createDeck(){
-        val name = Util.getDeckName()
 
-        val deck = Deck(name = name, -1, 1.5, 1.0, 0)
-
-
-        insertDeckUseCase(deck).onEach {
-            if (it is Resource.Success)
-                updateDecks()
-        }.launchIn(viewModelScope)
-
-    }
 
     private val _decks:MutableState<List<Deck>> = mutableStateOf(listOf())
     val decks = _decks
@@ -240,68 +221,9 @@ class MainViewModel @Inject constructor(
 
     private val _deckSizes = mutableStateOf<Map<String, Int>>(mapOf())
 
-    private val _deckBeingAccessed:MutableState<String?> = mutableStateOf(null)
-    val deckBeingAccessed:State<String?> = _deckBeingAccessed
-
-    enum class DeckAction{
-        DELETION,
-        EDITING,
-        INSPECTION,
-        ADDING,
-        RENAME
-    }
-
-    private val _deckActionBeingTaken:MutableState<DeckAction?> = mutableStateOf(null)
-    val deckActionBeingTaken:State<DeckAction?> = _deckActionBeingTaken
-
-    fun enterDeckActionMode(deckName:String? = null, mode:DeckAction? = null){
-        _deckBeingAccessed.value = deckName
-        _deckActionBeingTaken.value = mode
-
-        when(mode){
-            DeckAction.EDITING -> {
-                _editedDeckState.value = decks.value.find { it.name == deckName }
-            }
-            DeckAction.INSPECTION -> {
-                listCardsFromDeckUseCase(deckName).onEach {
-                    if (it is Resource.Success){
-                        withContext(Dispatchers.Main) {
-                            _inspectedDeckCards.value = it.data!!
-                        }
-                    }
-                }.launchIn(viewModelScope)
-
-            }
-            else -> {}
-        }
-
-    }
-    fun deleteDeck(){
-        if (_deckBeingAccessed.value != null){
-            deleteDeckUseCase(_deckBeingAccessed.value!!).onEach {
-                if (it is Resource.Success){
-                    updateDecks()
-                }
-            }.launchIn(viewModelScope)
-            enterDeckActionMode(null)
-        }
-    }
-
-    private val _editedDeckState:MutableState<Deck?> = mutableStateOf(null)
-    val editedDeckState:State<Deck?> = _editedDeckState
 
 
-    fun addCard(card: AtomicNote){
-        insertCardUseCase(card).launchIn(viewModelScope)
-    }
 
-    private val _inspectedDeckCards:MutableState<List<AtomicNote>> = mutableStateOf(listOf())
-
-    val inspectedDeckCards:State<List<AtomicNote>> = _inspectedDeckCards
-
-    fun loadDeckFromText(text: String){
-        addCardsFromTextUseCase(Pair(_deckBeingAccessed.value!!, text)).launchIn(viewModelScope)
-    }
 
     private val _comparisonQuestion:MutableState<String?> = mutableStateOf(null)
     val comparisonQuestion = _comparisonQuestion
@@ -318,32 +240,6 @@ class MainViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private val _comparisonDeck:MutableState<String?> = mutableStateOf(null)
-    val comparisonDeck:State<String?> = _comparisonDeck
-    private val _correlations:MutableState<List<Correlation>> = mutableStateOf(listOf())
-    val correlations:State<List<Correlation>> = _correlations
-    fun setComparisonDeck(deckName: String?){
-        _comparisonDeck.value = deckName
-        getAllCorrelationsUseCase(deckName).onEach {
-            if (it is Resource.Success){
-                _correlations.value = it.data!!
-            }
-
-        }.launchIn(viewModelScope)
-    }
-
-    private val _comparisonDeck2:MutableState<String?> = mutableStateOf(null)
-    val comparisonDeck2:State<String?> = _comparisonDeck2
-    fun setComparisonDeck2(deckName: String?){
-        _comparisonDeck2.value = deckName
-        listCardsFromDeckUseCase(_comparisonDeck2.value).onEach {
-            if (it is Resource.Success){
-                withContext(Dispatchers.Main) {
-                    _allCardsForManual.value = it.data!!
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
 
     private val _comparisonPopups:MutableState<List<String>> = mutableStateOf(listOf())
     val comparisonPopups:State<List<String>> = _comparisonPopups
@@ -355,26 +251,20 @@ class MainViewModel @Inject constructor(
         _comparisonPopups.value = _comparisonPopups.value.filter { it != text }
     }
 
-    fun renameDeck(deckName:String, deckDisplayName: String){
-        renameDeckUseCase(Pair(deckName, deckDisplayName)).onEach {
-            if (it is Resource.Success){
-                updateDecks()
-            }
-        }.launchIn(viewModelScope)
-    }
+
 
     private val _manualCardLeft:MutableState<String?> = mutableStateOf(null)
     val manualCardLeft:State<String?> = _manualCardLeft
     fun setManualLeft(cardName: String?){
-        _manualCardLeft.value = cardName
-        setManualRightSearchTerm("")
-        listCardsFromDeckUseCase(selectedDeck.value).onEach {
-            if (it is Resource.Success){
-                withContext(Dispatchers.Main) {
-                    _allCardsForManual.value = it.data!!
-                }
-            }
-        }.launchIn(viewModelScope)
+//        _manualCardLeft.value = cardName
+//        setManualRightSearchTerm("")
+//        listCardsFromDeckUseCase(selectedDeck.value).onEach {
+//            if (it is Resource.Success){
+//                withContext(Dispatchers.Main) {
+//                    _allCardsForManual.value = it.data!!
+//                }
+//            }
+//        }.launchIn(viewModelScope)
     }
 
     private val _allCardsForManual:MutableState<List<AtomicNote>> = mutableStateOf(listOf())

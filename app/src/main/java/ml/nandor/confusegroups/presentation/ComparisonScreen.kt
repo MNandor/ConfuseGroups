@@ -19,14 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ml.nandor.confusegroups.presentation.common.CommonViewModel
 
 @Composable
-fun ComparisonScreen(viewModel: MainViewModel){
+fun ComparisonScreen(viewModel: MainViewModel, commonViewModel: CommonViewModel){
 
-    val deckName = viewModel.comparisonDeck.value!!
+    val deckName = commonViewModel.comparisonDeck.value!!
 
     BackHandler(onBack = {
-        viewModel.setComparisonDeck(null)
+        commonViewModel.setComparisonDeck(null)
     })
 
     Column() {
@@ -40,7 +41,7 @@ fun ComparisonScreen(viewModel: MainViewModel){
             fontSize = 32.sp
         )
 
-        if (viewModel.correlations.value.isEmpty()){
+        if (commonViewModel.correlations.value.isEmpty()){
             Text(
                 text = "Loading Correlations. This might take longer for larger decks.",
                 modifier = Modifier
@@ -53,7 +54,7 @@ fun ComparisonScreen(viewModel: MainViewModel){
         }
 
         LazyColumn {
-            items(items = viewModel.correlations.value) {it ->
+            items(items = commonViewModel.correlations.value) {it ->
                 OutlinedCard (
                     modifier = Modifier
                         .fillMaxWidth()

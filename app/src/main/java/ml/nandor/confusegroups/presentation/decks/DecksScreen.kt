@@ -1,4 +1,4 @@
-package ml.nandor.confusegroups.presentation
+package ml.nandor.confusegroups.presentation.decks
 
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -44,41 +44,47 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import ml.nandor.confusegroups.Util
 import ml.nandor.confusegroups.domain.model.AtomicNote
+import ml.nandor.confusegroups.presentation.common.CommonViewModel
+import timber.log.Timber
 
 @Composable
-fun DecksScreen(viewModel: MainViewModel){
+fun DecksScreen(commonViewModel: CommonViewModel){
+    Timber.d("Launched")
+    val localViewModel: DecksViewModel = hiltViewModel()
+
     Surface() {
         Column() {
-            val decks = viewModel.decks.value
+            val decks = localViewModel.decks.value
             val ddecks: MutableList<String?> = decks.map { it.name }.toMutableList()
             ddecks.add(null)
             LazyColumn {
                 items(items = ddecks) { item ->
                     if (item == null) {
-                        AddDeck(viewModel)
+                        AddDeck(localViewModel)
                     } else {
-                        DeckItem(item, viewModel)
+                        DeckItem(item, localViewModel, commonViewModel)
                     }
 
                 }
             }
         }
         
-        DeleteDeckPopup(viewModel)
-        EditDeckSettingsPopup(viewModel)
-        AddToDeckPopup(viewModel)
-        InspectDeckPopup(viewModel)
-        RenameDeckPopup(viewModel)
+        DeleteDeckPopup(localViewModel)
+        EditDeckSettingsPopup(localViewModel)
+        AddToDeckPopup(localViewModel)
+        InspectDeckPopup(localViewModel)
+        RenameDeckPopup(localViewModel)
     }
 
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun DeckItem(text: String, viewModel: MainViewModel) {
-    val deckSize = viewModel.getDeckSize(text)
+private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: CommonViewModel) {
+    val deckSize = viewModel.getDeckSizeFromDeckName(text)
     val context = LocalContext.current
 
     val deckDisplayName = viewModel.decks.value.find { it.name == text }?.displayName ?: "[[$text]]"
@@ -91,10 +97,11 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
             .combinedClickable(
                 onClick = {
                     if (deckSize > 3) {
-                        viewModel.selectDeck(text)
-                    }
-                    else {
-                        Toast.makeText(context, "Minimum deck size is 4", Toast.LENGTH_SHORT).show()
+                        commonViewModel.selectDeck(text)
+                    } else {
+                        Toast
+                            .makeText(context, "Minimum deck size is 4", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             )
@@ -106,19 +113,21 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
 
                 Text(
                     modifier = Modifier
-                        .weight(0.15f).fillMaxWidth()
+                        .weight(0.15f)
+                        .fillMaxWidth()
                         .padding(top = 24.dp)
                         .wrapContentSize()
                         .height(64.dp)
                         .align(Alignment.CenterVertically),
 
-                    text = viewModel.getDeckSize(text).toString(),
+                    text = viewModel.getDeckSizeFromDeckName(text).toString(),
                     textAlign = TextAlign.Center
                 )
                 Text(
                     text = deckDisplayName,
                     modifier = Modifier
-                        .weight(0.7f).fillMaxWidth()
+                        .weight(0.7f)
+                        .fillMaxWidth()
                         .padding(top = 16.dp)
                         .wrapContentSize()
                         .height(64.dp)
@@ -128,7 +137,8 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                 )
                 Text(
                     modifier = Modifier
-                        .weight(0.15f).fillMaxWidth()
+                        .weight(0.15f)
+                        .fillMaxWidth()
                         .padding(top = 24.dp)
                         //.wrapContentSize()
                         .height(64.dp)
@@ -144,13 +154,17 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ){
-                IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.ADDING) }) {
+                IconButton(onClick = { viewModel.enterDeckActionMode(text,
+                    DecksViewModel.DeckAction.ADDING
+                ) }) {
                     Icon(Icons.Filled.Add, contentDescription = "Add one card to deck")
                 }
-                IconButton(onClick = { viewModel.setComparisonDeck(text) }) {
+                IconButton(onClick = { commonViewModel.setComparisonDeck(text) }) {
                     Icon(Icons.Filled.DateRange, contentDescription = "Show correlations")
                 }
-                IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.RENAME) }) {
+                IconButton(onClick = { viewModel.enterDeckActionMode(text,
+                    DecksViewModel.DeckAction.RENAME
+                ) }) {
                     Icon(Icons.Filled.Person, contentDescription = "Rename deck")
                 }
             }
@@ -159,16 +173,22 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ){
-                IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.INSPECTION) }) {
+                IconButton(onClick = { viewModel.enterDeckActionMode(text,
+                    DecksViewModel.DeckAction.INSPECTION
+                ) }) {
                     Icon(Icons.Filled.Edit, contentDescription = "Edit deck data")
                 }
-                IconButton(onClick = { viewModel.setComparisonDeck2(text) }) {
+                IconButton(onClick = { commonViewModel.setComparisonDeck2(text) }) {
                     Icon(Icons.Filled.DateRange, contentDescription = "Show confusegroups")
                 }
-                IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.EDITING) }) {
+                IconButton(onClick = { viewModel.enterDeckActionMode(text,
+                    DecksViewModel.DeckAction.EDITING
+                ) }) {
                     Icon(Icons.Filled.Settings, contentDescription = "Edit deck settings")
                 }
-                IconButton(onClick = { viewModel.enterDeckActionMode(text, MainViewModel.DeckAction.DELETION) }) {
+                IconButton(onClick = { viewModel.enterDeckActionMode(text,
+                    DecksViewModel.DeckAction.DELETION
+                ) }) {
                     Icon(Icons.Filled.Delete, contentDescription = "Delete deck")
                 }
             }
@@ -180,7 +200,7 @@ private fun DeckItem(text: String, viewModel: MainViewModel) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun AddDeck(viewModel: MainViewModel) {
+private fun AddDeck(viewModel: DecksViewModel) {
     ElevatedCard(
         modifier = Modifier
             .padding(16.dp)
@@ -210,9 +230,9 @@ private fun AddDeck(viewModel: MainViewModel) {
 }
 
 @Composable
-fun DeleteDeckPopup(viewModel: MainViewModel){
+fun DeleteDeckPopup(viewModel: DecksViewModel){
     val deckName = viewModel.deckBeingAccessed.value
-    val visible = viewModel.deckActionBeingTaken.value == MainViewModel.DeckAction.DELETION
+    val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.DELETION
 
     if (visible){
         AlertDialog(
@@ -242,9 +262,9 @@ fun DeleteDeckPopup(viewModel: MainViewModel){
 }
 
 @Composable
-fun EditDeckSettingsPopup(viewModel: MainViewModel){
+fun EditDeckSettingsPopup(viewModel: DecksViewModel){
     val deckName = viewModel.deckBeingAccessed.value
-    val visible = viewModel.deckActionBeingTaken.value == MainViewModel.DeckAction.EDITING
+    val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.EDITING
     if (visible){
         Dialog(onDismissRequest = { viewModel.enterDeckActionMode() }) {
             Card(
@@ -291,9 +311,9 @@ fun EditDeckSettingsPopup(viewModel: MainViewModel){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddToDeckPopup(viewModel: MainViewModel) {
+fun AddToDeckPopup(viewModel: DecksViewModel) {
     val deckName = viewModel.deckBeingAccessed.value
-    val visible = viewModel.deckActionBeingTaken.value == MainViewModel.DeckAction.ADDING
+    val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.ADDING
 
     var question by remember{ mutableStateOf("") }
     var answer by remember{ mutableStateOf("") }
@@ -364,9 +384,9 @@ fun AddToDeckPopup(viewModel: MainViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InspectDeckPopup(viewModel: MainViewModel) {
+fun InspectDeckPopup(viewModel: DecksViewModel) {
     val deckName = viewModel.deckBeingAccessed.value
-    val visible = viewModel.deckActionBeingTaken.value == MainViewModel.DeckAction.INSPECTION
+    val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.INSPECTION
     val cards = viewModel.inspectedDeckCards.value
 
     var inputText by remember{ mutableStateOf("") }
@@ -389,7 +409,9 @@ fun InspectDeckPopup(viewModel: MainViewModel) {
                         fontSize = 24.sp
                     )
                     LazyColumn(
-                        modifier = Modifier.padding(8.dp).fillMaxHeight(0.5f)
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxHeight(0.5f)
                     ) {
                         items(items = cards) { item ->
                             Text(item.id+" - "+item.answer)
@@ -419,7 +441,7 @@ fun InspectDeckPopup(viewModel: MainViewModel) {
 
                         TextButton(
                             onClick = {
-                                viewModel.loadDeckFromText(inputText)
+                                viewModel.addCardsAfterDeckInspection(inputText)
                                 inputText = ""
                               viewModel.enterDeckActionMode()
                             },
@@ -437,10 +459,10 @@ fun InspectDeckPopup(viewModel: MainViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RenameDeckPopup(viewModel: MainViewModel) {
+fun RenameDeckPopup(viewModel: DecksViewModel) {
     val deckName = viewModel.deckBeingAccessed.value
     val deckDisplayName = viewModel.decks.value.find { it.name == deckName }?.displayName ?: "UNNAMED"
-    val visible = viewModel.deckActionBeingTaken.value == MainViewModel.DeckAction.RENAME
+    val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.RENAME
 
     var inputText by remember{ mutableStateOf("") }
 

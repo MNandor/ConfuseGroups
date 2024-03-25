@@ -1,4 +1,4 @@
-package ml.nandor.confusegroups.presentation
+package ml.nandor.confusegroups.presentation.common
 
 import android.media.SoundPool
 import android.os.Bundle
@@ -12,6 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import ml.nandor.confusegroups.R
+import ml.nandor.confusegroups.presentation.ComparisonPopup
+import ml.nandor.confusegroups.presentation.ComparisonScreen
+import ml.nandor.confusegroups.presentation.decks.DecksScreen
+import ml.nandor.confusegroups.presentation.MainViewModel
+import ml.nandor.confusegroups.presentation.ManualConfusionsScreen
+import ml.nandor.confusegroups.presentation.ReviewScreen
+import ml.nandor.confusegroups.presentation.SearchAndAddManualPopup
 import ml.nandor.confusegroups.ui.theme.ConfuseGroupsTheme
 
 @AndroidEntryPoint
@@ -34,21 +41,22 @@ class MainActivity : ComponentActivity() {
         setContent {
             ConfuseGroupsTheme {
                 val viewModel: MainViewModel = hiltViewModel()
+                val commonViewModel: CommonViewModel = hiltViewModel()
 
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if (viewModel.selectedDeck.value != null){
+                    if (commonViewModel.selectedDeck.value != null){
                         ReviewScreen(viewModel, playNoise)
                     } else {
-                        if (viewModel.comparisonDeck2.value != null) {
-                            ManualConfusionsScreen(viewModel = viewModel)
-                        } else if (viewModel.comparisonDeck.value != null){
-                            ComparisonScreen(viewModel)
+                        if (commonViewModel.comparisonDeck2.value != null) {
+                            ManualConfusionsScreen(viewModel = viewModel, commonViewModel)
+                        } else if (commonViewModel.comparisonDeck.value != null){
+                            ComparisonScreen(viewModel, commonViewModel)
                         } else {
-                            DecksScreen(viewModel)
+                            DecksScreen(commonViewModel)
                         }
                     }
 

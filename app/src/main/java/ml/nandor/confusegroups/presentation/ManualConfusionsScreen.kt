@@ -16,15 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ml.nandor.confusegroups.domain.model.AtomicNote
+import ml.nandor.confusegroups.presentation.common.CommonViewModel
 import ml.nandor.confusegroups.presentation.item.NoteInAList
 
 @Composable
-fun ManualConfusionsScreen(viewModel: MainViewModel){
+fun ManualConfusionsScreen(viewModel: MainViewModel, commonViewModel:CommonViewModel){
 
-    val deckName = viewModel.comparisonDeck2.value!!
+    val deckName = commonViewModel.comparisonDeck2.value!!
 
     BackHandler(onBack = {
-        viewModel.setComparisonDeck2(null)
+        commonViewModel.setComparisonDeck2(null)
     })
 
     Column() {

@@ -14,7 +14,7 @@ class AddCardsFromTextUseCase @Inject constructor(
         val deck = input.first
         val data = input.second
 
-        for (pair in data.split(";")){
+        for (pair in data.split(";")){ //todo also newline
             val qa = pair.split("-")
 
             val question = qa[0].trim()
