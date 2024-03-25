@@ -55,7 +55,7 @@ interface DataAccessObject {
     fun getNotesMatchingAnswer(answer:String):List<AtomicNote>
 
     // todo this returns 1 when it should return 0
-    @Query("SELECT name, count(*) FROM Deck LEFT JOIN AtomicNote ON deck.name = AtomicNote.deck GROUP BY deck.name")
+    @Query("SELECT name, count(*) FROM Deck INNER JOIN AtomicNote ON deck.name = AtomicNote.deck GROUP BY deck.name")
     fun getDeckSizes():List<DeckSize>
 
     @Query("UPDATE DECK SET displayName = :deckNewName WHERE name = :deckID")
