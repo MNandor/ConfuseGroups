@@ -82,5 +82,7 @@ class CommonViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    // todo rather than 4 deck values, have one deck and one state variable
+
 
 }
