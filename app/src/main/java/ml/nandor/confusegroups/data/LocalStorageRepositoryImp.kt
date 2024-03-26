@@ -1,8 +1,10 @@
 package ml.nandor.confusegroups.data
 
 import ml.nandor.confusegroups.domain.model.AtomicNote
+import ml.nandor.confusegroups.domain.model.ConfuseGroup
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.DeckSize
+import ml.nandor.confusegroups.domain.model.GroupMembership
 import ml.nandor.confusegroups.domain.model.ManualConfusion
 import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
@@ -85,6 +87,14 @@ class LocalStorageRepositoryImp @Inject constructor(
 
     override fun updateCard(card: AtomicNote){
         return dao.updateCard(card.question, card.answer, card.id)
+    }
+
+    override fun insertConfuseGroup(group: ConfuseGroup) {
+        dao.insertConfuseGroup(group)
+    }
+
+    override fun makeCardPartOfGroup(membership: GroupMembership) {
+        dao.insertGroupMembership(membership)
     }
 
 }

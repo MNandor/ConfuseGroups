@@ -7,11 +7,13 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import ml.nandor.confusegroups.domain.model.AtomicNote
+import ml.nandor.confusegroups.domain.model.ConfuseGroup
 import ml.nandor.confusegroups.domain.model.Deck
+import ml.nandor.confusegroups.domain.model.GroupMembership
 import ml.nandor.confusegroups.domain.model.ManualConfusion
 import ml.nandor.confusegroups.domain.model.Review
 
-@Database(entities = [Deck::class, AtomicNote::class, Review::class, ManualConfusion::class], version = 5, exportSchema = false)
+@Database(entities = [Deck::class, AtomicNote::class, Review::class, ManualConfusion::class, ConfuseGroup::class, GroupMembership::class], version = 7, exportSchema = false)
 abstract class LocalStorageDatabase: RoomDatabase() {
     abstract fun dao(): DataAccessObject
 
@@ -25,7 +27,7 @@ abstract class LocalStorageDatabase: RoomDatabase() {
                     context.applicationContext,
                     LocalStorageDatabase::class.java,
                     "local_database"
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
                 .build()
                 INSTANCE = instance
 
@@ -69,6 +71,32 @@ abstract class LocalStorageDatabase: RoomDatabase() {
                 )
             }
         }
+
+        private val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create ConfuseGroup table
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `ConfuseGroup` (" +
+                            "`id` TEXT NOT NULL, " +
+                            "`displayName` TEXT, " +
+                            "PRIMARY KEY(`id`))"
+                )
+            }
+        }
+
+        private val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create GroupMembership table
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `GroupMembership` (" +
+                            "`id` TEXT NOT NULL, " +
+                            "`cardID` TEXT NOT NULL, " +
+                            "`groupID` TEXT NOT NULL, " +
+                            "PRIMARY KEY(`id`))"
+                )
+            }
+        }
+
 
     }
 }

@@ -1,8 +1,10 @@
 package ml.nandor.confusegroups.domain.repository
 
 import ml.nandor.confusegroups.domain.model.AtomicNote
+import ml.nandor.confusegroups.domain.model.ConfuseGroup
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.DeckSize
+import ml.nandor.confusegroups.domain.model.GroupMembership
 import ml.nandor.confusegroups.domain.model.ManualConfusion
 import ml.nandor.confusegroups.domain.model.Review
 
@@ -32,4 +34,8 @@ interface LocalStorageRepository {
     fun listManualConfusions(): List<ManualConfusion>
 
     fun updateCard(card: AtomicNote)
+
+    fun insertConfuseGroup(group: ConfuseGroup)
+
+    fun makeCardPartOfGroup(membership: GroupMembership)
 }
