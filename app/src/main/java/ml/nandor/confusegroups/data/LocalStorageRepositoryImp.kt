@@ -97,4 +97,12 @@ class LocalStorageRepositoryImp @Inject constructor(
         dao.insertGroupMembership(membership)
     }
 
+    override fun listConfuseGroups(): List<ConfuseGroup>{
+        return dao.listConfuseGroups()
+    }
+
+    override fun listGroupMemberships(): List<GroupMembership>{
+        return dao.listGroupMemberships()
+    }
+
 }

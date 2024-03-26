@@ -75,4 +75,10 @@ interface DataAccessObject {
     fun insertConfuseGroup(group: ConfuseGroup)
     @Insert
     fun insertGroupMembership(membership: GroupMembership)
+
+    @Query("SELECT * FROM ConfuseGroup")
+    fun listConfuseGroups():List<ConfuseGroup>
+
+    @Query("SELECT * FROM GroupMembership")
+    fun listGroupMemberships():List<GroupMembership>
 }

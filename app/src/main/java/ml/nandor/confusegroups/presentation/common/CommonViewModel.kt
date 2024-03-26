@@ -15,6 +15,7 @@ import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Correlation
 import ml.nandor.confusegroups.domain.usecase.GetAllCorrelationsUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.ListCardsGroupedFromDeckUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class CommonViewModel @Inject constructor(
     private val listCardsFromDeckUseCase: ListCardsFromDeckUseCase,
     private val getAllCorrelationsUseCase: GetAllCorrelationsUseCase,
+    private val listCardsGroupedFromDeckUseCase: ListCardsGroupedFromDeckUseCase
 ): ViewModel() {
 
     // Define a coroutinescope so we don't run on main thread
@@ -126,6 +128,8 @@ class CommonViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+
+        listCardsGroupedFromDeckUseCase(selectedDeck.value).launchIn(viewModelScope)
     }
 
     private val _allCardsForManual:MutableState<List<AtomicNote>> = mutableStateOf(listOf())

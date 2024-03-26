@@ -38,4 +38,8 @@ interface LocalStorageRepository {
     fun insertConfuseGroup(group: ConfuseGroup)
 
     fun makeCardPartOfGroup(membership: GroupMembership)
+
+    fun listConfuseGroups(): List<ConfuseGroup>
+
+    fun listGroupMemberships(): List<GroupMembership>
 }
