@@ -29,13 +29,12 @@ import timber.log.Timber
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SearchAndAddManualPopup(viewModel: MainViewModel, commonViewModel: CommonViewModel) {
+fun SearchAndAddManualPopup(commonViewModel: CommonViewModel) {
 
     val cardLeft = commonViewModel.manualCardLeft.value
     val visible = cardLeft != null
 
     var searchString = commonViewModel.manualRightSearchTerm.value
-    val searchResults = viewModel.allCardsForManualFiltered.value
 
     val newSearchResults = commonViewModel.groupToAddTo.value
 
@@ -79,11 +78,17 @@ fun SearchAndAddManualPopup(viewModel: MainViewModel, commonViewModel: CommonVie
                             ) {
                                 Column {
 
-                                    Text(item.confuseGroup?.displayName?:"UNGROUPED")
+                                    Text(item.confuseGroup?.displayName?:"UNGROUPED",
+                                        modifier = Modifier.combinedClickable {
+                                            Timber.d("Clicked - ${item.confuseGroup?.displayName?:"UNGROUPED"}")
+                                            val groupID = item.confuseGroup?.id
+                                            if (groupID != null)
+                                                commonViewModel.joinExistingGroup(groupID)
+                                        })
                                     // we're nesting lazycolumns
                                     // that's a bad idea
                                     // to make it work, we need to define the height of the inner lazycolumn
-                                    InnerColumn(cards = item.associatedNotes)
+                                    InnerColumn(cards = item.associatedNotes, commonViewModel)
                                 }
                             }
                         }
@@ -96,7 +101,7 @@ fun SearchAndAddManualPopup(viewModel: MainViewModel, commonViewModel: CommonVie
 }
 
 @Composable
-fun InnerColumn(cards: List<AtomicNote>){
+fun InnerColumn(cards: List<AtomicNote>, commonViewModel: CommonViewModel){
     LazyColumn(
         modifier = Modifier
             .heightIn(0.dp, 200.dp) //constrain height
@@ -107,6 +112,8 @@ fun InnerColumn(cards: List<AtomicNote>){
             NoteInAList(item, callback = {
                 Timber.d("Clicked - ${item.question}")
 //                viewModel.addManualConfusion(cardLeft, item.id)
+                commonViewModel.createGroupWithOtherCard(item.id)
+                // todo instead ask if user wants to merge into the existing group
             })
         }
     }

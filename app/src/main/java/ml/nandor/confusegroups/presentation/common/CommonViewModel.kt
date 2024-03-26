@@ -14,7 +14,9 @@ import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.ConfuseGroupToAddTo
 import ml.nandor.confusegroups.domain.model.Correlation
+import ml.nandor.confusegroups.domain.usecase.CreateConfuseGroupWithAnotherCardUseCase
 import ml.nandor.confusegroups.domain.usecase.GetAllCorrelationsUseCase
+import ml.nandor.confusegroups.domain.usecase.JoinConfuseGroupUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsGroupedFromDeckUseCase
 import timber.log.Timber
@@ -24,7 +26,9 @@ import javax.inject.Inject
 class CommonViewModel @Inject constructor(
     private val listCardsFromDeckUseCase: ListCardsFromDeckUseCase,
     private val getAllCorrelationsUseCase: GetAllCorrelationsUseCase,
-    private val listCardsGroupedFromDeckUseCase: ListCardsGroupedFromDeckUseCase
+    private val listCardsGroupedFromDeckUseCase: ListCardsGroupedFromDeckUseCase,
+    private val createConfuseGroupWithAnotherCardUseCase: CreateConfuseGroupWithAnotherCardUseCase,
+    private val joinConfuseGroupUseCase: JoinConfuseGroupUseCase
 ): ViewModel() {
 
     // Define a coroutinescope so we don't run on main thread
@@ -149,6 +153,35 @@ class CommonViewModel @Inject constructor(
     fun setManualRightSearchTerm(searchTerm: String){
         _manualRightSearchTerm.value = searchTerm
         Timber.d(">$searchTerm")
+    }
+
+    fun joinExistingGroup(groupID: String){
+        val left = manualCardLeft.value
+
+        if (left == null)
+            return
+
+        Timber.d("Merging $left into $groupID")
+
+        joinConfuseGroupUseCase(Pair(left, groupID)).onEach {
+            setManualLeft(left)
+        }.launchIn(viewModelScope)
+    }
+
+    fun createGroupWithOtherCard(noteID: String){
+        val left = manualCardLeft.value
+
+        if (left == noteID)
+            return
+
+        if (left == null)
+            return
+
+        Timber.d("Creating group with $left and $noteID")
+
+        createConfuseGroupWithAnotherCardUseCase(Pair(left, noteID)).onEach {
+            setManualLeft(left)
+        }.launchIn(viewModelScope)
     }
 
 }

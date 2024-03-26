@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    SearchAndAddManualPopup(viewModel = viewModel, commonViewModel)
+                    SearchAndAddManualPopup(commonViewModel)
 
                 }
             }
