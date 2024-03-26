@@ -2,6 +2,7 @@ package ml.nandor.confusegroups.presentation.common
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -144,7 +145,24 @@ class CommonViewModel @Inject constructor(
     }
 
     private val _groupsToAddTo:MutableState<List<ConfuseGroupToAddTo>> = mutableStateOf(listOf())
-    val groupToAddTo = _groupsToAddTo
+
+
+    val filteredGroupsToAddTo = derivedStateOf {
+        _groupsToAddTo.value.filter {
+            val str = manualRightSearchTerm.value.lowercase()
+            if (it.confuseGroup?.displayName?.lowercase()?.contains(str) == true)
+                return@filter true
+
+            for (note in it.associatedNotes){
+                if (note.question?.lowercase()?.contains(str) == true)
+                    return@filter true
+                if (note.answer.lowercase().contains(str))
+                    return@filter true
+            }
+
+            return@filter false
+        }
+    }
 
     private val _allCardsForManual:MutableState<List<AtomicNote>> = mutableStateOf(listOf())
 

@@ -36,7 +36,7 @@ fun SearchAndAddManualPopup(commonViewModel: CommonViewModel) {
 
     var searchString = commonViewModel.manualRightSearchTerm.value
 
-    val newSearchResults = commonViewModel.groupToAddTo.value
+    val newSearchResults = commonViewModel.filteredGroupsToAddTo.value
 
     if (visible) {
         Dialog(onDismissRequest = { commonViewModel.setManualLeft(null) }) {
