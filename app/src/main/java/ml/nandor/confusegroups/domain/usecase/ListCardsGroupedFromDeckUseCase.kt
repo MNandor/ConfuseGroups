@@ -36,7 +36,11 @@ class ListCardsGroupedFromDeckUseCase @Inject constructor(
             }
             val theCard = cards.find { it.id == membership.cardID }
 
-            theCard?.let { map[membership.groupID]!!.add(it) }
+            theCard?.let {
+                if (! map[membership.groupID]!!.contains(it)) // don't show the same card in the same group twice
+                    // todo should prevent these being added to the db to begin with
+                    map[membership.groupID]!!.add(it)
+            }
 
             ungroupedCards.remove(theCard)
         }

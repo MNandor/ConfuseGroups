@@ -38,8 +38,10 @@ fun CardsScreen(commonViewModel: CommonViewModel){
 
     val localViewModel: CardsViewModel = hiltViewModel()
 
-    commonViewModel.selectedDeck.value?.let { localViewModel.loadCardsFromDatabase(it) }
-
+    commonViewModel.selectedDeck.value?.let {
+        Timber.d("Loading from $it")
+        localViewModel.loadCardsFromDatabase(it)
+    }
 
     BackHandler(onBack = {
         commonViewModel.deselectDeck()
@@ -78,9 +80,17 @@ fun OneCard(card: AtomicNote, localViewModel: CardsViewModel, commonViewModel: C
         var answer by remember { mutableStateOf(card.answer) }
         var buttonVisible by remember { mutableStateOf(false) }
 
+        // todo these remember statements survive recomposition
+        // this is a problem if viewing a different deck
+
         Column {
             Text("[[${card.id}]]", fontSize = 12.sp,  modifier = Modifier
                 .padding(8.dp)
+                .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = LocalContentColor.current.copy(alpha = 0.5f)
+            )
+            Text("${card.question?:""} - ${card.answer}", fontSize = 12.sp,  modifier = Modifier
                 .fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = LocalContentColor.current.copy(alpha = 0.5f)
