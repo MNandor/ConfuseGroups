@@ -5,6 +5,8 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.presentation.common.CommonViewModel
 import ml.nandor.confusegroups.presentation.item.NoteInAList
 import timber.log.Timber
@@ -34,12 +37,14 @@ fun SearchAndAddManualPopup(viewModel: MainViewModel, commonViewModel: CommonVie
     var searchString = commonViewModel.manualRightSearchTerm.value
     val searchResults = viewModel.allCardsForManualFiltered.value
 
+    val newSearchResults = commonViewModel.groupToAddTo.value
+
     if (visible) {
         Dialog(onDismissRequest = { commonViewModel.setManualLeft(null) }) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.6f)
+                    .fillMaxHeight(0.8f)
             ) {
                 Column() {
                     Text(
@@ -65,15 +70,21 @@ fun SearchAndAddManualPopup(viewModel: MainViewModel, commonViewModel: CommonVie
                     ) {
                         Text("Close")
                     }
+
+
                     LazyColumn {
-                        items(items = searchResults) { item ->
+                        items(items = newSearchResults) { item ->
                             ElevatedCard(
                                 modifier = Modifier.padding(4.dp)
                             ) {
-                                NoteInAList(item, callback = {
-                                    Timber.d("$cardLeft - ${item.id}")
-                                    viewModel.addManualConfusion(cardLeft, item.id)
-                                })
+                                Column {
+
+                                    Text(item.confuseGroup?.displayName?:"UNGROUPED")
+                                    // we're nesting lazycolumns
+                                    // that's a bad idea
+                                    // to make it work, we need to define the height of the inner lazycolumn
+                                    InnerColumn(cards = item.associatedNotes)
+                                }
                             }
                         }
                     }
@@ -82,4 +93,21 @@ fun SearchAndAddManualPopup(viewModel: MainViewModel, commonViewModel: CommonVie
         }
     }
 
+}
+
+@Composable
+fun InnerColumn(cards: List<AtomicNote>){
+    LazyColumn(
+        modifier = Modifier
+            .heightIn(0.dp, 200.dp) //constrain height
+            .fillMaxWidth()
+    ){
+        items(items = cards){item ->
+//            Text("${item.question} - ${item.answer}")
+            NoteInAList(item, callback = {
+                Timber.d("Clicked - ${item.question}")
+//                viewModel.addManualConfusion(cardLeft, item.id)
+            })
+        }
+    }
 }

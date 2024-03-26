@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
+import ml.nandor.confusegroups.domain.model.ConfuseGroupToAddTo
 import ml.nandor.confusegroups.domain.model.Correlation
 import ml.nandor.confusegroups.domain.usecase.GetAllCorrelationsUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
@@ -129,8 +130,17 @@ class CommonViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
 
-        listCardsGroupedFromDeckUseCase(selectedDeck.value).launchIn(viewModelScope)
+        listCardsGroupedFromDeckUseCase(selectedDeck.value).onEach {
+            if (it is Resource.Success){
+                withContext(Dispatchers.Main) {
+                    _groupsToAddTo.value = it.data!!
+                }
+            }
+        }.launchIn(viewModelScope)
     }
+
+    private val _groupsToAddTo:MutableState<List<ConfuseGroupToAddTo>> = mutableStateOf(listOf())
+    val groupToAddTo = _groupsToAddTo
 
     private val _allCardsForManual:MutableState<List<AtomicNote>> = mutableStateOf(listOf())
 
