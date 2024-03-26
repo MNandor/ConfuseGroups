@@ -20,21 +20,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import ml.nandor.confusegroups.presentation.common.CommonViewModel
 import ml.nandor.confusegroups.presentation.item.NoteInAList
 import timber.log.Timber
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SearchAndAddManualPopup(viewModel: MainViewModel) {
+fun SearchAndAddManualPopup(viewModel: MainViewModel, commonViewModel: CommonViewModel) {
 
-    val cardLeft = viewModel.manualCardLeft.value
+    val cardLeft = commonViewModel.manualCardLeft.value
     val visible = cardLeft != null
 
-    var searchString = viewModel.manualRightSearchTerm.value
+    var searchString = commonViewModel.manualRightSearchTerm.value
     val searchResults = viewModel.allCardsForManualFiltered.value
 
     if (visible) {
-        Dialog(onDismissRequest = { viewModel.setManualLeft(null) }) {
+        Dialog(onDismissRequest = { commonViewModel.setManualLeft(null) }) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -53,13 +54,13 @@ fun SearchAndAddManualPopup(viewModel: MainViewModel) {
                         .padding(4.dp)
                         .fillMaxWidth(),
                         value = searchString,
-                        onValueChange = { it: String -> viewModel.setManualRightSearchTerm(it) },
+                        onValueChange = { it: String -> commonViewModel.setManualRightSearchTerm(it) },
                         label = { Text("Search for other cards") }
                     )
 
                     TextButton(
                         onClick = {
-                            viewModel.setManualLeft(null)
+                            commonViewModel.setManualLeft(null)
                         },
                     ) {
                         Text("Close")

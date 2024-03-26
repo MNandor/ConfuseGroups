@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import ml.nandor.confusegroups.domain.Resource
+import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Correlation
 import ml.nandor.confusegroups.domain.usecase.GetAllCorrelationsUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
@@ -106,5 +107,34 @@ class CommonViewModel @Inject constructor(
 
     private val _correlations:MutableState<List<Correlation>> = mutableStateOf(listOf())
     val correlations: State<List<Correlation>> = _correlations
+
+    private val _manualCardLeft:MutableState<String?> = mutableStateOf(null)
+    val manualCardLeft:State<String?> = _manualCardLeft
+
+    fun setManualLeft(cardName: String?){
+        _manualCardLeft.value = cardName
+
+        if (cardName == null)
+            return
+
+        setManualRightSearchTerm("")
+        listCardsFromDeckUseCase(selectedDeck.value).onEach {
+            if (it is Resource.Success){
+                withContext(Dispatchers.Main) {
+                    _allCardsForManual.value = it.data!!
+                    Timber.d("There are ${it.data.size} options for right!")
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private val _allCardsForManual:MutableState<List<AtomicNote>> = mutableStateOf(listOf())
+
+    private val _manualRightSearchTerm:MutableState<String> = mutableStateOf("")
+    val manualRightSearchTerm:State<String> = _manualRightSearchTerm
+    fun setManualRightSearchTerm(searchTerm: String){
+        _manualRightSearchTerm.value = searchTerm
+        Timber.d(">$searchTerm")
+    }
 
 }

@@ -1,6 +1,8 @@
 package ml.nandor.confusegroups.presentation.cards
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,7 +50,7 @@ fun CardsScreen(commonViewModel: CommonViewModel){
             val cards = localViewModel.deckCards.value
             LazyColumn {
                 items(items = cards) { item ->
-                    OneCard(item, localViewModel)
+                    OneCard(item, localViewModel, commonViewModel)
 
                 }
             }
@@ -56,13 +58,20 @@ fun CardsScreen(commonViewModel: CommonViewModel){
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun OneCard(card: AtomicNote, localViewModel: CardsViewModel){
+fun OneCard(card: AtomicNote, localViewModel: CardsViewModel, commonViewModel: CommonViewModel){
     ElevatedCard (
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
+            .combinedClickable(
+                onClick = {},
+                onLongClick = {
+                    commonViewModel.setManualLeft(card.id)
+                    Timber.d("Long Click!")
+                }
+            )
 
     ){
         var question by remember { mutableStateOf(card.question ?: "MISSING") }

@@ -279,10 +279,6 @@ class MainViewModel @Inject constructor(
     }
 
     private val _manualRightSearchTerm:MutableState<String> = mutableStateOf("")
-    val manualRightSearchTerm:State<String> = _manualRightSearchTerm
-    fun setManualRightSearchTerm(searchTerm: String){
-        _manualRightSearchTerm.value = searchTerm
-    }
 
     fun addManualConfusion(left: String, right:String){
         insertManualConfusionUseCase(ManualConfusion(leftCard = left, rightCard = right)).onEach {
