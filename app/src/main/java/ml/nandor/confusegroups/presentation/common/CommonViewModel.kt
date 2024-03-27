@@ -148,8 +148,8 @@ class CommonViewModel @Inject constructor(
 
 
     val filteredGroupsToAddTo = derivedStateOf {
+        val str = manualRightSearchTerm.value.lowercase()
         _groupsToAddTo.value.filter {
-            val str = manualRightSearchTerm.value.lowercase()
             if (it.confuseGroup?.displayName?.lowercase()?.contains(str) == true)
                 return@filter true
 
@@ -161,6 +161,19 @@ class CommonViewModel @Inject constructor(
             }
 
             return@filter false
+        }.map {
+            if (it.confuseGroup != null)
+                return@map it
+            else
+                return@map ConfuseGroupToAddTo(null, it.associatedNotes.filter {note ->
+                    if (note.question?.lowercase()?.contains(str) == true)
+                        return@filter true
+                    if (note.answer.lowercase().contains(str))
+                        return@filter true
+
+                    return@filter false
+
+                })
         }
     }
 
