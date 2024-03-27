@@ -107,7 +107,7 @@ fun ReviewScreen(playNoise: (Boolean) -> Int, commonViewModel: CommonViewModel) 
                 Text(text = "Level: " + localViewModel.deckLevel.value.toString())
             }
 
-            CardFront(card.note.id,  card.note.question?:"missing front")
+            CardFront(card.note.id,  card.note.question?:"missing front", commonViewModel)
 
             if (card.options.size == 4) {
                 if (localViewModel.comparisonQuestion.value == null) {
@@ -149,7 +149,8 @@ fun ReviewScreen(playNoise: (Boolean) -> Int, commonViewModel: CommonViewModel) 
                 } else {
                     CardComparisonBad(
                         text = localViewModel.comparisonQuestion.value!!,
-                        viewModel = localViewModel
+                        viewModel = localViewModel,
+                        commonViewModel = commonViewModel
                     )
                 }
 
@@ -176,7 +177,7 @@ fun ReviewScreen(playNoise: (Boolean) -> Int, commonViewModel: CommonViewModel) 
                     .fillMaxHeight()
                     .aspectRatio(1.0f)
             ) {
-                CardFront(card.note.id, card.note.question?:"missing front")
+                CardFront(card.note.id, card.note.question?:"missing front", commonViewModel)
             }
 
             if (card.options.size == 4) {
@@ -219,7 +220,8 @@ fun ReviewScreen(playNoise: (Boolean) -> Int, commonViewModel: CommonViewModel) 
                 } else {
                     CardComparisonBad(
                         text = localViewModel.comparisonQuestion.value!!,
-                        viewModel = localViewModel
+                        viewModel = localViewModel,
+                        commonViewModel = commonViewModel
                     )
                 }
 
@@ -233,7 +235,7 @@ fun ReviewScreen(playNoise: (Boolean) -> Int, commonViewModel: CommonViewModel) 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CardFront(text: String, displayText: String) {
+fun CardFront(text: String, displayText: String, commonViewModel: CommonViewModel) {
 
     ElevatedCard(
         modifier = Modifier
@@ -245,7 +247,7 @@ fun CardFront(text: String, displayText: String) {
 //                    viewModel.addComparisonPopup(text)
                 },
                 onLongClick = {
-//                    viewModel.setManualLeft(text)
+                    commonViewModel.setManualLeft(text)
                 }
 
             )
@@ -335,7 +337,7 @@ private fun CardOnlyOption(text: String, viewModel: ReviewViewModel, playNoise: 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun CardComparisonBad(text: String, viewModel: ReviewViewModel) {
+private fun CardComparisonBad(text: String, viewModel: ReviewViewModel, commonViewModel: CommonViewModel) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -346,7 +348,8 @@ private fun CardComparisonBad(text: String, viewModel: ReviewViewModel) {
                     viewModel.nextQuestion(false)
                 },
                 onLongClick = {
-//                    viewModel.setManualLeft(text)
+//                    commonViewModel.setManualLeft()
+                    // todo to make this work, use ID, not question
                 }
             )
     ) {
