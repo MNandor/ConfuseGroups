@@ -392,7 +392,7 @@ private fun RowScope.CardBackOption(
 
                     },
                     onLongClick = {
-                        //viewModel.displayComparison(text)
+                        viewModel.displayComparison(text)
                     }
                 )
         ) {

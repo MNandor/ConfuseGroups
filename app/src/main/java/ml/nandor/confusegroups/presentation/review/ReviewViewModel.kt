@@ -22,6 +22,7 @@ import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.usecase.CreateConfuseGroupWithAnotherCardUseCase
 import ml.nandor.confusegroups.domain.usecase.GetAllCorrelationsUseCase
 import ml.nandor.confusegroups.domain.usecase.GetLevelOfDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.GetQuestionFromAnswerUseCase
 import ml.nandor.confusegroups.domain.usecase.GetViewablesFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertReviewUseCase
 import ml.nandor.confusegroups.domain.usecase.JoinConfuseGroupUseCase
@@ -36,6 +37,7 @@ class ReviewViewModel @Inject constructor(
     private val getLevelOfDeckUseCase: GetLevelOfDeckUseCase,
     private val getViewablesFromDeckUseCase: GetViewablesFromDeckUseCase,
     private val insertReviewUseCase: InsertReviewUseCase,
+    private val getQuestionFromAnswerUseCase: GetQuestionFromAnswerUseCase
 ): ViewModel() {
 
     // Define a coroutinescope so we don't run on main thread
@@ -177,7 +179,7 @@ class ReviewViewModel @Inject constructor(
                     _currentIndex.value += 1
                 }
                 _cardCorrectness.value = allCorrect
-//                displayComparison(null)
+                displayComparison(null)
             }
         } else {
             if (_currentIndex.value >= viewableCards.value.size-1) {
@@ -185,11 +187,25 @@ class ReviewViewModel @Inject constructor(
             } else {
                 _currentIndex.value += 1
             }
-//            displayComparison(null)
+            displayComparison(null)
         }
 
     }
 
     private val _comparisonQuestion:MutableState<String?> = mutableStateOf(null)
     val comparisonQuestion = _comparisonQuestion
+
+    fun displayComparison(answer: String?){
+        // todo how do we handle duplicates in either direction?
+        if (answer == null){
+            _comparisonQuestion.value = null
+            return
+        }
+
+        getQuestionFromAnswerUseCase(answer).onEach {
+            if (it is Resource.Success){
+                _comparisonQuestion.value = it.data
+            }
+        }.launchIn(viewModelScope)
+    }
 }
