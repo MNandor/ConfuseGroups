@@ -66,81 +66,11 @@ class MainViewModel @Inject constructor(
         CardCorrectness.BASE
     )
     private val _cardCorrectness = mutableStateOf(allCorrect)
-    val cardCorrectness = _cardCorrectness
 
     private val _currentIndex = mutableStateOf(0)
-    val currentQuestion = derivedStateOf { viewableCards.value[_currentIndex.value]}
+
 
     private var isClickable = true
-    fun isClickable():Boolean = isClickable
-    fun checkAnswer(answer:String):Boolean{
-        val card = viewableCards.value[_currentIndex.value]
-
-        val wasCorrect = answer == card.options[card.correct-1]
-
-        val review = Review(
-            question = card.note.id, //alright this needs to be changed
-            answer = answer,
-            level = deckLevel.value,
-            streak = if (wasCorrect) card.streakSoFar+1 else 0,
-            timeStamp = System.currentTimeMillis()/1000,
-            unpickedAnswers = card.options.filter { it != answer }.joinToString(";")
-        )
-
-        insertReviewUseCase(review).onEach {
-            if (it is Resource.Success){
-                if (wasCorrect){
-                    nextQuestion(false)
-                } else {
-                    val cors:MutableList<CardCorrectness> = mutableListOf()
-
-                    for (option in card.options){
-                        if (option == answer)
-                            cors.add(CardCorrectness.BAD)
-                        else if (option == card.options[card.correct-1])
-                            cors.add(CardCorrectness.GOOD)
-                        else
-                            cors.add(CardCorrectness.BASE)
-
-                        _cardCorrectness.value = cors
-                    }
-
-                    nextQuestion(true)
-                }
-
-//                updateDeckLevel(selectedDeck.value)
-            }
-
-        }.launchIn(viewModelScope)
-
-        return wasCorrect
-    }
-
-    fun nextQuestion(delay:Boolean = false){
-        if (delay){
-            viewModelScope.launch {
-                isClickable = false
-                delay(3000)
-                isClickable = true
-
-                if (_currentIndex.value >= viewableCards.value.size-1) {
-//                    selectDeck(selectedDeck.value)
-                } else {
-                    _currentIndex.value += 1
-                }
-                _cardCorrectness.value = allCorrect
-                displayComparison(null)
-            }
-        } else {
-            if (_currentIndex.value >= viewableCards.value.size-1) {
-//                selectDeck(selectedDeck.value)
-            } else {
-                _currentIndex.value += 1
-            }
-            displayComparison(null)
-        }
-
-    }
 
 
 
@@ -156,28 +86,6 @@ class MainViewModel @Inject constructor(
 
         }.launchIn(viewModelScope)
     }
-    fun selectDeck(deckName: String?){
-        updateDeckLevel(deckName)
-        getViewablesFromDeckUseCase(deckName).onEach {
-            if (it is Resource.Loading){
-                isClickable = false
-            }
-
-            if (it is Resource.Success){
-                withContext(Dispatchers.Main) {
-                    _currentIndex.value = 0
-                    _viewableCards.value = it.data!!
-
-                    isClickable = true
-                }
-            } else if (it is Resource.Error){
-                withContext(Dispatchers.Main) {
-
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
-
 
 
     private val _decks:MutableState<List<Deck>> = mutableStateOf(listOf())

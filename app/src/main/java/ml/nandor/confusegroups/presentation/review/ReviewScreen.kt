@@ -1,4 +1,4 @@
-package ml.nandor.confusegroups.presentation
+package ml.nandor.confusegroups.presentation.review
 
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
@@ -34,17 +34,26 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ml.nandor.confusegroups.presentation.AutoResizeText
+import ml.nandor.confusegroups.presentation.FontSizeRange
+import ml.nandor.confusegroups.presentation.MainViewModel
+import ml.nandor.confusegroups.presentation.common.CommonViewModel
 import timber.log.Timber
 import java.io.File
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 @Composable
-fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
+fun ReviewScreen(playNoise: (Boolean) -> Int, commonViewModel: CommonViewModel) {
+
+    val localViewModel:ReviewViewModel = hiltViewModel()
+
+    commonViewModel.selectedDeck.value?.let { localViewModel.beginReviewingADeck(it) }
 
     val colorGood = Color.Green.copy(alpha = 0.1f)
     val colorBad = Color.Red.copy(alpha = 0.1f)
@@ -57,8 +66,16 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
 
     val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
 
-    val card = viewModel.currentQuestion.value
-    val correctness = viewModel.cardCorrectness.value
+    BackHandler(onBack = {
+        commonViewModel.deselectDeck()
+    })
+
+    val card = localViewModel.currentQuestion.value
+
+    if (card == null)
+        return
+
+    val correctness = localViewModel.cardCorrectness.value
 
     val provideUserFeedback = { success: Boolean ->
 
@@ -75,9 +92,7 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
         playNoise(success)
     }
 
-    BackHandler(onBack = {
-        viewModel.selectDeck(null)
-    })
+
 
     if (isPortrait) {
         Column(
@@ -89,13 +104,13 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
             Row(
 
             ) {
-                Text(text = "Level: " + viewModel.deckLevel.value.toString())
+                Text(text = "Level: " + localViewModel.deckLevel.value.toString())
             }
 
-            CardFront(card.note.id, viewModel, card.note.question?:"missing front")
+            CardFront(card.note.id,  card.note.question?:"missing front")
 
             if (card.options.size == 4) {
-                if (viewModel.comparisonQuestion.value == null) {
+                if (localViewModel.comparisonQuestion.value == null) {
                     Row(
                         modifier = Modifier
                             .weight(1.0f)
@@ -103,13 +118,13 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                         CardBackOption(
                             card.options[0],
                             correctness[0],
-                            viewModel,
+                            localViewModel,
                             provideUserFeedback
                         )
                         CardBackOption(
                             card.options[1],
                             correctness[1],
-                            viewModel,
+                            localViewModel,
                             provideUserFeedback
                         )
                     }
@@ -121,25 +136,25 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                         CardBackOption(
                             card.options[2],
                             correctness[2],
-                            viewModel,
+                            localViewModel,
                             provideUserFeedback
                         )
                         CardBackOption(
                             card.options[3],
                             correctness[3],
-                            viewModel,
+                            localViewModel,
                             provideUserFeedback
                         )
                     }
                 } else {
                     CardComparisonBad(
-                        text = viewModel.comparisonQuestion.value!!,
-                        viewModel = viewModel
+                        text = localViewModel.comparisonQuestion.value!!,
+                        viewModel = localViewModel
                     )
                 }
 
             } else {
-                CardOnlyOption(text = card.options[0], viewModel, provideUserFeedback)
+                CardOnlyOption(text = card.options[0], localViewModel, provideUserFeedback)
             }
 
         }
@@ -153,7 +168,7 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
             Row(
 
             ) {
-                Text(text = "Level: " + viewModel.deckLevel.value.toString())
+                Text(text = "Level: " + localViewModel.deckLevel.value.toString())
             }
 
             Box(
@@ -161,11 +176,11 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                     .fillMaxHeight()
                     .aspectRatio(1.0f)
             ) {
-                CardFront(card.note.id, viewModel, card.note.question?:"missing front")
+                CardFront(card.note.id, card.note.question?:"missing front")
             }
 
             if (card.options.size == 4) {
-                if (viewModel.comparisonQuestion.value == null) {
+                if (localViewModel.comparisonQuestion.value == null) {
                     Column(
                         modifier = Modifier
                             .weight(1.0f)
@@ -173,13 +188,13 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                         CardOptionWrapper(
                             card.options[0],
                             correctness[0],
-                            viewModel,
+                            localViewModel,
                             provideUserFeedback
                         )
                         CardOptionWrapper(
                             card.options[1],
                             correctness[1],
-                            viewModel,
+                            localViewModel,
                             provideUserFeedback
                         )
                     }
@@ -191,25 +206,25 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
                         CardOptionWrapper(
                             card.options[2],
                             correctness[2],
-                            viewModel,
+                            localViewModel,
                             provideUserFeedback
                         )
                         CardOptionWrapper(
                             card.options[3],
                             correctness[3],
-                            viewModel,
+                            localViewModel,
                             provideUserFeedback
                         )
                     }
                 } else {
                     CardComparisonBad(
-                        text = viewModel.comparisonQuestion.value!!,
-                        viewModel = viewModel
+                        text = localViewModel.comparisonQuestion.value!!,
+                        viewModel = localViewModel
                     )
                 }
 
             } else {
-                CardOnlyOption(text = card.options[0], viewModel, provideUserFeedback)
+                CardOnlyOption(text = card.options[0], localViewModel, provideUserFeedback)
             }
         }
     }
@@ -218,7 +233,7 @@ fun ReviewScreen(viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CardFront(text: String, viewModel: MainViewModel, displayText: String) {
+fun CardFront(text: String, displayText: String) {
 
     ElevatedCard(
         modifier = Modifier
@@ -227,16 +242,16 @@ fun CardFront(text: String, viewModel: MainViewModel, displayText: String) {
             .aspectRatio(1.0f)
             .combinedClickable(
                 onClick = {
-                    viewModel.addComparisonPopup(text)
+//                    viewModel.addComparisonPopup(text)
                 },
                 onLongClick = {
-                    viewModel.setManualLeft(text)
+//                    viewModel.setManualLeft(text)
                 }
 
             )
     ) {
         Surface() {
-            Text(viewModel.getManualRelationsCount(text).toString())
+//            Text(viewModel.getManualRelationsCount(text).toString()) // todo number of groups current card is a member of
             CardContent(displayText)
         }
     }
@@ -301,7 +316,7 @@ private fun CardContent(text: String, color: Color = Color.Unspecified, isSmall:
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun CardOnlyOption(text: String, viewModel: MainViewModel, playNoise: (Boolean) -> Int) {
+private fun CardOnlyOption(text: String, viewModel: ReviewViewModel, playNoise: (Boolean) -> Int) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -320,7 +335,7 @@ private fun CardOnlyOption(text: String, viewModel: MainViewModel, playNoise: (B
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun CardComparisonBad(text: String, viewModel: MainViewModel) {
+private fun CardComparisonBad(text: String, viewModel: ReviewViewModel) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -331,7 +346,7 @@ private fun CardComparisonBad(text: String, viewModel: MainViewModel) {
                     viewModel.nextQuestion(false)
                 },
                 onLongClick = {
-                    viewModel.setManualLeft(text)
+//                    viewModel.setManualLeft(text)
                 }
             )
     ) {
@@ -342,8 +357,8 @@ private fun CardComparisonBad(text: String, viewModel: MainViewModel) {
 @Composable
 private fun ColumnScope.CardOptionWrapper(
     text: String,
-    state: MainViewModel.CardCorrectness = MainViewModel.CardCorrectness.BASE,
-    viewModel: MainViewModel,
+    state: ReviewViewModel.CardCorrectness = ReviewViewModel.CardCorrectness.BASE,
+    viewModel: ReviewViewModel,
     playNoise: (Boolean) -> Int
 ) {
     Row(
@@ -357,12 +372,12 @@ private fun ColumnScope.CardOptionWrapper(
 @Composable
 private fun RowScope.CardBackOption(
     text: String,
-    state: MainViewModel.CardCorrectness = MainViewModel.CardCorrectness.BASE,
-    viewModel: MainViewModel,
+    state: ReviewViewModel.CardCorrectness = ReviewViewModel.CardCorrectness.BASE,
+    viewModel: ReviewViewModel,
     playNoise: (Boolean) -> Int
 ) {
     // Base state = color unmodified
-    if (state == MainViewModel.CardCorrectness.BASE) {
+    if (state == ReviewViewModel.CardCorrectness.BASE) {
         ElevatedCard(
             modifier = Modifier
                 .weight(1.0f)
@@ -377,7 +392,7 @@ private fun RowScope.CardBackOption(
 
                     },
                     onLongClick = {
-                        viewModel.displayComparison(text)
+                        //viewModel.displayComparison(text)
                     }
                 )
         ) {
@@ -391,7 +406,7 @@ private fun RowScope.CardBackOption(
                 .padding(16.dp)
                 .fillMaxHeight(),
             // set color
-            colors = CardDefaults.cardColors(containerColor = if (state == MainViewModel.CardCorrectness.GOOD) Color.Green else Color.Red)
+            colors = CardDefaults.cardColors(containerColor = if (state == ReviewViewModel.CardCorrectness.GOOD) Color.Green else Color.Red)
         ) {
             CardContent(text = text, color = Color.Black, isSmall = true)
         }

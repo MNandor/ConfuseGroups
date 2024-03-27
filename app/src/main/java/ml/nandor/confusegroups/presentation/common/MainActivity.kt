@@ -17,7 +17,7 @@ import ml.nandor.confusegroups.presentation.ComparisonScreen
 import ml.nandor.confusegroups.presentation.decks.DecksScreen
 import ml.nandor.confusegroups.presentation.MainViewModel
 import ml.nandor.confusegroups.presentation.ManualConfusionsScreen
-import ml.nandor.confusegroups.presentation.ReviewScreen
+import ml.nandor.confusegroups.presentation.review.ReviewScreen
 import ml.nandor.confusegroups.presentation.SearchAndAddManualPopup
 import ml.nandor.confusegroups.presentation.cards.CardsScreen
 import ml.nandor.confusegroups.ui.theme.ConfuseGroupsTheme
@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     when(commonViewModel.selectedMode.value){
                         CommonViewModel.DeckOpenMode.NONE -> DecksScreen(commonViewModel)
-                        CommonViewModel.DeckOpenMode.REVIEW -> ReviewScreen(viewModel, playNoise)
+                        CommonViewModel.DeckOpenMode.REVIEW -> ReviewScreen(playNoise, commonViewModel)
                         CommonViewModel.DeckOpenMode.CORRELATIONS -> ComparisonScreen(commonViewModel)
                         CommonViewModel.DeckOpenMode.CONFUSEGROUPS -> ManualConfusionsScreen(viewModel = viewModel, commonViewModel)
                         CommonViewModel.DeckOpenMode.VIEWCARDS -> CardsScreen(commonViewModel)

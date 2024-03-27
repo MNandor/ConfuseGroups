@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import ml.nandor.confusegroups.BuildConfig
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.presentation.common.CommonViewModel
 import timber.log.Timber
@@ -86,17 +87,19 @@ fun OneCard(card: AtomicNote, localViewModel: CardsViewModel, commonViewModel: C
         var buttonVisible by remember { mutableStateOf(false) }
 
         Column {
-            Text("[[${card.id}]]", fontSize = 12.sp,  modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                color = LocalContentColor.current.copy(alpha = 0.5f)
-            )
-            Text("${card.question?:""} - ${card.answer}", fontSize = 12.sp,  modifier = Modifier
-                .fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                color = LocalContentColor.current.copy(alpha = 0.5f)
-            )
+            if (BuildConfig.DEBUG){
+                Text("[[${card.id}]]", fontSize = 12.sp,  modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    color = LocalContentColor.current.copy(alpha = 0.5f)
+                )
+                Text("${card.question?:""} - ${card.answer}", fontSize = 12.sp,  modifier = Modifier
+                    .fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    color = LocalContentColor.current.copy(alpha = 0.5f)
+                )
+            }
             Row {
                 TextField(
                     value = question,
