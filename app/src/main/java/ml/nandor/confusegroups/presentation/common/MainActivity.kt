@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     when(commonViewModel.selectedMode.value){
                         CommonViewModel.DeckOpenMode.NONE -> DecksScreen(commonViewModel)
                         CommonViewModel.DeckOpenMode.REVIEW -> ReviewScreen(viewModel, playNoise)
-                        CommonViewModel.DeckOpenMode.CORRELATIONS -> ComparisonScreen(viewModel, commonViewModel)
+                        CommonViewModel.DeckOpenMode.CORRELATIONS -> ComparisonScreen(commonViewModel)
                         CommonViewModel.DeckOpenMode.CONFUSEGROUPS -> ManualConfusionsScreen(viewModel = viewModel, commonViewModel)
                         CommonViewModel.DeckOpenMode.VIEWCARDS -> CardsScreen(commonViewModel)
 

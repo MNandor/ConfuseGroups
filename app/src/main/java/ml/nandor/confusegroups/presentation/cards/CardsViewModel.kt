@@ -37,12 +37,20 @@ class CardsViewModel @Inject constructor(
     val deckCards: State<List<AtomicNote>> = _deckCards
 
     var currentDeck = ""
+
+
+    // used to avoid a bug
+    // where the UI would load data from the previously selected deck
+    private val _readyToCompose = mutableStateOf(false)
+    val readyToCompose = _readyToCompose
     fun loadCardsFromDatabase(deckName: String){
+        _readyToCompose.value=false
         currentDeck = deckName
         listCardsFromDeckUseCase(deckName).onEach {
             if (it is Resource.Success){
                 withContext(Dispatchers.Main) {
                     _deckCards.value = it.data!!
+                    _readyToCompose.value=true
                 }
             }
         }.launchIn(viewModelScope)

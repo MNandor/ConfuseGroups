@@ -49,13 +49,18 @@ fun CardsScreen(commonViewModel: CommonViewModel){
 
     Surface() {
         Column() {
-            val cards = localViewModel.deckCards.value
-            LazyColumn {
-                items(items = cards) { item ->
-                    OneCard(item, localViewModel, commonViewModel)
+            if (localViewModel.readyToCompose.value)
+                TheColumn(cards = localViewModel.deckCards.value, localViewModel = localViewModel, commonViewModel = commonViewModel)
+        }
+    }
+}
 
-                }
-            }
+@Composable
+fun TheColumn(cards: List<AtomicNote>, localViewModel:CardsViewModel, commonViewModel:CommonViewModel){
+    LazyColumn {
+        items(items = cards) { item ->
+            OneCard(item, localViewModel, commonViewModel)
+
         }
     }
 }
@@ -76,12 +81,9 @@ fun OneCard(card: AtomicNote, localViewModel: CardsViewModel, commonViewModel: C
             )
 
     ){
-        var question by remember { mutableStateOf(card.question ?: "MISSING") }
+        var question by remember { Timber.d("Question reloaded ${card.question}"); mutableStateOf(card.question ?: "MISSING") }
         var answer by remember { mutableStateOf(card.answer) }
         var buttonVisible by remember { mutableStateOf(false) }
-
-        // todo these remember statements survive recomposition
-        // this is a problem if viewing a different deck
 
         Column {
             Text("[[${card.id}]]", fontSize = 12.sp,  modifier = Modifier
@@ -119,8 +121,8 @@ fun OneCard(card: AtomicNote, localViewModel: CardsViewModel, commonViewModel: C
                     localViewModel.updateCardValues(card.id, question, answer)
                 },
                     modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth()) {
+                        .padding(8.dp)
+                        .fillMaxWidth()) {
                     Text(text = "Update")
 
                 }

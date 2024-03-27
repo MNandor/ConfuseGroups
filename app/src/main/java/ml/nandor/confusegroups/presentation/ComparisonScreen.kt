@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import ml.nandor.confusegroups.presentation.common.CommonViewModel
 
 @Composable
-fun ComparisonScreen(viewModel: MainViewModel, commonViewModel: CommonViewModel){
+fun ComparisonScreen(commonViewModel: CommonViewModel){
 
     val deckName = commonViewModel.selectedDeck.value!!
 
