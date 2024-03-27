@@ -253,7 +253,9 @@ fun CardFront(text: String, displayText: String, commonViewModel: CommonViewMode
             )
     ) {
         Surface() {
-//            Text(viewModel.getManualRelationsCount(text).toString()) // todo number of groups current card is a member of
+            // number of groups current card is a member of
+            // todo add to group popup needs to be opened at least once
+            Text(commonViewModel.getGroupMembershipCount(text).toString())
             CardContent(displayText)
         }
     }

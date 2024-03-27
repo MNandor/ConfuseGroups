@@ -202,4 +202,16 @@ class CommonViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun getGroupMembershipCount(noteID: String):Int{
+        return _groupsToAddTo.value.filter {
+            if (it.confuseGroup == null)
+                return@filter  false
+            for (note in it.associatedNotes){
+                if (note.id == noteID)
+                    return@filter true
+            }
+            return@filter false
+        }.size
+    }
+
 }
