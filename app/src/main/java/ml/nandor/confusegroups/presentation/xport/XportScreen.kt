@@ -30,7 +30,21 @@ fun XportScreen(commonViewModel: CommonViewModel){
             Text("Export")
 
         }
-        TextField(value = localViewModel.exportString.value, onValueChange = {}, modifier = Modifier.fillMaxHeight(.40f).fillMaxWidth())
+        TextField(value = localViewModel.exportString.value, onValueChange = {}, modifier = Modifier
+            .fillMaxHeight(.40f)
+            .fillMaxWidth()
+        )
+        
+        TextField(value = localViewModel.exportContent.value, onValueChange = {localViewModel.setCompareString(it)}, modifier = Modifier
+            .fillMaxHeight(.5f)
+            .fillMaxWidth()
+        )
+
+        TextField(value = localViewModel.diffed.value, onValueChange = {}, modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+        )
+
 
     }
 

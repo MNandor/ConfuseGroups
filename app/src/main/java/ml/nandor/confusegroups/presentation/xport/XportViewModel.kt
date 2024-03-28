@@ -74,4 +74,44 @@ class XportViewModel @Inject constructor(
         sb.toString()
     }
 
+
+    fun setCompareString(s: String){
+        _exportContent.value = s
+    }
+
+    val diffed = derivedStateOf {
+        // gonna handwrite a short algorithm for now
+        // should import a diff library later
+        // this algorithm doesn't take into account orders, groups, duplicates
+        // but it's good enough for now
+        // todo
+        val leftLines = exportString.value.split("\n")
+        val rightLines = _exportContent.value.split("\n")
+
+        val sb = StringBuilder()
+
+        for (line in leftLines){
+            if (!rightLines.contains(line)){
+                sb.append("- ")
+                sb.append(line)
+                sb.append("\n")
+
+            }
+
+        }
+
+        for (line in rightLines){
+            if (!leftLines.contains(line)){
+                sb.append("+ ")
+                sb.append(line)
+                sb.append("\n")
+
+            }
+
+        }
+
+        sb.toString()
+
+    }
+
 }
