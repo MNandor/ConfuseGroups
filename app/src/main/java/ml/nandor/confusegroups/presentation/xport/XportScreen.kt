@@ -2,6 +2,8 @@ package ml.nandor.confusegroups.presentation.xport
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -9,6 +11,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import ml.nandor.confusegroups.presentation.common.CommonViewModel
 
@@ -23,11 +26,12 @@ fun XportScreen(commonViewModel: CommonViewModel){
     })
 
     Column {
-        Button(onClick = { localViewModel.loadExportString(commonViewModel.selectedDeck.value) }) {
+        Button(onClick = { localViewModel.loadExportString(commonViewModel.selectedDeck.value) }, modifier = Modifier.fillMaxWidth()) {
             Text("Export")
 
         }
-        TextField(value = localViewModel.exportString.value, onValueChange = {})
+        TextField(value = localViewModel.exportString.value, onValueChange = {}, modifier = Modifier.fillMaxHeight(.40f).fillMaxWidth())
+
     }
 
 }
