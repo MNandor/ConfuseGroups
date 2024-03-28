@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
@@ -196,6 +197,9 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                     DecksViewModel.DeckAction.DELETION
                 ) }) {
                     Icon(Icons.Filled.Delete, contentDescription = "Delete deck")
+                }
+                IconButton(onClick = { commonViewModel.selectDeck(text, CommonViewModel.DeckOpenMode.XPORT) }) {
+                    Icon(Icons.Filled.ExitToApp, contentDescription = "Import/export mode")
                 }
             }
         }

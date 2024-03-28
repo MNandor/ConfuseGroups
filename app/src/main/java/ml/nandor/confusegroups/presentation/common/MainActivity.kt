@@ -20,6 +20,7 @@ import ml.nandor.confusegroups.presentation.ManualConfusionsScreen
 import ml.nandor.confusegroups.presentation.review.ReviewScreen
 import ml.nandor.confusegroups.presentation.SearchAndAddManualPopup
 import ml.nandor.confusegroups.presentation.cards.CardsScreen
+import ml.nandor.confusegroups.presentation.xport.XportScreen
 import ml.nandor.confusegroups.ui.theme.ConfuseGroupsTheme
 
 @AndroidEntryPoint
@@ -55,6 +56,7 @@ class MainActivity : ComponentActivity() {
                         CommonViewModel.DeckOpenMode.CORRELATIONS -> ComparisonScreen(commonViewModel)
                         CommonViewModel.DeckOpenMode.CONFUSEGROUPS -> ManualConfusionsScreen(viewModel = viewModel, commonViewModel)
                         CommonViewModel.DeckOpenMode.VIEWCARDS -> CardsScreen(commonViewModel)
+                        CommonViewModel.DeckOpenMode.XPORT -> XportScreen(commonViewModel = commonViewModel)
 
                     }
 

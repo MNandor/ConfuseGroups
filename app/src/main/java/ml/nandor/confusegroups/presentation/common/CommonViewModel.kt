@@ -56,7 +56,8 @@ class CommonViewModel @Inject constructor(
         REVIEW,
         CORRELATIONS,
         CONFUSEGROUPS,
-        VIEWCARDS
+        VIEWCARDS,
+        XPORT
     }
 
     fun selectDeck(deckName: String?, deckMode: DeckOpenMode){
@@ -98,6 +99,10 @@ class CommonViewModel @Inject constructor(
             }
 
             DeckOpenMode.REVIEW -> {
+
+            }
+
+            DeckOpenMode.XPORT -> {
 
             }
 
