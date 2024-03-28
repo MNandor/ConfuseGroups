@@ -35,16 +35,19 @@ fun XportScreen(commonViewModel: CommonViewModel){
             .fillMaxWidth()
         )
         
-        TextField(value = localViewModel.exportContent.value, onValueChange = {localViewModel.setCompareString(it)}, modifier = Modifier
+        TextField(value = localViewModel.importableText.value, onValueChange = {localViewModel.setCompareString(it)}, modifier = Modifier
             .fillMaxHeight(.5f)
             .fillMaxWidth()
         )
 
         TextField(value = localViewModel.diffed.value, onValueChange = {}, modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()
+            .fillMaxHeight(.8f)
         )
+        Button(onClick = { localViewModel.importFromText() }, modifier = Modifier.fillMaxWidth()) {
+            Text("Import")
 
+        }
 
     }
 
