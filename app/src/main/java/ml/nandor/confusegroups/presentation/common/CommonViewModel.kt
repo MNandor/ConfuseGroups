@@ -163,6 +163,9 @@ class CommonViewModel @Inject constructor(
                     return@filter true
                 if (note.answer.lowercase().contains(str))
                     return@filter true
+
+                if (note.id.lowercase() == str)
+                    return@filter true
             }
 
             return@filter false
