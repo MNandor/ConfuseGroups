@@ -11,10 +11,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
+import ml.nandor.confusegroups.Util
 import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
+import ml.nandor.confusegroups.domain.model.ConfuseGroup
 import ml.nandor.confusegroups.domain.model.ConfuseGroupToAddTo
 import ml.nandor.confusegroups.domain.usecase.AddCardsFromTextUseCase
+import ml.nandor.confusegroups.domain.usecase.CreateConfuseGroupUseCase
 import ml.nandor.confusegroups.domain.usecase.DeleteDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetDeckSizesUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertCardUseCase
@@ -33,7 +36,8 @@ import javax.inject.Inject
 class XportViewModel @Inject constructor(
     private val listCardsFromDeckUseCase:ListCardsFromDeckUseCase,
     private val listCardsGroupedFromDeckUseCase: ListCardsGroupedFromDeckUseCase,
-    private val joinConfuseGroupUseCase: JoinConfuseGroupUseCase
+    private val joinConfuseGroupUseCase: JoinConfuseGroupUseCase,
+    private val createConfuseGroupUseCase: CreateConfuseGroupUseCase
 ): ViewModel() {
 
     // Define a coroutinescope so we don't run on main thread
@@ -179,9 +183,7 @@ class XportViewModel @Inject constructor(
             return
         Timber.d("Into # $groupname - ${notes.size} possible additions")
 
-        // todo rather than nulling out, create the asked-for groups or even cards
-
-        val group = searchGroup(groupname) ?: return
+        val group = searchGroup(groupname) ?: ConfuseGroupToAddTo(createGroup(groupname), listOf())
 
         group.confuseGroup ?: return
 
@@ -232,5 +234,16 @@ class XportViewModel @Inject constructor(
             return returnables[0]
         }
     }
+
+    private fun createGroup(groupName:String): ConfuseGroup {
+        val groupID = Util.getCardName()
+
+        val group = ConfuseGroup(groupID, groupName)
+
+        createConfuseGroupUseCase(group).launchIn(viewModelScope)
+        return group
+
+    }
+
 
 }
