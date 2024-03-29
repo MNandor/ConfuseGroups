@@ -5,4 +5,5 @@ data class PreparedViewableCard(
     val options: List<String>,
     val streakSoFar: Int,
     val note: AtomicNote,
+    val optionsAsNotes: List<AtomicNote>
 )

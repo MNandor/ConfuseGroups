@@ -17,6 +17,7 @@ import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.ConfuseGroupToAddTo
 import ml.nandor.confusegroups.domain.model.Correlation
+import ml.nandor.confusegroups.domain.model.NewReview
 import ml.nandor.confusegroups.domain.model.PreparedViewableCard
 import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.usecase.CreateConfuseGroupWithAnotherCardUseCase
@@ -128,14 +129,56 @@ class ReviewViewModel @Inject constructor(
 
         val wasCorrect = answer == card.options[card.correct-1]
 
+        val timeStamp = System.currentTimeMillis()
+
         val review = Review(
             question = card.note.id, //alright this needs to be changed
             answer = answer,
             level = deckLevel.value,
             streak = if (wasCorrect) card.streakSoFar+1 else 0,
-            timeStamp = System.currentTimeMillis()/1000,
+            timeStamp = timeStamp/1000,
             unpickedAnswers = card.options.filter { it != answer }.joinToString(";")
         )
+
+        val pickedNote = card.optionsAsNotes.find {
+            it.answer == answer
+        }
+        val unpickedNotes = card.optionsAsNotes.filter {
+            it.answer != answer
+        }
+
+        Timber.d("Picked $pickedNote")
+        unpickedNotes.forEach{
+            Timber.d("Not picked $it")
+        }
+
+        if (pickedNote!=null){
+            val newReview = NewReview(
+                timeStamp = timeStamp,
+                questionID = card.note.id,
+                answerOptionID = pickedNote.id,
+                levelWhereThisHappened = deckLevel.value,
+                wasThisOptionPicked = true,
+                streakValueAfterThis = if (wasCorrect) card.streakSoFar+1 else 0,
+            )
+            Timber.d("$newReview")
+        } else {
+            Timber.e("The picked card doesn't exist!")
+        }
+
+        for (unpickedNote in unpickedNotes){
+            val newReview = NewReview(
+                timeStamp = timeStamp,
+                questionID = card.note.id,
+                answerOptionID = unpickedNote.id,
+                levelWhereThisHappened = deckLevel.value,
+                wasThisOptionPicked = false,
+                streakValueAfterThis = if (wasCorrect) card.streakSoFar+1 else 0,
+            )
+
+            Timber.d("$newReview")
+        }
+
 
         insertReviewUseCase(review).onEach {
             if (it is Resource.Success){

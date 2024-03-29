@@ -82,14 +82,14 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         val viewAbles = reviewCards.map {note ->
             val possiblesWrongs = allCards
                 .filter { it.id != note.id && it.answer != note.answer }
-                .map { it -> it.answer }
+                //.map { it -> it.answer }
                 .toMutableList()
 
             Timber.tag("alg1math").d("${note.id}")
 
             val corres = possiblesWrongs
                 .shuffled()
-                .map { pos ->  Pair(pos, -determineCorrelation(note.id, pos, deck.confuseExponent, reviewsByLeft[note.id]!!.toList())) }
+                .map { pos ->  Pair(pos, -determineCorrelation(note.id, pos.answer, deck.confuseExponent, reviewsByLeft[note.id]!!.toList())) }
                 .sortedBy { it.second }
                 .map{it.first}
 
@@ -99,7 +99,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
             val fullRandom = possiblesWrongs.filter { !answers.contains(it) }.random()
 
 
-            answers.add(note.answer)
+            answers.add(note)
             answers.add(fullRandom)
 
             val options = answers.shuffled()
@@ -107,7 +107,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
             // known to be not null, otherwise it'd be a new card
             val streakSoFar = reviews.find { it.question == note.id }!!.streak
 
-            val viewableCard = PreparedViewableCard(options.indexOf(note.answer)+1, options, streakSoFar, note)
+            val viewableCard = PreparedViewableCard(options.map { it.answer }.indexOf(note.answer)+1, options.map { it.answer }, streakSoFar, note, options)
 
             return@map viewableCard
 
@@ -121,7 +121,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         Timber.d("Limiting to $newCount new cards")
 
         val newViewables = newCards.map{note ->
-            val viewableCard = PreparedViewableCard(1, listOf(note.answer), -1, note)
+            val viewableCard = PreparedViewableCard(1, listOf(note.answer), -1, note, listOf(note))
 
             return@map viewableCard
         }.shuffled().take(newCount)
