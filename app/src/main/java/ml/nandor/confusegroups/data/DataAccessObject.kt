@@ -10,6 +10,7 @@ import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.DeckSize
 import ml.nandor.confusegroups.domain.model.GroupMembership
 import ml.nandor.confusegroups.domain.model.ManualConfusion
+import ml.nandor.confusegroups.domain.model.NewReview
 import ml.nandor.confusegroups.domain.model.Review
 
 @Dao
@@ -81,4 +82,7 @@ interface DataAccessObject {
 
     @Query("SELECT * FROM GroupMembership")
     fun listGroupMemberships():List<GroupMembership>
+
+    @Insert
+    fun insertNewReview(review: NewReview)
 }

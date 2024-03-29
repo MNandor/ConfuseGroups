@@ -25,6 +25,7 @@ import ml.nandor.confusegroups.domain.usecase.GetAllCorrelationsUseCase
 import ml.nandor.confusegroups.domain.usecase.GetLevelOfDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetQuestionFromAnswerUseCase
 import ml.nandor.confusegroups.domain.usecase.GetViewablesFromDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.InsertNewReviewUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertReviewUseCase
 import ml.nandor.confusegroups.domain.usecase.JoinConfuseGroupUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
@@ -38,7 +39,8 @@ class ReviewViewModel @Inject constructor(
     private val getLevelOfDeckUseCase: GetLevelOfDeckUseCase,
     private val getViewablesFromDeckUseCase: GetViewablesFromDeckUseCase,
     private val insertReviewUseCase: InsertReviewUseCase,
-    private val getQuestionFromAnswerUseCase: GetQuestionFromAnswerUseCase
+    private val getQuestionFromAnswerUseCase: GetQuestionFromAnswerUseCase,
+    private val insertNewReviewUseCase: InsertNewReviewUseCase
 ): ViewModel() {
 
     // Define a coroutinescope so we don't run on main thread
@@ -162,6 +164,7 @@ class ReviewViewModel @Inject constructor(
                 streakValueAfterThis = if (wasCorrect) card.streakSoFar+1 else 0,
             )
             Timber.d("$newReview")
+            insertNewReviewUseCase(newReview).launchIn(viewModelScope)
         } else {
             Timber.e("The picked card doesn't exist!")
         }
@@ -177,6 +180,7 @@ class ReviewViewModel @Inject constructor(
             )
 
             Timber.d("$newReview")
+            insertNewReviewUseCase(newReview).launchIn(viewModelScope)
         }
 
 

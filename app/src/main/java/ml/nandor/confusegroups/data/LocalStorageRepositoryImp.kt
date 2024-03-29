@@ -6,6 +6,7 @@ import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.DeckSize
 import ml.nandor.confusegroups.domain.model.GroupMembership
 import ml.nandor.confusegroups.domain.model.ManualConfusion
+import ml.nandor.confusegroups.domain.model.NewReview
 import ml.nandor.confusegroups.domain.model.Review
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import timber.log.Timber
@@ -103,6 +104,10 @@ class LocalStorageRepositoryImp @Inject constructor(
 
     override fun listGroupMemberships(): List<GroupMembership>{
         return dao.listGroupMemberships()
+    }
+
+    override fun insertNewReview(review: NewReview) {
+        return dao.insertNewReview(review)
     }
 
 }

@@ -1,10 +1,12 @@
 package ml.nandor.confusegroups.domain.model
 
+import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+@Entity
 data class NewReview(
-    @PrimaryKey
-    val reviewID: Long? = 0,
+    @PrimaryKey(autoGenerate = true)
+    val reviewID: Long? = null,
 
     val timeStamp: Long,
 

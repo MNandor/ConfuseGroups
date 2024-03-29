@@ -11,9 +11,10 @@ import ml.nandor.confusegroups.domain.model.ConfuseGroup
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.model.GroupMembership
 import ml.nandor.confusegroups.domain.model.ManualConfusion
+import ml.nandor.confusegroups.domain.model.NewReview
 import ml.nandor.confusegroups.domain.model.Review
 
-@Database(entities = [Deck::class, AtomicNote::class, Review::class, ManualConfusion::class, ConfuseGroup::class, GroupMembership::class], version = 7, exportSchema = false)
+@Database(entities = [Deck::class, AtomicNote::class, Review::class, ManualConfusion::class, ConfuseGroup::class, GroupMembership::class, NewReview::class], version = 9, exportSchema = false)
 abstract class LocalStorageDatabase: RoomDatabase() {
     abstract fun dao(): DataAccessObject
 
@@ -27,7 +28,7 @@ abstract class LocalStorageDatabase: RoomDatabase() {
                     context.applicationContext,
                     LocalStorageDatabase::class.java,
                     "local_database"
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
                 .build()
                 INSTANCE = instance
 
@@ -96,6 +97,40 @@ abstract class LocalStorageDatabase: RoomDatabase() {
                 )
             }
         }
+
+        private val MIGRATION_7_8: Migration = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create NewReview table
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `NewReview` (" +
+                            "`reviewID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`timeStamp` INTEGER NOT NULL, " +
+                            "`questionID` TEXT NOT NULL, " +
+                            "`answerOptionID` TEXT NOT NULL, " +
+                            "`levelWhereThisHappened` INTEGER NOT NULL, " +
+                            "`streakValueAfterThis` INTEGER NOT NULL, " +
+                            "`wasThisOptionPicked` INTEGER NOT NULL)"
+                )
+            }
+        }
+
+        private val MIGRATION_8_9: Migration = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DROP TABLE NewReview")
+                // Create NewReview table
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `NewReview` (" +
+                            "`reviewID` INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                            "`timeStamp` INTEGER NOT NULL, " +
+                            "`questionID` TEXT NOT NULL, " +
+                            "`answerOptionID` TEXT NOT NULL, " +
+                            "`levelWhereThisHappened` INTEGER NOT NULL, " +
+                            "`streakValueAfterThis` INTEGER NOT NULL, " +
+                            "`wasThisOptionPicked` INTEGER NOT NULL)"
+                )
+            }
+        }
+
 
 
     }
