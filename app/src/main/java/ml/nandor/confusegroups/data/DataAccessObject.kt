@@ -88,4 +88,7 @@ interface DataAccessObject {
 
     @Query("UPDATE ConfuseGroup SET displayName = :newName WHERE id = :groupID")
     fun renameConfuseGroup(groupID: String, newName: String)
+
+    @Query("SELECT NewReview.* FROM NewReview LEFT JOIN AtomicNote ON NewReview.questionID = AtomicNote.question WHERE AtomicNote.deck = :deckID")
+    fun getNewReviewsFromDeck(deckID: String): List<NewReview>
 }

@@ -54,16 +54,16 @@ fun ComparisonScreen(commonViewModel: CommonViewModel){
         }
 
         LazyColumn {
-            items(items = commonViewModel.correlations.value) {it ->
+            items (items = commonViewModel.newCorrelation.value){it ->
                 OutlinedCard (
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1.0f)
+                        .aspectRatio(.9f)
                         .padding(16.dp)
                 ){
 
                     Text(
-                        text = (it.correlation*100).toInt().toString()+"%",
+                        text = (it.getCorrelationValue()*100).toInt().toString()+"%",
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 16.dp)
@@ -71,18 +71,21 @@ fun ComparisonScreen(commonViewModel: CommonViewModel){
                         ,
                         fontSize = 16.sp
                     )
+                    Text("Left asked ${it.timesLeftFellForRight + it.timesLeftAvoidedRight} times. Right picked ${it.timesLeftFellForRight} times.", modifier = Modifier.padding(start = 16.dp))
+                    Text("Right asked ${it.timesRightFellForLeft + it.timesRightAvoidedLeft} times. Left picked ${it.timesRightFellForLeft} times.", modifier = Modifier.padding(start = 16.dp))
 
                     Row(
                         modifier = Modifier
                             .weight(1.0f)
                     ) {
-                        SimpleSmallCard(it.leftCard.id)
-                        SimpleSmallCard(it.rightCard.id)
+                        SimpleSmallCard(it.leftCard.question?:"[[${it.leftCard.id}]]")
+                        SimpleSmallCard(it.rightCard.question?:"[[${it.rightCard.id}]]")
                     }
 
                     Row(
                         modifier = Modifier
                             .weight(1.0f)
+                            .padding(bottom = 8.dp)
                     ) {
                         SimpleSmallCard(it.leftCard.answer)
                         SimpleSmallCard(it.rightCard.answer)

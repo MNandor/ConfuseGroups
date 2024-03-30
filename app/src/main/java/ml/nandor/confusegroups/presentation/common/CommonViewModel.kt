@@ -15,8 +15,10 @@ import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.ConfuseGroupToAddTo
 import ml.nandor.confusegroups.domain.model.Correlation
+import ml.nandor.confusegroups.domain.model.NewCorrelation
 import ml.nandor.confusegroups.domain.usecase.CreateConfuseGroupWithAnotherCardUseCase
 import ml.nandor.confusegroups.domain.usecase.GetAllCorrelationsUseCase
+import ml.nandor.confusegroups.domain.usecase.GetNewCorrelationsFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.JoinConfuseGroupUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsGroupedFromDeckUseCase
@@ -29,7 +31,8 @@ class CommonViewModel @Inject constructor(
     private val getAllCorrelationsUseCase: GetAllCorrelationsUseCase,
     private val listCardsGroupedFromDeckUseCase: ListCardsGroupedFromDeckUseCase,
     private val createConfuseGroupWithAnotherCardUseCase: CreateConfuseGroupWithAnotherCardUseCase,
-    private val joinConfuseGroupUseCase: JoinConfuseGroupUseCase
+    private val joinConfuseGroupUseCase: JoinConfuseGroupUseCase,
+    private val getNewCorrelationsFromDeckUseCase: GetNewCorrelationsFromDeckUseCase
 ): ViewModel() {
 
     // Define a coroutinescope so we don't run on main thread
@@ -60,6 +63,9 @@ class CommonViewModel @Inject constructor(
         XPORT
     }
 
+
+    private val _newCorrelations: MutableState<List<NewCorrelation>> = mutableStateOf(listOf())
+    val newCorrelation = _newCorrelations
     fun selectDeck(deckName: String?, deckMode: DeckOpenMode){
         Timber.d("Selected deck $deckName for review!")
         _selectedDeck.value = deckName
@@ -74,6 +80,13 @@ class CommonViewModel @Inject constructor(
                     }
 
                 }.launchIn(viewModelScope)
+                if (deckName != null) // todo move this to comparison viewmodel
+                    getNewCorrelationsFromDeckUseCase(deckName).onEach {
+                        if (it is Resource.Success){
+                            _newCorrelations.value = it.data!!
+                        }
+
+                    }.launchIn(viewModelScope)
             }
 
             DeckOpenMode.CONFUSEGROUPS -> {

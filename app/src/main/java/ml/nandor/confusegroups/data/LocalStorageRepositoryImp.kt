@@ -114,4 +114,8 @@ class LocalStorageRepositoryImp @Inject constructor(
         return dao.renameConfuseGroup(groupID, newName)
     }
 
+    override fun getNewReviewsFromDeck(deckID: String): List<NewReview>{
+        return dao.getNewReviewsFromDeck(deckID)
+    }
+
 }
