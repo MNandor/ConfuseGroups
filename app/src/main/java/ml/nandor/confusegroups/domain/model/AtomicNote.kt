@@ -11,5 +11,6 @@ data class AtomicNote(
     val answer: String,
     val deck: String,
     @ColumnInfo(name = "questionDisplay")
-    val question: String? // visually, what shows up as a question
+    val question: String?, // visually, what shows up as a question
+    val mnemonic: String? = null
 )
