@@ -138,7 +138,7 @@ class ReviewViewModel @Inject constructor(
             answer = answer,
             level = deckLevel.value,
             streak = if (wasCorrect) card.streakSoFar+1 else 0,
-            timeStamp = timeStamp/1000,
+            timeStamp = timeStamp,
             unpickedAnswers = card.options.filter { it != answer }.joinToString(";")
         )
 
