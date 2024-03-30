@@ -45,4 +45,6 @@ interface LocalStorageRepository {
     fun listGroupMemberships(): List<GroupMembership>
 
     fun insertNewReview(review: NewReview)
+
+    fun renameConfuseGroup(groupID: String, newName: String)
 }

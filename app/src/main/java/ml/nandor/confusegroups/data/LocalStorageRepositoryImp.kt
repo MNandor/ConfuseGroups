@@ -110,4 +110,8 @@ class LocalStorageRepositoryImp @Inject constructor(
         return dao.insertNewReview(review)
     }
 
+    override fun renameConfuseGroup(groupID: String, newName: String){
+        return dao.renameConfuseGroup(groupID, newName)
+    }
+
 }

@@ -85,4 +85,7 @@ interface DataAccessObject {
 
     @Insert
     fun insertNewReview(review: NewReview)
+
+    @Query("UPDATE ConfuseGroup SET displayName = :newName WHERE id = :groupID")
+    fun renameConfuseGroup(groupID: String, newName: String)
 }
