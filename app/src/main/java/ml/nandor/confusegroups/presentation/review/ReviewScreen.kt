@@ -2,6 +2,7 @@ package ml.nandor.confusegroups.presentation.review
 
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
+import android.graphics.drawable.VectorDrawable
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -30,15 +31,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ml.nandor.confusegroups.R
 import ml.nandor.confusegroups.presentation.AutoResizeText
 import ml.nandor.confusegroups.presentation.FontSizeRange
 import ml.nandor.confusegroups.presentation.MainViewModel
@@ -289,11 +298,24 @@ private fun CardContent(text: String, color: Color = Color.Unspecified, isSmall:
 
             val bmp = BitmapFactory.decodeFile(file.path)
 
-            Image(
-                bitmap = bmp.asImageBitmap(),
-                contentDescription = "Sample Image",
-                modifier = Modifier.fillMaxSize()
-            )
+            if (bmp != null){
+                Image(
+                    bitmap = bmp.asImageBitmap(),
+                    contentDescription = "Sample Image",
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else if (firstMatch.endsWith(".svg")){
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(file)
+                        .decoderFactory(SvgDecoder.Factory())
+                        .error(R.drawable.ic_launcher_foreground)
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .build(),
+                    contentDescription = "Sample Image",
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
         } else if (!secondMatch.isNullOrEmpty()) {
             AsyncImage(
