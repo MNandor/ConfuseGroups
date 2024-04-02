@@ -72,6 +72,8 @@ class ReviewViewModel @Inject constructor(
 
         loadANewLevel()
 
+        displayComparison(null)
+
     }
 
     fun loadANewLevel(){
