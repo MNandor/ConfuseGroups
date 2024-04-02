@@ -424,7 +424,7 @@ fun InspectDeckPopup(viewModel: DecksViewModel) {
                             .fillMaxHeight(0.5f)
                     ) {
                         items(items = cards) { item ->
-                            Text(item.id+" - "+item.answer)
+                            Text(item.question+" - "+item.answer)
 
                         }
                     }

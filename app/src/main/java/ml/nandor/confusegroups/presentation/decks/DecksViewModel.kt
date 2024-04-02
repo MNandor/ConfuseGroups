@@ -163,6 +163,7 @@ class DecksViewModel @Inject constructor(
     }
 
     fun addCard(card: AtomicNote){
+        Timber.d("Adding 1 card to deck: $card")
         insertCardUseCase(card).onEach {
             updateDeckSizesFromDatabase()
         }.launchIn(viewModelScope)
