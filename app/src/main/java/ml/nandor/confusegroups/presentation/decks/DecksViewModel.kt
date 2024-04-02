@@ -15,6 +15,7 @@ import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
 import ml.nandor.confusegroups.domain.usecase.AddCardsFromTextUseCase
+import ml.nandor.confusegroups.domain.usecase.CreateReverseDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.DeleteDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetDeckSizesUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertCardUseCase
@@ -35,6 +36,7 @@ class DecksViewModel @Inject constructor(
     private val renameDeckUseCase: RenameDeckUseCase,
     private val insertCardUseCase: InsertCardUseCase,
     private val insertDeckUseCase: InsertDeckUseCase,
+    private val createReverseDeckUseCase: CreateReverseDeckUseCase
 ): ViewModel() {
 
     // Define a coroutinescope so we don't run on main thread
@@ -89,7 +91,8 @@ class DecksViewModel @Inject constructor(
         EDITING,
         INSPECTION,
         ADDING,
-        RENAME
+        RENAME,
+        REVERSE
     }
 
     private val _editedDeckState:MutableState<Deck?> = mutableStateOf(null)
@@ -182,6 +185,18 @@ class DecksViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
 
+    }
+
+    fun reverseDeck(){
+        if (_deckBeingAccessed.value == null) return
+
+        Timber.d("Reversing ${_deckBeingAccessed.value}")
+        createReverseDeckUseCase(_deckBeingAccessed.value!!).onEach {
+            if (it is Resource.Success){
+                listDecksFromDatabase()
+                Timber.d("Created reverse deck")
+            }
+        }.launchIn(viewModelScope)
     }
 
 

@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -79,6 +80,7 @@ fun DecksScreen(commonViewModel: CommonViewModel){
         AddToDeckPopup(localViewModel)
         InspectDeckPopup(localViewModel)
         RenameDeckPopup(localViewModel)
+        ReverseDeckPopup(localViewModel)
     }
 
 }
@@ -173,6 +175,12 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                     commonViewModel.selectDeck(text, CommonViewModel.DeckOpenMode.VIEWCARDS)
                 }) {
                     Icon(Icons.Filled.Menu, contentDescription = "View Cards")
+                }
+                IconButton(onClick = {
+                    viewModel.enterDeckActionMode(text,
+                        DecksViewModel.DeckAction.REVERSE)
+                }) {
+                    Icon(Icons.Filled.ArrowBack, contentDescription = "Reverse Deck")
                 }
             }
             Row(
@@ -511,6 +519,30 @@ fun RenameDeckPopup(viewModel: DecksViewModel) {
                     }
                 }
 
+            }
+        }
+    }
+}
+
+@Composable
+fun ReverseDeckPopup(viewModel: DecksViewModel){
+    val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.REVERSE
+
+    if (visible){
+        Dialog(onDismissRequest = { viewModel.enterDeckActionMode() }) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.6f)
+            ) {
+                TextButton(
+                    onClick = {
+                        viewModel.reverseDeck()
+                        viewModel.enterDeckActionMode()
+                    },
+                ) {
+                    Text("Reverse Deck!")
+                }
             }
         }
     }
