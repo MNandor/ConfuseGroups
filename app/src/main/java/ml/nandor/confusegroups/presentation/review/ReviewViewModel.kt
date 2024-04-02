@@ -243,16 +243,11 @@ class ReviewViewModel @Inject constructor(
     val comparisonQuestion = _comparisonQuestion
 
     fun displayComparison(answer: String?){
-        // todo how do we handle duplicates in either direction?
         if (answer == null){
             _comparisonQuestion.value = null
             return
         }
 
-        getQuestionFromAnswerUseCase(answer).onEach {
-            if (it is Resource.Success){
-                _comparisonQuestion.value = it.data
-            }
-        }.launchIn(viewModelScope)
+        _comparisonQuestion.value = currentQuestion.value?.optionsAsNotes?.find { it.answer == answer }?.question
     }
 }
