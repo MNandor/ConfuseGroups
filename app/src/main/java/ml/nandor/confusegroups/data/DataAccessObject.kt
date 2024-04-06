@@ -91,4 +91,8 @@ interface DataAccessObject {
 
     @Query("SELECT NewReview.* FROM NewReview LEFT JOIN AtomicNote ON NewReview.questionID = AtomicNote.question WHERE AtomicNote.deck = :deckID")
     fun getNewReviewsFromDeck(deckID: String): List<NewReview>
+
+    // todo
+//    @Query("SELECT NewReview.* FROM NewReview ")
+//    fun getRecentNewReviewsFromDeck(deckID: String): List<NewReview>
 }

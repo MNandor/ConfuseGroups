@@ -49,4 +49,6 @@ interface LocalStorageRepository {
     fun renameConfuseGroup(groupID: String, newName: String)
 
     fun getNewReviewsFromDeck(deckID: String): List<NewReview>
+
+//    fun getRecentNewReviewsFromDeck(deckID: String): List<NewReview>
 }

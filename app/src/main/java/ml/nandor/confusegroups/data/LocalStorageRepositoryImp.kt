@@ -118,4 +118,8 @@ class LocalStorageRepositoryImp @Inject constructor(
         return dao.getNewReviewsFromDeck(deckID)
     }
 
+//    override fun getRecentNewReviewsFromDeck(deckID: String): List<NewReview>{
+//        return dao.getRecentNewReviewsFromDeck(deckID)
+//    }
+
 }

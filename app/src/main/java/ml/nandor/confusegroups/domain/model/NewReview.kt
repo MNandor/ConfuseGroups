@@ -24,5 +24,7 @@ data class NewReview(
     // if questionID != answerOptionID, then:
     // this bool being false is correct,
     // otherwise incorrect (false positive)
-    val wasThisOptionPicked: Boolean
+    val wasThisOptionPicked: Boolean,
+
+    val deckID: String,
 )

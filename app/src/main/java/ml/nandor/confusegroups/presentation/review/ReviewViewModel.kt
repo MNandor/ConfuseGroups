@@ -156,7 +156,7 @@ class ReviewViewModel @Inject constructor(
             Timber.d("Not picked $it")
         }
 
-        if (pickedNote!=null){
+        if (pickedNote!=null && selectedDeck != null){
             val newReview = NewReview(
                 timeStamp = timeStamp,
                 questionID = card.note.id,
@@ -164,11 +164,12 @@ class ReviewViewModel @Inject constructor(
                 levelWhereThisHappened = deckLevel.value,
                 wasThisOptionPicked = true,
                 streakValueAfterThis = if (wasCorrect) card.streakSoFar+1 else 0,
+                deckID = selectedDeck!!
             )
             Timber.d("$newReview")
             insertNewReviewUseCase(newReview).launchIn(viewModelScope)
         } else {
-            Timber.e("The picked card doesn't exist!")
+            Timber.e("The picked card or deck doesn't exist!")
         }
 
         for (unpickedNote in unpickedNotes){
@@ -179,6 +180,7 @@ class ReviewViewModel @Inject constructor(
                 levelWhereThisHappened = deckLevel.value,
                 wasThisOptionPicked = false,
                 streakValueAfterThis = if (wasCorrect) card.streakSoFar+1 else 0,
+                deckID = selectedDeck!!
             )
 
             Timber.d("$newReview")
