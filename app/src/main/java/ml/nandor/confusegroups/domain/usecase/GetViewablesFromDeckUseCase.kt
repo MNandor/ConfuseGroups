@@ -98,41 +98,55 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         val newReviews = repository.getNewReviewsFromDeck(deckName)
 
 
+        val before = System.currentTimeMillis()
         // someday, someone will optimize this
         // because currently it's like O(N^a billion)
         // for now I just want to get it working
 
-        val randomOptions = reviewCards.associate { left -> Pair(left.id, // for each "left" (question note)
-            allCards.associate {right ->  // evaluate each "right" (potential answer note)
+        // (performance)
+        val reviewCardIDs = reviewCards.map { it.id }
+        val maybeRelevantReviews = newReviews.filter { it.questionID in reviewCardIDs || it.answerOptionID in reviewCardIDs }
 
-                // performance reasons: select relevant reviews rather than looping through all of them multiple times
-                val relevantReviews = newReviews.filter { (it.questionID == left.id && it.answerOptionID == right.id) ||  (it.questionID == right.id && it.answerOptionID == left.id)}
+        val randomOptions = reviewCards.associate { left ->
 
-                var timesLeftAvoidedRight: Int = relevantReviews.filter { (it.questionID == left.id && it.answerOptionID == right.id && !it.wasThisOptionPicked) }.size
-                var timesRightAvoidedLeft: Int = relevantReviews.filter { (it.questionID == right.id && it.answerOptionID == left.id && !it.wasThisOptionPicked) }.size
-                var timesLeftFellForRight: Int = relevantReviews.filter { (it.questionID == left.id && it.answerOptionID == right.id && it.wasThisOptionPicked) }.size
-                var timesRightFellForLeft: Int = relevantReviews.filter { (it.questionID == right.id && it.answerOptionID == left.id && it.wasThisOptionPicked) }.size
+            val relevantGroupMemberships = groupMemberships
+                .filter { it.cardID == left.id } // for each group the left belongs in
+                .map { g-> groupMemberships.filter { it.groupID == g.groupID }  } // get all members that belong to the same group
 
-                val ll = (timesLeftFellForRight+1).toDouble()/(timesLeftAvoidedRight+1)
-                val rr = (timesRightFellForLeft+1).toDouble()/(timesRightAvoidedLeft+1)
+            Pair(left.id, // for each "left" (question note)
 
-                val correlationValue =  (ll+rr)/2.0f
+                allCards.associate {right ->  // evaluate each "right" (potential answer note)
 
-                Pair(right.id,
-                    object {
-                        val hasGroupInCommon = groupMemberships
-                            .filter { it.cardID == left.id } // for each group the left belongs in
-                            .map { g-> groupMemberships.filter { it.groupID == g.groupID }  } // get all members that belong to the same group
-                            .map { it.filter { it.cardID == right.id } } // and find if any of the members are the right
-                            .filter { it.isNotEmpty() } // *sigh* remove empty groups of groups
-                            .isNotEmpty()
-                        val isSame = left.id == right.id
+                    // (performance) select relevant reviews rather than looping through all of them multiple times
+                    val relevantReviews = maybeRelevantReviews.filter { (it.questionID == left.id && it.answerOptionID == right.id) ||  (it.questionID == right.id && it.answerOptionID == left.id)}
 
-                        val correlationValue = correlationValue
-                    }
-                )
-            }.filter { !it.value.isSame }
-        )}
+                    var timesLeftAvoidedRight: Int = relevantReviews.filter { (it.questionID == left.id && it.answerOptionID == right.id && !it.wasThisOptionPicked) }.size
+                    var timesRightAvoidedLeft: Int = relevantReviews.filter { (it.questionID == right.id && it.answerOptionID == left.id && !it.wasThisOptionPicked) }.size
+                    var timesLeftFellForRight: Int = relevantReviews.filter { (it.questionID == left.id && it.answerOptionID == right.id && it.wasThisOptionPicked) }.size
+                    var timesRightFellForLeft: Int = relevantReviews.filter { (it.questionID == right.id && it.answerOptionID == left.id && it.wasThisOptionPicked) }.size
+
+                    val ll = (timesLeftFellForRight+1).toDouble()/(timesLeftAvoidedRight+1)
+                    val rr = (timesRightFellForLeft+1).toDouble()/(timesRightAvoidedLeft+1)
+
+                    val correlationValue =  (ll+rr)/2.0f
+
+                    Pair(right.id,
+                        object {
+                            val hasGroupInCommon = relevantGroupMemberships
+                                .map { it.filter { it.cardID == right.id } } // and find if any of the members are the right
+                                .filter { it.isNotEmpty() } // *sigh* remove empty groups of groups
+                                .isNotEmpty()
+                            val isSame = left.id == right.id
+
+                            val correlationValue = correlationValue
+                        }
+                    )
+                }.filter { !it.value.isSame }
+            )
+        }
+
+        val after = System.currentTimeMillis()
+        Timber.i("Lasted ${after-before}ms")
 
         if (BuildConfig.DEBUG){
             Timber.i("The map!")
@@ -150,10 +164,11 @@ class GetViewablesFromDeckUseCase @Inject constructor(
             }
         }
 
+
         // todo use multipliers and randomness
         val updatedViewables = reviewCards.map {note ->
             val ll = randomOptions[note.id]!!.toList()
-            val wrongs = ll.sortedBy { it.second.correlationValue + (if (it.second.hasGroupInCommon) 1.0 else 0.0) }.take(3).map { it.first }
+            val wrongs = ll.sortedByDescending { it.second.correlationValue + (if (it.second.hasGroupInCommon) 1.0 else 0.0) }.take(3).map { it.first }
             val wrongNotes = wrongs.map { it1 -> allCards.find { it1 == it.id }!! }
             val options = (wrongNotes+ listOf<AtomicNote>(note)).shuffled()
 
@@ -186,30 +201,6 @@ class GetViewablesFromDeckUseCase @Inject constructor(
     // Calculate the earliest level the card will appear on again
     private fun recentReviewToLevel(review: Review, deckMultiplier:Double):Int{
         return review.level+deckMultiplier.pow(review.streak).toInt()
-    }
-
-    private fun recentNewReviewToLevel(review: NewReview, deckMultiplier:Double):Int{
-        return review.levelWhereThisHappened+deckMultiplier.pow(review.streakValueAfterThis).toInt()
-    }
-
-    private fun determineCorrelation(question: String, answer: String, exponent: Double, reviews: List<Review>):Double{
-
-        // currently ignoring reverse reviews
-        val relevants = reviews.filter { it.question == question }
-
-        val mistakeCount = relevants.filter { it.answer == answer }.size
-        val correctCount = relevants.filter { answer in it.unpickedAnswers.split(";") }.size
-
-        val totalCount = mistakeCount+correctCount
-
-        // the magic formula that makes it all work
-        val base = (mistakeCount+0.5)/(totalCount+1.0)/2.0
-
-        val final = base.pow(exponent)
-
-        //Timber.tag("alg1math").d("\t$answer - (${mistakeCount}/${totalCount}) - ${(final*100).toInt()}%")
-
-        return final
     }
 
     private fun getDeckLevel(deckName: String, successMultiplier: Double):Int{
