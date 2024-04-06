@@ -17,12 +17,7 @@ class GetNewCorrelationsFromDeckUseCase @Inject constructor(
 
         val map = mutableMapOf<String, NewCorrelation>()
 
-        for(i in 0..(cards.size-1)){
-            for (j in (i+1)..(cards.size-1)){
-                //Timber.d("${cards[i].id} - ${cards[j].id}")
-                map["${cards[i].id} - ${cards[j].id}"] = NewCorrelation(cards[i], cards[j])
-            }
-        }
+        val helpMap = cards.associate { Pair(it.id, it) }
 
         for (review in reviews){
             if (review.questionID == review.answerOptionID)
@@ -32,7 +27,7 @@ class GetNewCorrelationsFromDeckUseCase @Inject constructor(
                 val key = "${review.questionID} - ${review.answerOptionID}"
 
                 if (key !in map.keys){
-                    Timber.e("$key not in map")
+                    map[key] = NewCorrelation(helpMap[review.questionID]!!, helpMap[review.answerOptionID]!!)
                 }
 
                 if (review.wasThisOptionPicked){
@@ -44,7 +39,7 @@ class GetNewCorrelationsFromDeckUseCase @Inject constructor(
                 val key = "${review.answerOptionID} - ${review.questionID}"
 
                 if (key !in map.keys){
-                    Timber.e("$key not in map")
+                    map[key] = NewCorrelation(helpMap[review.questionID]!!, helpMap[review.answerOptionID]!!)
                 }
 
                 if (review.wasThisOptionPicked){
@@ -58,7 +53,7 @@ class GetNewCorrelationsFromDeckUseCase @Inject constructor(
 
         val fin = map.values.sortedByDescending { it.getCorrelationValue() }
 
-        Timber.d(fin.toString())
+        Timber.d(fin.size.toString())
 
         return fin.take(100)
     }
