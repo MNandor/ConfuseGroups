@@ -95,4 +95,11 @@ interface DataAccessObject {
     // todo
 //    @Query("SELECT NewReview.* FROM NewReview ")
 //    fun getRecentNewReviewsFromDeck(deckID: String): List<NewReview>
+
+    @Query("UPDATE Deck SET correlationPreference = :newVal WHERE name = :deckID")
+    fun setDeckCorrelationPreferenceValue(deckID:String, newVal: Double)
+    @Query("UPDATE Deck SET confgroupPreference = :newVal WHERE name = :deckID")
+    fun setDeckGroupPreferenceValue(deckID:String, newVal: Double)
+    @Query("UPDATE Deck SET randomPreference = :newVal WHERE name = :deckID")
+    fun setDeckRandomPreferenceValue(deckID:String, newVal: Double)
 }

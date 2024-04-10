@@ -122,4 +122,16 @@ class LocalStorageRepositoryImp @Inject constructor(
 //        return dao.getRecentNewReviewsFromDeck(deckID)
 //    }
 
+    override fun setDeckCorrelationPreferenceValue(deckID:String, newVal: Double){
+        return dao.setDeckCorrelationPreferenceValue(deckID, newVal)
+    }
+
+    override fun setDeckGroupPreferenceValue(deckID:String, newVal: Double){
+        return dao.setDeckGroupPreferenceValue(deckID, newVal)
+    }
+
+    override fun setDeckRandomPreferenceValue(deckID:String, newVal: Double){
+        return dao.setDeckRandomPreferenceValue(deckID, newVal)
+    }
+
 }

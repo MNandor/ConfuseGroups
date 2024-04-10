@@ -18,14 +18,6 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 ): UseCase<String?, List<PreparedViewableCard>>() {
     override fun doStuff(deckName: String?): List<PreparedViewableCard> {
 
-        // for each card, aside from the correct answer, we want to select 3 incorrect options to show the user
-        // we prefer selecting more challenging options
-        // these are correlated cards; cards that belong to at least one shared group
-        // and implicitly: cards we don't know the correlatio nwith
-        val CORRELATION_MULTIPLIER = 2
-        val GROUP_MULTIPLIER = 1
-        val RANDOMNESS_MULTIPLIER = 1
-
         // todo keeping these as constants for now
         // todo choosing cards per level and chosing wrong answers can be two separate calls
         // allowing for the latter to happen per-card
@@ -42,6 +34,15 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         }
 
         val deck = repository.getDeckByName(deckName)
+
+        // for each card, aside from the correct answer, we want to select 3 incorrect options to show the user
+        // we prefer selecting more challenging options
+        // these are correlated cards; cards that belong to at least one shared group
+        // and implicitly: cards we don't know the correlatio nwith
+        val CORRELATION_MULTIPLIER = deck.correlationPreference
+        val GROUP_MULTIPLIER = deck.confgroupPreference
+        val RANDOMNESS_MULTIPLIER = deck.randomPreference
+
 
         val reviews = repository.getMostRecentReviewsByDeckName(deckName)
 

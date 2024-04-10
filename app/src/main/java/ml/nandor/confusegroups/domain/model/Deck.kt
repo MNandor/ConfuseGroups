@@ -25,5 +25,9 @@ data class Deck(
     // currently unused because we reset to 1 level (so this value is practically infinite)
     val failExponent:Int,
 
-    val displayName: String? = null
+    val displayName: String? = null,
+
+    val correlationPreference: Double = 2.0,
+    val confgroupPreference: Double = 1.0,
+    val randomPreference: Double = 1.0
 )

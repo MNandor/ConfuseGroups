@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -279,16 +280,20 @@ fun DeleteDeckPopup(viewModel: DecksViewModel){
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditDeckSettingsPopup(viewModel: DecksViewModel){
     val deckName = viewModel.deckBeingAccessed.value
     val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.EDITING
     if (visible){
+        val corPref = remember { mutableStateOf("") }
+        val grpPref = remember { mutableStateOf("") }
+        val ranPref = remember { mutableStateOf("") }
         Dialog(onDismissRequest = { viewModel.enterDeckActionMode() }) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.6f)
+                    .fillMaxHeight(0.7f)
             ){
                 Column() {
                     Text(deckName!!,
@@ -319,6 +324,29 @@ fun EditDeckSettingsPopup(viewModel: DecksViewModel){
                     ){
                         Text("Confuse exponent: ")
                         Text(viewModel.editedDeckState.value?.confuseExponent.toString())
+                    }
+                    Row(modifier = Modifier
+                        .padding(4.dp)
+                    ){
+                        Text("Correlation preference")
+                        TextField(value = corPref.value, onValueChange = {corPref.value = it})
+                    }
+                    Row(modifier = Modifier
+                        .padding(4.dp)
+                    ){
+                        Text("Group preference")
+                        TextField(value = grpPref.value, onValueChange = {grpPref.value = it})
+                    }
+                    Row(modifier = Modifier
+                        .padding(4.dp)
+                    ){
+                        Text("Random preference")
+                        TextField(value = ranPref.value, onValueChange = {ranPref.value = it})
+                    }
+                    Button(onClick = {
+                        viewModel.setPreferences(corPref.value, grpPref.value, ranPref.value)
+                    }) {
+                        Text("Update!")
                     }
                 }
 

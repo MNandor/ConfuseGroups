@@ -51,4 +51,8 @@ interface LocalStorageRepository {
     fun getNewReviewsFromDeck(deckID: String): List<NewReview>
 
 //    fun getRecentNewReviewsFromDeck(deckID: String): List<NewReview>
+
+    fun setDeckCorrelationPreferenceValue(deckID:String, newVal: Double)
+    fun setDeckGroupPreferenceValue(deckID:String, newVal: Double)
+    fun setDeckRandomPreferenceValue(deckID:String, newVal: Double)
 }

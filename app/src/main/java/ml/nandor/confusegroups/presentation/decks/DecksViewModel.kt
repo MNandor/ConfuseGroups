@@ -23,6 +23,7 @@ import ml.nandor.confusegroups.domain.usecase.InsertDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListDecksUseCase
 import ml.nandor.confusegroups.domain.usecase.RenameDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.UpdateDeckPreferencesUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -36,7 +37,8 @@ class DecksViewModel @Inject constructor(
     private val renameDeckUseCase: RenameDeckUseCase,
     private val insertCardUseCase: InsertCardUseCase,
     private val insertDeckUseCase: InsertDeckUseCase,
-    private val createReverseDeckUseCase: CreateReverseDeckUseCase
+    private val createReverseDeckUseCase: CreateReverseDeckUseCase,
+    private val updateDeckPreferencesUseCase: UpdateDeckPreferencesUseCase
 ): ViewModel() {
 
     // Define a coroutinescope so we don't run on main thread
@@ -197,6 +199,19 @@ class DecksViewModel @Inject constructor(
                 Timber.d("Created reverse deck")
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun setPreferences(cor: String, grp: String, ran: String){
+        if (_deckBeingAccessed.value == null) return
+
+        val input = UpdateDeckPreferencesUseCase.InputDC(
+            deckName = deckBeingAccessed.value!!,
+            correlationPreference = cor,
+            groupPreference = grp,
+            randomPreference = ran
+        )
+
+        updateDeckPreferencesUseCase(input).launchIn(viewModelScope)
     }
 
 
