@@ -22,7 +22,7 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         // we prefer selecting more challenging options
         // these are correlated cards; cards that belong to at least one shared group
         // and implicitly: cards we don't know the correlatio nwith
-        val CORRELATION_MULTIPLIER = 1
+        val CORRELATION_MULTIPLIER = 2
         val GROUP_MULTIPLIER = 1
         val RANDOMNESS_MULTIPLIER = 1
 
@@ -130,15 +130,19 @@ class GetViewablesFromDeckUseCase @Inject constructor(
 
                     val correlationValue =  (ll+rr)/2.0f
 
+
                     Pair(right.id,
                         object {
-                            val hasGroupInCommon = relevantGroupMemberships
+                            val hasGroupInCommon = if (relevantGroupMemberships
                                 .map { it.filter { it.cardID == right.id } } // and find if any of the members are the right
                                 .filter { it.isNotEmpty() } // *sigh* remove empty groups of groups
-                                .isNotEmpty()
+                                .isNotEmpty()) 1.0 else 0.0
+
                             val isSame = left.id == right.id
 
                             val correlationValue = correlationValue
+
+                            val randomValue = Math.random()
                         }
                     )
                 }.filter { !it.value.isSame }
@@ -148,27 +152,18 @@ class GetViewablesFromDeckUseCase @Inject constructor(
         val after = System.currentTimeMillis()
         Timber.i("Lasted ${after-before}ms")
 
-        if (BuildConfig.DEBUG){
-            Timber.i("The map!")
-            for (left in randomOptions.keys){
-                Timber.i(left)
-
-                val r = randomOptions[left]
-
-                if (r != null) {
-                    for (right in r.keys){
-                        val elem = r[right]
-                        Timber.d("[$right]: ${elem?.correlationValue}, ${elem?.hasGroupInCommon}")
-                    }
-                }
-            }
-        }
-
 
         // todo use multipliers and randomness
         val updatedViewables = reviewCards.map {note ->
             val ll = randomOptions[note.id]!!.toList()
-            val wrongs = ll.sortedByDescending { it.second.correlationValue + (if (it.second.hasGroupInCommon) 1.0 else 0.0) }.take(3).map { it.first }
+            val wrongs = ll
+                .sortedByDescending {
+                    it.second.correlationValue * CORRELATION_MULTIPLIER +
+                    it.second.hasGroupInCommon * GROUP_MULTIPLIER +
+                    it.second.randomValue * RANDOMNESS_MULTIPLIER
+                }
+                .take(3)
+                .map { it.first }
             val wrongNotes = wrongs.map { it1 -> allCards.find { it1 == it.id }!! }
             val options = (wrongNotes+ listOf<AtomicNote>(note)).shuffled()
 
