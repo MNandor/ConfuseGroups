@@ -2,6 +2,7 @@ package ml.nandor.confusegroups.presentation.decks
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -211,7 +212,16 @@ class DecksViewModel @Inject constructor(
             randomPreference = ran
         )
 
-        updateDeckPreferencesUseCase(input).launchIn(viewModelScope)
+        updateDeckPreferencesUseCase(input).onEach {
+            if (it is Resource.Success){
+                listDecksFromDatabase()
+                Timber.d("Updated deck preference values")
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    val thisDeck = derivedStateOf {
+        _decks.value.find { it.name == _deckBeingAccessed.value }
     }
 
 

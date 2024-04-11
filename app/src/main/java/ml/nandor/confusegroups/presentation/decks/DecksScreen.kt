@@ -329,24 +329,31 @@ fun EditDeckSettingsPopup(viewModel: DecksViewModel){
                         .padding(4.dp)
                     ){
                         Text("Correlation preference")
+                        Text(viewModel.thisDeck.value?.correlationPreference.toString())
                         TextField(value = corPref.value, onValueChange = {corPref.value = it})
                     }
                     Row(modifier = Modifier
                         .padding(4.dp)
                     ){
                         Text("Group preference")
+                        Text(viewModel.thisDeck.value?.confgroupPreference.toString())
                         TextField(value = grpPref.value, onValueChange = {grpPref.value = it})
                     }
                     Row(modifier = Modifier
                         .padding(4.dp)
                     ){
                         Text("Random preference")
+                        Text(viewModel.thisDeck.value?.randomPreference.toString())
                         TextField(value = ranPref.value, onValueChange = {ranPref.value = it})
                     }
-                    Button(onClick = {
-                        viewModel.setPreferences(corPref.value, grpPref.value, ranPref.value)
-                    }) {
-                        Text("Update!")
+                    Row(modifier = Modifier
+                        .padding(4.dp)
+                    ){
+                        Button(onClick = {
+                            viewModel.setPreferences(corPref.value, grpPref.value, ranPref.value)
+                        }) {
+                            Text("Update!")
+                        }
                     }
                 }
 
