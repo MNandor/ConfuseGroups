@@ -158,6 +158,8 @@ class XportViewModel @Inject constructor(
                 continue
             }
 
+            // todo this should be a usecase
+
 
 
             val split = if (line.contains("--")){
@@ -188,6 +190,8 @@ class XportViewModel @Inject constructor(
         group.confuseGroup ?: return
 
         for (_note in notes){
+            // todo offer to create note instead
+            // currently, if this doesn't correspond to an existing note, we just don't add the note to the deck
             val note = searchNote(_note.first, _note.second)?: continue
 
             // todo check if already a member

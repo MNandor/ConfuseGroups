@@ -16,6 +16,9 @@ class AddCardsFromTextUseCase @Inject constructor(
 
         for (pair in data.split(";", "\n")){
 
+            if (pair.startsWith("#")) continue // corresponds to exported group headers
+
+            // if either side is meant to have a dash in it, a double-dash is the separator
             val qa = if (pair.contains("--")) pair.split("--")
             else if (pair.contains("-")) pair.split("-")
             else continue
