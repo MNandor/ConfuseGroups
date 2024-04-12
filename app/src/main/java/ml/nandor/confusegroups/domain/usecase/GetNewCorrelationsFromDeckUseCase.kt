@@ -1,5 +1,8 @@
 package ml.nandor.confusegroups.domain.usecase
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.NewCorrelation
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import timber.log.Timber
@@ -8,8 +11,10 @@ import kotlin.math.pow
 
 class GetNewCorrelationsFromDeckUseCase @Inject constructor(
     private val repository: LocalStorageRepository
-): UseCase<String, List<NewCorrelation>>() {
-    override fun doStuff(input: String): List<NewCorrelation> {
+) {
+    operator fun invoke(input: String): Flow<Resource<List<NewCorrelation>>> = flow{
+
+        emit(Resource.Loading())
 
         val reviews = repository.getNewReviewsFromDeck(input)
 
@@ -19,7 +24,14 @@ class GetNewCorrelationsFromDeckUseCase @Inject constructor(
 
         val helpMap = cards.associate { Pair(it.id, it) }
 
-        for (review in reviews){
+        val shouldEmitProgress = reviews.size > 1000
+
+        for ((index, review) in reviews.withIndex()){
+
+            if (shouldEmitProgress && (index+1) % 100 == 0 ){
+                emit(Resource.Progress(index+1))
+            }
+
             if (review.questionID == review.answerOptionID)
                 continue
 
@@ -55,7 +67,7 @@ class GetNewCorrelationsFromDeckUseCase @Inject constructor(
 
         Timber.d(fin.size.toString())
 
-        return fin.take(100)
+        emit(Resource.Success(fin.take(100)))
     }
 
 }

@@ -64,6 +64,9 @@ class CommonViewModel @Inject constructor(
     }
 
 
+    private val _progressPercent = mutableStateOf(0)
+    val progressPercent = _progressPercent
+
     private val _newCorrelations: MutableState<List<NewCorrelation>> = mutableStateOf(listOf())
     val newCorrelation = _newCorrelations
     fun selectDeck(deckName: String?, deckMode: DeckOpenMode){
@@ -77,6 +80,7 @@ class CommonViewModel @Inject constructor(
                 getAllCorrelationsUseCase(deckName).onEach {
                     if (it is Resource.Success){
                         _correlations.value = it.data!!
+                        _progressPercent.value = 0
                     }
 
                 }.launchIn(viewModelScope)
@@ -84,6 +88,10 @@ class CommonViewModel @Inject constructor(
                     getNewCorrelationsFromDeckUseCase(deckName).onEach {
                         if (it is Resource.Success){
                             _newCorrelations.value = it.data!!
+                        }
+                        if (it is Resource.Progress){
+                            Timber.d("Loading Correlations: ${it.progressPercent}")
+                            _progressPercent.value = it.progressPercent!!
                         }
 
                     }.launchIn(viewModelScope)
