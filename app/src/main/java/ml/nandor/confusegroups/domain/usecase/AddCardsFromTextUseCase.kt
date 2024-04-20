@@ -1,6 +1,7 @@
 package ml.nandor.confusegroups.domain.usecase
 
 import ml.nandor.confusegroups.Util
+import ml.nandor.confusegroups.domain.TextImport
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.repository.LocalStorageRepository
 import javax.inject.Inject
@@ -18,14 +19,9 @@ class AddCardsFromTextUseCase @Inject constructor(
 
             if (pair.startsWith("#")) continue // corresponds to exported group headers
 
-            // if either side is meant to have a dash in it, a double-dash is the separator
-            val qa = if (pair.contains("--")) pair.split("--")
-            else if (pair.contains("-")) pair.split("-")
-            else continue
+            val (question, answer) = TextImport.textToQAPair(pair) ?: return
 
-            val question = qa[0].trim()
-
-            val card = AtomicNote(Util.getCardName(), answer = qa[1].trim(), deck = deck, question)
+            val card = AtomicNote(Util.getCardName(), answer = answer, deck = deck, question)
             repository.insertCard(card)
 
         }

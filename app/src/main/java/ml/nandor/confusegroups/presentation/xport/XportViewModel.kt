@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import ml.nandor.confusegroups.Util
 import ml.nandor.confusegroups.domain.Resource
+import ml.nandor.confusegroups.domain.TextImport
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.ConfuseGroup
 import ml.nandor.confusegroups.domain.model.ConfuseGroupToAddTo
@@ -153,23 +154,9 @@ class XportViewModel @Inject constructor(
                 continue
             }
 
-            if (!line.contains("-")){
-                Timber.d("Missing dash in $groupName")
-                continue
-            }
+            val pair = TextImport.textToQAPair(line) ?: continue
 
-            // todo this should be a usecase
-
-
-
-            val split = if (line.contains("--")){
-                line.split("--")
-            }
-            else if (line.contains("-")){
-                line.split("-")
-            } else return
-
-            linesSoFar.add(Pair(split[0], split[1]))
+            linesSoFar.add(pair)
 
 
         }
