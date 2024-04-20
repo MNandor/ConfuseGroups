@@ -1,6 +1,5 @@
 package ml.nandor.confusegroups.presentation.decks
 
-import android.media.Image
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -14,18 +13,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -58,13 +54,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import ml.nandor.confusegroups.R
 import ml.nandor.confusegroups.Util
 import ml.nandor.confusegroups.domain.model.AtomicNote
@@ -652,27 +646,56 @@ fun InitialTutorialPopup(viewModel: DecksViewModel){
                     .fillMaxWidth()
                     .fillMaxHeight(0.8f)
             ) {
-                HorizontalPager(pageCount = 2) {page ->
+                HorizontalPager(pageCount = 2, modifier = Modifier.padding(8.dp).fillMaxHeight(.8f)) {page ->
 
                     when (page){
                         0 -> {
-                            val vec:ImageVector = Icons.Filled.DateRange
+                            Column(modifier = Modifier.fillMaxHeight()) {
+                                Text ("Welcome to ConfuseGroups!", fontSize = 24.sp, textAlign = TextAlign.Center)
 
-                            Image(vec, contentDescription="Hi", contentScale = ContentScale.FillWidth, modifier = Modifier.fillMaxWidth(), colorFilter = ColorFilter.tint(
-                                LocalContentColor.current))
+
+                                val vec1 = painterResource(id = R.drawable.logo_confusegroups_importable)
+
+                                Image(vec1, contentDescription="Hi", contentScale = ContentScale.FillWidth, modifier = Modifier.fillMaxWidth())
+
+                            }
+
                         }
                         else -> {
-                            Text(page.toString())
+                            Column(modifier = Modifier.fillMaxHeight()) {
+                                Text(page.toString())
+                                val vec: ImageVector = Icons.Filled.DateRange
+                                Image(
+                                    vec,
+                                    contentDescription = "Hi",
+                                    contentScale = ContentScale.FillWidth,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colorFilter = ColorFilter.tint(
+                                        LocalContentColor.current
+                                    )
+                                )
+                            }
                         }
                     }
                     
                 }
-                TextButton(
-                    onClick = {
-                        viewModel.hideInitialPopup()
-                    },
-                ) {
-                    Text("Got it!!")
+                Row(){
+                    TextButton(
+                        onClick = {
+                            viewModel.hideInitialPopup()
+                        },
+                    ) {
+                        Text("Skip")
+                    }
+
+                    TextButton(
+                        onClick = {
+                            viewModel.hideInitialPopup()
+                        },
+                    ) {
+                        Text("Next")
+                    }
+
                 }
             }
         }
