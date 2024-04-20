@@ -365,6 +365,30 @@ fun EditDeckSettingsPopup(viewModel: DecksViewModel){
                             Text("Update!")
                         }
                     }
+                    Text("Explanation")
+                    Text(fontSize = 8.sp, lineHeight = 8.sp, modifier = Modifier.padding(8.dp), text = """
+                        New Cards Per Level
+                        Limiting this means you can start practicing already learned cards before seeing ALL cards at least once.
+                        If set to -1, the limit is auto-calculated based on deck size.
+                        
+                        Success Multiplier
+                        Determines how fast gaps between successful reviews grow.
+                        This actually barely affects the order of Review cards in relation to each other, but a higher value causes New cards to show sooner.
+                        (Subject to change)
+                        
+                        Confuse Exponent
+                        (Legacy, subject to removal)
+                        
+                        Correlation Preference
+                        Picking the wrong answer increases the "correlation" between the card questioned and the card that contained the wrong answer.
+                        This determines how much more likely that same wrong answer is offered the next time the card is reviewed.
+                        
+                        Group Preference
+                        How much more likely are cards with at least one ConfuseGroup in common are to be offered as pickable options.
+                        
+                        Random Preference
+                        Randomly pick pickable wrong answers as opposed to the above two methods.
+                    """.trimIndent())
                 }
 
             }
