@@ -10,10 +10,13 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -300,7 +303,9 @@ fun EditDeckSettingsPopup(viewModel: DecksViewModel){
                     .fillMaxWidth()
                     .fillMaxHeight(0.7f)
             ){
-                Column() {
+                Column(
+                    Modifier.verticalScroll(rememberScrollState())
+                ) {
                     Text(deckName!!,
                         modifier = Modifier
                             .padding(4.dp)
@@ -383,7 +388,11 @@ fun AddToDeckPopup(viewModel: DecksViewModel) {
                     .fillMaxWidth()
                     .fillMaxHeight(0.6f)
             ) {
-                Column() {
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+
+                ) {
                     Text(
                         deckName!!,
                         modifier = Modifier
@@ -457,7 +466,9 @@ fun InspectDeckPopup(viewModel: DecksViewModel) {
                     .fillMaxWidth()
                     .fillMaxHeight(0.6f)
             ) {
-                Column() {
+                Column(
+                    Modifier.verticalScroll(rememberScrollState())
+                ) {
                     Text(
                         deckName!!,
                         modifier = Modifier
@@ -470,6 +481,7 @@ fun InspectDeckPopup(viewModel: DecksViewModel) {
                         modifier = Modifier
                             .padding(8.dp)
                             .fillMaxHeight(0.5f)
+                            .heightIn(0.dp, 200.dp)
                     ) {
                         items(items = cards) { item ->
                             Text(item.question+" - "+item.answer)
