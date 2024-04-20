@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ml.nandor.confusegroups.Util
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.presentation.common.CommonViewModel
@@ -62,6 +63,7 @@ import timber.log.Timber
 fun DecksScreen(commonViewModel: CommonViewModel){
     Timber.d("Launched")
     val localViewModel: DecksViewModel = hiltViewModel()
+    localViewModel.listDecksFromDatabase()
 
     Surface() {
         Column() {

@@ -46,15 +46,11 @@ class DecksViewModel @Inject constructor(
 
     // Define a coroutinescope so we don't run on main thread
     private val viewModelScope = CoroutineScope(Dispatchers.Default)
-    init {
-        Timber.d("Initialized!")
-        listDecksFromDatabase()
-    }
 
     private val _decks: MutableState<List<Deck>> = mutableStateOf(listOf())
     val decks = _decks
 
-    private fun listDecksFromDatabase(){
+    fun listDecksFromDatabase(){
 
         Timber.d("Loading decks!")
 
