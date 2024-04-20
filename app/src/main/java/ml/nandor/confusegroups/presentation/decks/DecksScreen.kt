@@ -7,6 +7,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,7 +55,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -646,7 +652,9 @@ fun InitialTutorialPopup(viewModel: DecksViewModel){
                     .fillMaxWidth()
                     .fillMaxHeight(0.8f)
             ) {
-                HorizontalPager(pageCount = 2, modifier = Modifier.padding(8.dp).fillMaxHeight(.8f)) {page ->
+                HorizontalPager(pageCount = 7, modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxHeight(.9f)) {page ->
 
                     when (page){
                         0 -> {
@@ -658,15 +666,27 @@ fun InitialTutorialPopup(viewModel: DecksViewModel){
 
                                 Image(vec1, contentDescription="Hi", contentScale = ContentScale.FillWidth, modifier = Modifier.fillMaxWidth())
 
+                                Text ("The memory game that adapts to your knowledge to keep you challenged!")
+
                             }
 
                         }
-                        else -> {
+
+                        1 -> {
                             Column(modifier = Modifier.fillMaxHeight()) {
-                                Text(page.toString())
-                                val vec: ImageVector = Icons.Filled.DateRange
+                                Text(buildAnnotatedString{
+                                    append("A ")
+                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)) {
+                                        append("Flashcard")
+                                    }
+                                    append(" consists of a Front (Question) and Back (Answer) side.")
+
+                                }
+
+                                )
+
                                 Image(
-                                    vec,
+                                    painter = painterResource(id = R.drawable.intro_hito),
                                     contentDescription = "Hi",
                                     contentScale = ContentScale.FillWidth,
                                     modifier = Modifier.fillMaxWidth(),
@@ -674,6 +694,152 @@ fun InitialTutorialPopup(viewModel: DecksViewModel){
                                         LocalContentColor.current
                                     )
                                 )
+
+
+                                Text("""                  
+                                  You will be shown a Question, and 4 possible Answers.
+                                  Pick the right one.
+                                  """.trimIndent())
+
+                                Image(
+                                    painter = painterResource(id = R.drawable.intro_hito2),
+                                    contentDescription = "Hi",
+                                    contentScale = ContentScale.FillWidth,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colorFilter = ColorFilter.tint(
+                                        LocalContentColor.current
+                                    )
+                                )
+                            }
+                        }
+                        2 -> {
+                            Column(modifier = Modifier.fillMaxHeight()) {
+                                Text(
+                                    buildAnnotatedString{
+                                        append("A collection of Flashcards is called a ")
+                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)) {
+                                            append("Deck")
+                                        }
+                                        append(".")
+                                        append(" A basic Deck has been created for you to try, but you can always delete it and make your own.")
+                                        append(" You can also import Decks from other users.")
+
+                                    }
+                                )
+
+                                Image(
+                                    painter = painterResource(id = R.drawable.intro_deck),
+                                    contentDescription = "Hi",
+                                    contentScale = ContentScale.FillWidth,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colorFilter = ColorFilter.tint(
+                                        LocalContentColor.current
+                                    )
+                                )
+                            }
+                        }
+                        3 -> {
+                            Column(modifier = Modifier.fillMaxHeight()) {
+                                Text(
+                                    buildAnnotatedString{
+                                        append("Two Cards are considered ")
+                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)) {
+                                            append("Correlated")
+                                        }
+                                        append(" if you choose one Card's Answer when presented with the other Card's Question.")
+                                    }
+                                )
+
+                                Image(
+                                    painter = painterResource(id = R.drawable.intro_correlation),
+                                    contentDescription = "Hi",
+                                    contentScale = ContentScale.FillWidth,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colorFilter = ColorFilter.tint(
+                                        LocalContentColor.current
+                                    )
+                                )
+                                Text("The more often you mistake them for each other, the stronger the Correlation becomes.")
+                            }
+                        }
+                        4 -> {
+                            Column(modifier = Modifier.fillMaxHeight()) {
+                                Text(
+                                    buildAnnotatedString{
+                                        append("A ")
+                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)) {
+                                            append("ConfuseGroup")
+                                        }
+                                        append(" is formed by two or more Cards that you've identified as interconnected.")
+                                    }
+                                )
+
+                                Image(
+                                    painter = painterResource(id = R.drawable.intro_groups),
+                                    contentDescription = "Hi",
+                                    contentScale = ContentScale.FillWidth,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colorFilter = ColorFilter.tint(
+                                        LocalContentColor.current
+                                    )
+                                )
+
+                                Text("They share something in common and are likely to be Correlated with each other.")
+                            }
+                        }
+                        5 -> {
+                            Column(modifier = Modifier.fillMaxHeight()) {
+                                Text("A Correlation is between exactly two cards and it's determined by your answers.")
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text("A ConfuseGroup can include any number of cards and is created manually.")
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text("You can configure the each Deck to be more likely to show selectable Answers from Correlated cards, or cards that share a ConfuseGroup. This makes the challenge harder than completely random options.")
+
+                                Image(
+                                    painter = painterResource(id = R.drawable.intro_settings),
+                                    contentDescription = "Hi",
+                                    contentScale = ContentScale.FillWidth,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colorFilter = ColorFilter.tint(
+                                        LocalContentColor.current
+                                    )
+                                )
+                            }
+                        }
+                        6 -> {
+                            Column(modifier = Modifier.fillMaxHeight()) {
+                                Text(
+                                    """
+                                The app adjusts to your learning habits. If you consistently answer a card correctly, it will appear less frequently because you already know it well—no need for extra practice!
+                            """.trimIndent()
+                                )
+                                Image(
+                                    painter = painterResource(id = R.drawable.intro_srs),
+                                    contentDescription = "Hi",
+                                    contentScale = ContentScale.FillWidth,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colorFilter = ColorFilter.tint(
+                                        LocalContentColor.current
+                                    )
+                                )
+                                Text("If you're familiar with Spaced Repetition Systems, it's the same concept, minus the waiting time.")
+
+                                Image(
+                                    painter = painterResource(id = R.drawable.intro_potato),
+                                    contentDescription = "Hi",
+                                    contentScale = ContentScale.FillWidth,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colorFilter = ColorFilter.tint(
+                                        LocalContentColor.current
+                                    )
+                                )
+                            }
+                        }
+                        else -> {
+                            Column(modifier = Modifier.fillMaxHeight()) {
+                                Text(page.toString())
+//                                val vec: ImageVector =
+
                             }
                         }
                     }
