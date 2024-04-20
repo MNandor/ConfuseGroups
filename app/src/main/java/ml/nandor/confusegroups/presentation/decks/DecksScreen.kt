@@ -31,6 +31,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -92,7 +93,10 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
     val deckSize = viewModel.getDeckSizeFromDeckName(text)
     val context = LocalContext.current
 
-    val deckDisplayName = viewModel.decks.value.find { it.name == text }?.displayName ?: "[[$text]]"
+    val theDeck = viewModel.decks.value.find { it.name == text }
+
+    val deckDisplayName = theDeck?.displayName ?: "[[$text]]"
+    val displayNameOpacity = theDeck?.displayName?.let { 1.0f } ?: 0.5f // funniest null check i've ever written
 
     ElevatedCard(
         modifier = Modifier
@@ -138,7 +142,8 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                         .height(64.dp)
                     ,
                     textAlign = TextAlign.Center,
-                    fontSize = 32.sp
+                    fontSize = 32.sp,
+                    color = LocalContentColor.current.copy(alpha = displayNameOpacity)
                 )
                 Text(
                     modifier = Modifier
