@@ -15,16 +15,19 @@ import ml.nandor.confusegroups.Util
 import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.domain.model.Deck
+import ml.nandor.confusegroups.domain.model.SettingKV
 import ml.nandor.confusegroups.domain.usecase.AddCardsFromTextUseCase
 import ml.nandor.confusegroups.domain.usecase.CreateReverseDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.DeleteDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetDeckSizesUseCase
+import ml.nandor.confusegroups.domain.usecase.GetKeyValueUseCase
 import ml.nandor.confusegroups.domain.usecase.GetLevelOfMultipleDecksUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertCardUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListDecksUseCase
 import ml.nandor.confusegroups.domain.usecase.RenameDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.SetKeyValueUseCase
 import ml.nandor.confusegroups.domain.usecase.UpdateDeckPreferencesUseCase
 import timber.log.Timber
 import javax.inject.Inject
@@ -41,7 +44,9 @@ class DecksViewModel @Inject constructor(
     private val insertDeckUseCase: InsertDeckUseCase,
     private val createReverseDeckUseCase: CreateReverseDeckUseCase,
     private val updateDeckPreferencesUseCase: UpdateDeckPreferencesUseCase,
-    private val getLevelOfMultipleDecksUseCase: GetLevelOfMultipleDecksUseCase
+    private val getLevelOfMultipleDecksUseCase: GetLevelOfMultipleDecksUseCase,
+    private val getKeyValueUseCase: GetKeyValueUseCase,
+    private val setKeyValueUseCase: SetKeyValueUseCase
 ): ViewModel() {
 
     // Define a coroutinescope so we don't run on main thread
@@ -242,6 +247,30 @@ class DecksViewModel @Inject constructor(
         _decks.value.find { it.name == _deckBeingAccessed.value }
     }
 
+    private val _shouldShowInitialPopup = mutableStateOf(false)
+    val shouldShowInitialPopup = _shouldShowInitialPopup
+    fun checkForInitialPopup(){
+        getKeyValueUseCase("seenInitialPopup").onEach {
+            if (it is Resource.Success) {
+                withContext(Dispatchers.Main) {
+                    _shouldShowInitialPopup.value = if (it.data?.value == "true") false else true
+                }
+
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun hideInitialPopup(){
+        _shouldShowInitialPopup.value = false
+
+//        setKeyValueUseCase(SettingKV("seenInitialPopup", "true")).launchIn(viewModelScope)
+
+
+    }
+
+    init {
+        checkForInitialPopup()
+    }
 
 
 }

@@ -2,6 +2,7 @@ package ml.nandor.confusegroups.data
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import ml.nandor.confusegroups.domain.model.AtomicNote
@@ -12,6 +13,7 @@ import ml.nandor.confusegroups.domain.model.GroupMembership
 import ml.nandor.confusegroups.domain.model.ManualConfusion
 import ml.nandor.confusegroups.domain.model.NewReview
 import ml.nandor.confusegroups.domain.model.Review
+import ml.nandor.confusegroups.domain.model.SettingKV
 
 @Dao
 interface DataAccessObject {
@@ -102,4 +104,10 @@ interface DataAccessObject {
     fun setDeckGroupPreferenceValue(deckID:String, newVal: Double)
     @Query("UPDATE Deck SET randomPreference = :newVal WHERE name = :deckID")
     fun setDeckRandomPreferenceValue(deckID:String, newVal: Double)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun setKV(kv: SettingKV)
+
+    @Query("SELECT * FROM SettingKV WHERE keyName = :keyName")
+    fun getKV(keyName: String):SettingKV
 }

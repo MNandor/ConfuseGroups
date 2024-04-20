@@ -1,7 +1,9 @@
 package ml.nandor.confusegroups.presentation.decks
 
+import android.media.Image
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,14 +14,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -47,13 +53,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ml.nandor.confusegroups.R
 import ml.nandor.confusegroups.Util
 import ml.nandor.confusegroups.domain.model.AtomicNote
 import ml.nandor.confusegroups.presentation.common.CommonViewModel
@@ -81,7 +93,8 @@ fun DecksScreen(commonViewModel: CommonViewModel){
                 }
             }
         }
-        
+
+        InitialTutorialPopup(localViewModel)
         DeleteDeckPopup(localViewModel)
         EditDeckSettingsPopup(localViewModel)
         AddToDeckPopup(localViewModel)
@@ -621,6 +634,45 @@ fun ReverseDeckPopup(viewModel: DecksViewModel){
                     },
                 ) {
                     Text("Reverse Deck!")
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun InitialTutorialPopup(viewModel: DecksViewModel){
+    val visible = viewModel.shouldShowInitialPopup.value
+
+    if (visible){
+        Dialog(onDismissRequest = { viewModel.enterDeckActionMode() }) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.8f)
+            ) {
+                HorizontalPager(pageCount = 2) {page ->
+
+                    when (page){
+                        0 -> {
+                            val vec:ImageVector = Icons.Filled.DateRange
+
+                            Image(vec, contentDescription="Hi", contentScale = ContentScale.FillWidth, modifier = Modifier.fillMaxWidth(), colorFilter = ColorFilter.tint(
+                                LocalContentColor.current))
+                        }
+                        else -> {
+                            Text(page.toString())
+                        }
+                    }
+                    
+                }
+                TextButton(
+                    onClick = {
+                        viewModel.hideInitialPopup()
+                    },
+                ) {
+                    Text("Got it!!")
                 }
             }
         }

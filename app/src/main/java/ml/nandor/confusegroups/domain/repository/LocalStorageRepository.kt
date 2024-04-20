@@ -8,6 +8,7 @@ import ml.nandor.confusegroups.domain.model.GroupMembership
 import ml.nandor.confusegroups.domain.model.ManualConfusion
 import ml.nandor.confusegroups.domain.model.NewReview
 import ml.nandor.confusegroups.domain.model.Review
+import ml.nandor.confusegroups.domain.model.SettingKV
 
 interface LocalStorageRepository {
     fun insertDeck(deck: Deck)
@@ -55,4 +56,8 @@ interface LocalStorageRepository {
     fun setDeckCorrelationPreferenceValue(deckID:String, newVal: Double)
     fun setDeckGroupPreferenceValue(deckID:String, newVal: Double)
     fun setDeckRandomPreferenceValue(deckID:String, newVal: Double)
+
+    fun setKV(kv: SettingKV)
+
+    fun getKV(keyName: String): SettingKV
 }
