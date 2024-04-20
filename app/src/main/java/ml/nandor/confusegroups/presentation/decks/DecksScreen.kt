@@ -94,6 +94,7 @@ fun DecksScreen(commonViewModel: CommonViewModel){
 @Composable
 private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: CommonViewModel) {
     val deckSize = viewModel.getDeckSizeFromDeckName(text)
+    val deckLevel = viewModel.getDeckLevelFromDeckName(text)
     val context = LocalContext.current
 
     val theDeck = viewModel.decks.value.find { it.name == text }
@@ -132,7 +133,7 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                         .height(64.dp)
                         .align(Alignment.CenterVertically),
 
-                    text = viewModel.getDeckSizeFromDeckName(text).toString(),
+                    text = deckLevel.toString(),
                     textAlign = TextAlign.Center
                 )
                 Text(

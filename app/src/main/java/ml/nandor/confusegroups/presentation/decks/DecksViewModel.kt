@@ -19,6 +19,7 @@ import ml.nandor.confusegroups.domain.usecase.AddCardsFromTextUseCase
 import ml.nandor.confusegroups.domain.usecase.CreateReverseDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.DeleteDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.GetDeckSizesUseCase
+import ml.nandor.confusegroups.domain.usecase.GetLevelOfMultipleDecksUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertCardUseCase
 import ml.nandor.confusegroups.domain.usecase.InsertDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
@@ -39,7 +40,8 @@ class DecksViewModel @Inject constructor(
     private val insertCardUseCase: InsertCardUseCase,
     private val insertDeckUseCase: InsertDeckUseCase,
     private val createReverseDeckUseCase: CreateReverseDeckUseCase,
-    private val updateDeckPreferencesUseCase: UpdateDeckPreferencesUseCase
+    private val updateDeckPreferencesUseCase: UpdateDeckPreferencesUseCase,
+    private val getLevelOfMultipleDecksUseCase: GetLevelOfMultipleDecksUseCase
 ): ViewModel() {
 
     // Define a coroutinescope so we don't run on main thread
@@ -51,6 +53,7 @@ class DecksViewModel @Inject constructor(
 
     private val _decks: MutableState<List<Deck>> = mutableStateOf(listOf())
     val decks = _decks
+
     private fun listDecksFromDatabase(){
 
         Timber.d("Loading decks!")
@@ -63,6 +66,7 @@ class DecksViewModel @Inject constructor(
                 }
 
                 updateDeckSizesFromDatabase()
+                updateDeckLevelsFromDatabase()
             }
 
         }.launchIn(viewModelScope)
@@ -83,9 +87,27 @@ class DecksViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    private fun updateDeckLevelsFromDatabase(){
+        Timber.d("Loading deck levels!")
+
+        getLevelOfMultipleDecksUseCase(_decks.value).onEach {
+            if (it is Resource.Success){
+                withContext(Dispatchers.Main) {
+                    _deckLevels.value = it.data!!
+                    Timber.d(it.data.toString())
+                }
+            }
+        }.launchIn(viewModelScope)
+
+    }
+
+    private val _deckLevels = mutableStateOf<Map<String, Int>>(mapOf())
+
     fun getDeckSizeFromDeckName(deckName: String): Int {
         return _deckSizes.value[deckName] ?: 0
     }
+
+    fun getDeckLevelFromDeckName(deckName: String?): Int = _deckLevels.value[deckName] ?: 0
 
 
 
