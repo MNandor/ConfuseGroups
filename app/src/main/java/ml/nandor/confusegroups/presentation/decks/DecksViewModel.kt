@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
+import ml.nandor.confusegroups.BuildConfig
 import ml.nandor.confusegroups.Util
 import ml.nandor.confusegroups.domain.Resource
 import ml.nandor.confusegroups.domain.model.AtomicNote
@@ -262,9 +263,9 @@ class DecksViewModel @Inject constructor(
 
     fun hideInitialPopup(){
         _shouldShowInitialPopup.value = false
-
-//        setKeyValueUseCase(SettingKV("seenInitialPopup", "true")).launchIn(viewModelScope)
-
+        if (BuildConfig.DEBUG)
+            return
+        setKeyValueUseCase(SettingKV("seenInitialPopup", "true")).launchIn(viewModelScope)
 
     }
 

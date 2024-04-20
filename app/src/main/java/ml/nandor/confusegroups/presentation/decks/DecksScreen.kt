@@ -51,7 +51,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -72,7 +71,7 @@ import ml.nandor.confusegroups.presentation.common.CommonViewModel
 import timber.log.Timber
 
 @Composable
-fun DecksScreen(commonViewModel: CommonViewModel){
+fun DecksScreen(commonViewModel: CommonViewModel) {
     Timber.d("Launched")
     val localViewModel: DecksViewModel = hiltViewModel()
     localViewModel.listDecksFromDatabase()
@@ -115,7 +114,8 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
     val theDeck = viewModel.decks.value.find { it.name == text }
 
     val deckDisplayName = theDeck?.displayName ?: "[[$text]]"
-    val displayNameOpacity = theDeck?.displayName?.let { 1.0f } ?: 0.5f // funniest null check i've ever written
+    val displayNameOpacity =
+        theDeck?.displayName?.let { 1.0f } ?: 0.5f // funniest null check i've ever written
 
     ElevatedCard(
         modifier = Modifier
@@ -134,10 +134,11 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                 }
             )
     ) {
-        Column(){
-            Row(modifier = Modifier
-                .fillMaxWidth()
-            ){
+        Column() {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
 
                 Text(
                     modifier = Modifier
@@ -158,8 +159,7 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                         .fillMaxWidth()
                         .padding(top = 16.dp)
                         .wrapContentSize()
-                        .height(64.dp)
-                    ,
+                        .height(64.dp),
                     textAlign = TextAlign.Center,
                     fontSize = 32.sp,
                     color = LocalContentColor.current.copy(alpha = displayNameOpacity)
@@ -171,29 +171,39 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                         .padding(top = 24.dp)
                         //.wrapContentSize()
                         .height(64.dp)
-                        .align(Alignment.CenterVertically)
-                    ,
+                        .align(Alignment.CenterVertically),
                     text = deckSize.toString(),
                     color = if (deckSize > 3) Color.Unspecified else Color.Red,
                     textAlign = TextAlign.Center
                 )
-             }
+            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
-            ){
-                IconButton(onClick = { viewModel.enterDeckActionMode(text,
-                    DecksViewModel.DeckAction.ADDING
-                ) }) {
+            ) {
+                IconButton(onClick = {
+                    viewModel.enterDeckActionMode(
+                        text,
+                        DecksViewModel.DeckAction.ADDING
+                    )
+                }) {
                     Icon(Icons.Filled.Add, contentDescription = "Add one card to deck")
                 }
-                IconButton(onClick = { commonViewModel.selectDeck(text, CommonViewModel.DeckOpenMode.CORRELATIONS) }) {
+                IconButton(onClick = {
+                    commonViewModel.selectDeck(
+                        text,
+                        CommonViewModel.DeckOpenMode.CORRELATIONS
+                    )
+                }) {
                     Icon(Icons.Filled.DateRange, contentDescription = "Show correlations")
                 }
-                IconButton(onClick = { viewModel.enterDeckActionMode(text,
-                    DecksViewModel.DeckAction.RENAME
-                ) }) {
+                IconButton(onClick = {
+                    viewModel.enterDeckActionMode(
+                        text,
+                        DecksViewModel.DeckAction.RENAME
+                    )
+                }) {
                     Icon(Icons.Filled.Person, contentDescription = "Rename deck")
                 }
                 IconButton(onClick = {
@@ -202,8 +212,10 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                     Icon(Icons.Filled.Menu, contentDescription = "View Cards")
                 }
                 IconButton(onClick = {
-                    viewModel.enterDeckActionMode(text,
-                        DecksViewModel.DeckAction.REVERSE)
+                    viewModel.enterDeckActionMode(
+                        text,
+                        DecksViewModel.DeckAction.REVERSE
+                    )
                 }) {
                     Icon(Icons.Filled.ArrowBack, contentDescription = "Reverse Deck")
                 }
@@ -212,26 +224,45 @@ private fun DeckItem(text: String, viewModel: DecksViewModel, commonViewModel: C
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
-            ){
-                IconButton(onClick = { viewModel.enterDeckActionMode(text,
-                    DecksViewModel.DeckAction.INSPECTION
-                ) }) {
+            ) {
+                IconButton(onClick = {
+                    viewModel.enterDeckActionMode(
+                        text,
+                        DecksViewModel.DeckAction.INSPECTION
+                    )
+                }) {
                     Icon(Icons.Filled.Edit, contentDescription = "Edit deck data")
                 }
-                IconButton(onClick = { commonViewModel.selectDeck(text, CommonViewModel.DeckOpenMode.CONFUSEGROUPS) }) {
+                IconButton(onClick = {
+                    commonViewModel.selectDeck(
+                        text,
+                        CommonViewModel.DeckOpenMode.CONFUSEGROUPS
+                    )
+                }) {
                     Icon(Icons.Filled.DateRange, contentDescription = "Show confusegroups")
                 }
-                IconButton(onClick = { viewModel.enterDeckActionMode(text,
-                    DecksViewModel.DeckAction.EDITING
-                ) }) {
+                IconButton(onClick = {
+                    viewModel.enterDeckActionMode(
+                        text,
+                        DecksViewModel.DeckAction.EDITING
+                    )
+                }) {
                     Icon(Icons.Filled.Settings, contentDescription = "Edit deck settings")
                 }
-                IconButton(onClick = { viewModel.enterDeckActionMode(text,
-                    DecksViewModel.DeckAction.DELETION
-                ) }) {
+                IconButton(onClick = {
+                    viewModel.enterDeckActionMode(
+                        text,
+                        DecksViewModel.DeckAction.DELETION
+                    )
+                }) {
                     Icon(Icons.Filled.Delete, contentDescription = "Delete deck")
                 }
-                IconButton(onClick = { commonViewModel.selectDeck(text, CommonViewModel.DeckOpenMode.XPORT) }) {
+                IconButton(onClick = {
+                    commonViewModel.selectDeck(
+                        text,
+                        CommonViewModel.DeckOpenMode.XPORT
+                    )
+                }) {
                     Icon(Icons.Filled.ExitToApp, contentDescription = "Import/export mode")
                 }
             }
@@ -255,15 +286,14 @@ private fun AddDeck(viewModel: DecksViewModel) {
                 }
             )
     ) {
-        Column(){
+        Column() {
             Text(
                 text = "+",
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
                     .wrapContentSize()
-                    .height(64.dp)
-                ,
+                    .height(64.dp),
                 textAlign = TextAlign.Center,
                 fontSize = 48.sp
             )
@@ -273,11 +303,11 @@ private fun AddDeck(viewModel: DecksViewModel) {
 }
 
 @Composable
-fun DeleteDeckPopup(viewModel: DecksViewModel){
+fun DeleteDeckPopup(viewModel: DecksViewModel) {
     val deckName = viewModel.deckBeingAccessed.value
     val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.DELETION
 
-    if (visible){
+    if (visible) {
         AlertDialog(
             onDismissRequest = { viewModel.enterDeckActionMode() },
             title = {
@@ -306,10 +336,10 @@ fun DeleteDeckPopup(viewModel: DecksViewModel){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditDeckSettingsPopup(viewModel: DecksViewModel){
+fun EditDeckSettingsPopup(viewModel: DecksViewModel) {
     val deckName = viewModel.deckBeingAccessed.value
     val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.EDITING
-    if (visible){
+    if (visible) {
         val corPref = remember { mutableStateOf("") }
         val grpPref = remember { mutableStateOf("") }
         val ranPref = remember { mutableStateOf("") }
@@ -318,11 +348,12 @@ fun EditDeckSettingsPopup(viewModel: DecksViewModel){
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.7f)
-            ){
+            ) {
                 Column(
                     Modifier.verticalScroll(rememberScrollState())
                 ) {
-                    Text(deckName!!,
+                    Text(
+                        deckName!!,
                         modifier = Modifier
                             .padding(4.dp)
                             .fillMaxWidth(),
@@ -333,48 +364,52 @@ fun EditDeckSettingsPopup(viewModel: DecksViewModel){
                     Row(
                         modifier = Modifier
                             .padding(4.dp)
-                    ){
+                    ) {
                         Text("New cards per level: ")
                         Text(viewModel.editedDeckState.value?.newCardsPerLevel.toString())
                     }
                     Row(
                         modifier = Modifier
                             .padding(4.dp)
-                    ){
+                    ) {
                         Text("Success multiplier: ")
                         Text(viewModel.editedDeckState.value?.successMultiplier.toString())
                     }
                     Row(
                         modifier = Modifier
                             .padding(4.dp)
-                    ){
+                    ) {
                         Text("Confuse exponent: ")
                         Text(viewModel.editedDeckState.value?.confuseExponent.toString())
                     }
-                    Row(modifier = Modifier
-                        .padding(4.dp)
-                    ){
+                    Row(
+                        modifier = Modifier
+                            .padding(4.dp)
+                    ) {
                         Text("Correlation preference")
                         Text(viewModel.thisDeck.value?.correlationPreference.toString())
-                        TextField(value = corPref.value, onValueChange = {corPref.value = it})
+                        TextField(value = corPref.value, onValueChange = { corPref.value = it })
                     }
-                    Row(modifier = Modifier
-                        .padding(4.dp)
-                    ){
+                    Row(
+                        modifier = Modifier
+                            .padding(4.dp)
+                    ) {
                         Text("Group preference")
                         Text(viewModel.thisDeck.value?.confgroupPreference.toString())
-                        TextField(value = grpPref.value, onValueChange = {grpPref.value = it})
+                        TextField(value = grpPref.value, onValueChange = { grpPref.value = it })
                     }
-                    Row(modifier = Modifier
-                        .padding(4.dp)
-                    ){
+                    Row(
+                        modifier = Modifier
+                            .padding(4.dp)
+                    ) {
                         Text("Random preference")
                         Text(viewModel.thisDeck.value?.randomPreference.toString())
-                        TextField(value = ranPref.value, onValueChange = {ranPref.value = it})
+                        TextField(value = ranPref.value, onValueChange = { ranPref.value = it })
                     }
-                    Row(modifier = Modifier
-                        .padding(4.dp)
-                    ){
+                    Row(
+                        modifier = Modifier
+                            .padding(4.dp)
+                    ) {
                         Button(onClick = {
                             viewModel.setPreferences(corPref.value, grpPref.value, ranPref.value)
                         }) {
@@ -382,7 +417,11 @@ fun EditDeckSettingsPopup(viewModel: DecksViewModel){
                         }
                     }
                     Text("Explanation")
-                    Text(fontSize = 8.sp, lineHeight = 8.sp, modifier = Modifier.padding(8.dp), text = """
+                    Text(
+                        fontSize = 8.sp,
+                        lineHeight = 8.sp,
+                        modifier = Modifier.padding(8.dp),
+                        text = """
                         New Cards Per Level
                         Limiting this means you can start practicing already learned cards before seeing ALL cards at least once.
                         If set to -1, the limit is auto-calculated based on deck size.
@@ -404,7 +443,8 @@ fun EditDeckSettingsPopup(viewModel: DecksViewModel){
                         
                         Random Preference
                         Randomly pick pickable wrong answers as opposed to the above two methods.
-                    """.trimIndent())
+                    """.trimIndent()
+                    )
                 }
 
             }
@@ -418,8 +458,8 @@ fun AddToDeckPopup(viewModel: DecksViewModel) {
     val deckName = viewModel.deckBeingAccessed.value
     val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.ADDING
 
-    var question by remember{ mutableStateOf("") }
-    var answer by remember{ mutableStateOf("") }
+    var question by remember { mutableStateOf("") }
+    var answer by remember { mutableStateOf("") }
 
     if (visible) {
         Dialog(onDismissRequest = { viewModel.enterDeckActionMode(null) }) {
@@ -461,7 +501,7 @@ fun AddToDeckPopup(viewModel: DecksViewModel) {
                             .fillMaxWidth()
                             .padding(top = 16.dp),
                         horizontalArrangement = Arrangement.SpaceAround
-                    ){
+                    ) {
                         TextButton(
                             onClick = {
                                 question = ""
@@ -474,14 +514,19 @@ fun AddToDeckPopup(viewModel: DecksViewModel) {
 
                         TextButton(
                             onClick = {
-                                val card = AtomicNote(id = Util.getCardName(), answer = answer, deck = deckName, question = question)
+                                val card = AtomicNote(
+                                    id = Util.getCardName(),
+                                    answer = answer,
+                                    deck = deckName,
+                                    question = question
+                                )
                                 viewModel.addCard(card)
                                 question = ""
                                 answer = ""
                             },
                         ) {
-                        Text("Add")
-                    }
+                            Text("Add")
+                        }
                     }
                 }
             }
@@ -496,7 +541,7 @@ fun InspectDeckPopup(viewModel: DecksViewModel) {
     val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.INSPECTION
     val cards = viewModel.inspectedDeckCards.value
 
-    var inputText by remember{ mutableStateOf("") }
+    var inputText by remember { mutableStateOf("") }
 
 
     if (visible) {
@@ -524,13 +569,13 @@ fun InspectDeckPopup(viewModel: DecksViewModel) {
                             .heightIn(0.dp, 200.dp)
                     ) {
                         items(items = cards) { item ->
-                            Text(item.question+" - "+item.answer)
+                            Text(item.question + " - " + item.answer)
 
                         }
                     }
                     TextField(
                         value = inputText,
-                        onValueChange = {inputText = it},
+                        onValueChange = { inputText = it },
                         label = { Text("Que1-Ans1;Que1-Ans2") },
                         maxLines = 1,
                     )
@@ -539,7 +584,7 @@ fun InspectDeckPopup(viewModel: DecksViewModel) {
                             .fillMaxWidth()
                             .padding(top = 16.dp),
                         horizontalArrangement = Arrangement.SpaceAround
-                    ){
+                    ) {
                         TextButton(
                             onClick = {
                                 inputText = ""
@@ -553,7 +598,7 @@ fun InspectDeckPopup(viewModel: DecksViewModel) {
                             onClick = {
                                 viewModel.addCardsAfterDeckInspection(inputText)
                                 inputText = ""
-                              viewModel.enterDeckActionMode()
+                                viewModel.enterDeckActionMode()
                             },
                         ) {
                             Text("Add")
@@ -571,10 +616,11 @@ fun InspectDeckPopup(viewModel: DecksViewModel) {
 @Composable
 fun RenameDeckPopup(viewModel: DecksViewModel) {
     val deckName = viewModel.deckBeingAccessed.value
-    val deckDisplayName = viewModel.decks.value.find { it.name == deckName }?.displayName ?: "UNNAMED"
+    val deckDisplayName =
+        viewModel.decks.value.find { it.name == deckName }?.displayName ?: "UNNAMED"
     val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.RENAME
 
-    var inputText by remember{ mutableStateOf("") }
+    var inputText by remember { mutableStateOf("") }
 
 
     if (visible) {
@@ -595,7 +641,7 @@ fun RenameDeckPopup(viewModel: DecksViewModel) {
                     )
                     TextField(
                         value = inputText,
-                        onValueChange = {inputText = it},
+                        onValueChange = { inputText = it },
                         label = { Text(deckDisplayName) },
                         maxLines = 1,
                         modifier = Modifier.padding(16.dp)
@@ -617,10 +663,10 @@ fun RenameDeckPopup(viewModel: DecksViewModel) {
 }
 
 @Composable
-fun ReverseDeckPopup(viewModel: DecksViewModel){
+fun ReverseDeckPopup(viewModel: DecksViewModel) {
     val visible = viewModel.deckActionBeingTaken.value == DecksViewModel.DeckAction.REVERSE
 
-    if (visible){
+    if (visible) {
         Dialog(onDismissRequest = { viewModel.enterDeckActionMode() }) {
             Card(
                 modifier = Modifier
@@ -642,41 +688,58 @@ fun ReverseDeckPopup(viewModel: DecksViewModel){
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun InitialTutorialPopup(viewModel: DecksViewModel){
+fun InitialTutorialPopup(viewModel: DecksViewModel) {
     val visible = viewModel.shouldShowInitialPopup.value
 
-    if (visible){
+    if (visible) {
         Dialog(onDismissRequest = { viewModel.enterDeckActionMode() }) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.8f)
             ) {
-                HorizontalPager(pageCount = 7, modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxHeight(.9f)) {page ->
+                HorizontalPager(
+                    pageCount = 7, modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxHeight(.9f)
+                ) { page ->
 
-                    when (page){
-                        0 -> {
-                            Column(modifier = Modifier.fillMaxHeight()) {
-                                Text ("Welcome to ConfuseGroups!", fontSize = 24.sp, textAlign = TextAlign.Center)
+                    Column(modifier = Modifier.fillMaxHeight()) {
+                        when (page) {
+                            0 -> {
+
+                                Text(
+                                    "Welcome to ConfuseGroups!",
+                                    fontSize = 24.sp,
+                                    textAlign = TextAlign.Center
+                                )
 
 
-                                val vec1 = painterResource(id = R.drawable.logo_confusegroups_importable)
+                                val vec1 =
+                                    painterResource(id = R.drawable.logo_confusegroups_importable)
 
-                                Image(vec1, contentDescription="Hi", contentScale = ContentScale.FillWidth, modifier = Modifier.fillMaxWidth())
+                                Image(
+                                    vec1,
+                                    contentDescription = "Hi",
+                                    contentScale = ContentScale.FillWidth,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
 
-                                Text ("The memory game that adapts to your knowledge to keep you challenged!")
+                                Text("The memory game that adapts to your knowledge to keep you challenged!")
+
 
                             }
 
-                        }
+                            1 -> {
 
-                        1 -> {
-                            Column(modifier = Modifier.fillMaxHeight()) {
-                                Text(buildAnnotatedString{
+                                Text(buildAnnotatedString {
                                     append("A ")
-                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)) {
+                                    withStyle(
+                                        style = SpanStyle(
+                                            fontWeight = FontWeight.Bold,
+                                            textDecoration = TextDecoration.Underline
+                                        )
+                                    ) {
                                         append("Flashcard")
                                     }
                                     append(" consists of a Front (Question) and Back (Answer) side.")
@@ -696,10 +759,12 @@ fun InitialTutorialPopup(viewModel: DecksViewModel){
                                 )
 
 
-                                Text("""                  
+                                Text(
+                                    """                  
                                   You will be shown a Question, and 4 possible Answers.
                                   Pick the right one.
-                                  """.trimIndent())
+                                  """.trimIndent()
+                                )
 
                                 Image(
                                     painter = painterResource(id = R.drawable.intro_hito2),
@@ -710,14 +775,20 @@ fun InitialTutorialPopup(viewModel: DecksViewModel){
                                         LocalContentColor.current
                                     )
                                 )
+
                             }
-                        }
-                        2 -> {
-                            Column(modifier = Modifier.fillMaxHeight()) {
+
+                            2 -> {
+
                                 Text(
-                                    buildAnnotatedString{
+                                    buildAnnotatedString {
                                         append("A collection of Flashcards is called a ")
-                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)) {
+                                        withStyle(
+                                            style = SpanStyle(
+                                                fontWeight = FontWeight.Bold,
+                                                textDecoration = TextDecoration.Underline
+                                            )
+                                        ) {
                                             append("Deck")
                                         }
                                         append(".")
@@ -736,14 +807,20 @@ fun InitialTutorialPopup(viewModel: DecksViewModel){
                                         LocalContentColor.current
                                     )
                                 )
+
                             }
-                        }
-                        3 -> {
-                            Column(modifier = Modifier.fillMaxHeight()) {
+
+                            3 -> {
+
                                 Text(
-                                    buildAnnotatedString{
+                                    buildAnnotatedString {
                                         append("Two Cards are considered ")
-                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)) {
+                                        withStyle(
+                                            style = SpanStyle(
+                                                fontWeight = FontWeight.Bold,
+                                                textDecoration = TextDecoration.Underline
+                                            )
+                                        ) {
                                             append("Correlated")
                                         }
                                         append(" if you choose one Card's Answer when presented with the other Card's Question.")
@@ -760,14 +837,20 @@ fun InitialTutorialPopup(viewModel: DecksViewModel){
                                     )
                                 )
                                 Text("The more often you mistake them for each other, the stronger the Correlation becomes.")
+
                             }
-                        }
-                        4 -> {
-                            Column(modifier = Modifier.fillMaxHeight()) {
+
+                            4 -> {
+
                                 Text(
-                                    buildAnnotatedString{
+                                    buildAnnotatedString {
                                         append("A ")
-                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)) {
+                                        withStyle(
+                                            style = SpanStyle(
+                                                fontWeight = FontWeight.Bold,
+                                                textDecoration = TextDecoration.Underline
+                                            )
+                                        ) {
                                             append("ConfuseGroup")
                                         }
                                         append(" is formed by two or more Cards that you've identified as interconnected.")
@@ -785,10 +868,11 @@ fun InitialTutorialPopup(viewModel: DecksViewModel){
                                 )
 
                                 Text("They share something in common and are likely to be Correlated with each other.")
+
                             }
-                        }
-                        5 -> {
-                            Column(modifier = Modifier.fillMaxHeight()) {
+
+                            5 -> {
+
                                 Text("A Correlation is between exactly two cards and it's determined by your answers.")
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text("A ConfuseGroup can include any number of cards and is created manually.")
@@ -804,10 +888,11 @@ fun InitialTutorialPopup(viewModel: DecksViewModel){
                                         LocalContentColor.current
                                     )
                                 )
+
                             }
-                        }
-                        6 -> {
-                            Column(modifier = Modifier.fillMaxHeight()) {
+
+                            6 -> {
+
                                 Text(
                                     """
                                 The app adjusts to your learning habits. If you consistently answer a card correctly, it will appear less frequently because you already know it well—no need for extra practice!
@@ -834,18 +919,12 @@ fun InitialTutorialPopup(viewModel: DecksViewModel){
                                     )
                                 )
                             }
-                        }
-                        else -> {
-                            Column(modifier = Modifier.fillMaxHeight()) {
-                                Text(page.toString())
-//                                val vec: ImageVector =
 
-                            }
                         }
                     }
-                    
+
                 }
-                Row(){
+                Row() {
                     TextButton(
                         onClick = {
                             viewModel.hideInitialPopup()
