@@ -43,8 +43,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        Timber.d(ExportDatabaseFile.test())
-
         setContent {
             ConfuseGroupsTheme {
                 val viewModel: MainViewModel = hiltViewModel()
