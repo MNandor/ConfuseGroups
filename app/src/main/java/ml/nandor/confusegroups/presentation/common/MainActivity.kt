@@ -23,6 +23,8 @@ import ml.nandor.confusegroups.presentation.SearchAndAddManualPopup
 import ml.nandor.confusegroups.presentation.cards.CardsScreen
 import ml.nandor.confusegroups.presentation.xport.XportScreen
 import ml.nandor.confusegroups.ui.theme.ConfuseGroupsTheme
+import ml.nandor.exportDatabaseFile.ExportDatabaseFile
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -40,6 +42,8 @@ class MainActivity : ComponentActivity() {
                 soundPool.play(badSoundID, 1.0f, 1.0f, 0, 0, 1.0f)
             }
         }
+
+        Timber.d(ExportDatabaseFile.test())
 
         setContent {
             ConfuseGroupsTheme {
