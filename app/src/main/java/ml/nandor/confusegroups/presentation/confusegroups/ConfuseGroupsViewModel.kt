@@ -83,11 +83,31 @@ class ConfuseGroupsViewModel @Inject constructor(
 
     fun decideOnRemovalFromGroup(doTheRemoval: Boolean){
 
-        _groupToDeleteFrom.value ?: return
-        _cardToDeleteFromGroup.value ?: return
+        val groupID = _groupToDeleteFrom.value ?: return
+        val cardID = _cardToDeleteFromGroup.value ?: return
 
         if (doTheRemoval){
-            removeCardFromGroupUseCase(RemoveCardFromGroupUseCase.Input(_groupToDeleteFrom.value!!, _cardToDeleteFromGroup.value!!)).onEach {
+            removeCardFromGroupUseCase(RemoveCardFromGroupUseCase.Input(groupID, cardID)).onEach {
+
+                // We made a change to the database and we know exactly which on-screen element it impacts
+                // We could recompose the entire universe by re-fetching everything from the database...
+                // Or we could make an identical change here
+                // Causing just once function to recompose
+                // An added benefit: we don't scroll away
+                if (it is Resource.Success){
+                    val oldVal = deckGroups.value.toMutableList()
+                    val indexOfGroup = oldVal.indexOfFirst { it.confuseGroup?.id ==  groupID && it.associatedNotes.any { it.id ==  cardID}}
+                    val indexOfCard = oldVal[indexOfGroup].associatedNotes.indexOfFirst { it.id ==  cardID}
+                    val newAssociatedNotes = oldVal[indexOfGroup].associatedNotes.toMutableList()
+                    newAssociatedNotes.removeAt(indexOfCard)
+                    oldVal[indexOfGroup] = oldVal[indexOfGroup].copy(associatedNotes = newAssociatedNotes)
+                    withContext(Dispatchers.Main){
+                        _deckGroups.value = oldVal
+                    }
+                }
+
+
+
 
             }.launchIn(viewModelScope)
 

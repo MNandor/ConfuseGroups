@@ -120,6 +120,8 @@ interface CanManageAConfuseGroup{
 @Composable
 fun DrawnConfuseGroup(group: ConfuseGroupToAddTo, managerInterface: CanManageAConfuseGroup){
 
+    Timber.d("Composing ${group.confuseGroup?.id}")
+
     if (group.confuseGroup == null) return
 
     val newName = remember{ mutableStateOf(group.confuseGroup.displayName?:"MISSING") }
