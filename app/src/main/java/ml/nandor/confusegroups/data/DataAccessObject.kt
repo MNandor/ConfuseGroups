@@ -110,4 +110,7 @@ interface DataAccessObject {
 
     @Query("SELECT * FROM SettingKV WHERE keyName = :keyName")
     fun getKV(keyName: String):SettingKV
+
+    @Query("DELETE FROM groupmembership WHERE cardID = :cardID AND groupID = :groupID")
+    fun removeCardFromGroup(groupID: String, cardID: String)
 }

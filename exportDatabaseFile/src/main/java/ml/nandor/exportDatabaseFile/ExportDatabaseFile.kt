@@ -33,19 +33,22 @@ object ExportDatabaseFile {
         return options
     }
 
-    fun exportDBToStorage(context: Context, searchString: String = "", fileName:String?=null){
+    fun exportDBToStorage(context: Context, searchString: String = "", fileName:String?=null): String?{
         val options = getExportableDatabases(context, searchString)
 
-        if (options.size != 1) return
+        if (options.size != 1) return null
 
         val dbFile = options[0]
 
         val targetDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
 
-        val exportedFileName = File(targetDir.absolutePath + "/exported-${context.applicationContext.applicationInfo.name}-${System.currentTimeMillis()/1000}.db")
+        val targetFileName = "${context.applicationContext.applicationInfo.name}-${System.currentTimeMillis()/1000}.db"
+
+        val exportedFileName = File(targetDir.absolutePath + "/exported-$targetFileName")
 
         dbFile.copyTo(exportedFileName)
 
+        return targetFileName
 
     }
 }

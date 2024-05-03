@@ -146,4 +146,8 @@ class LocalStorageRepositoryImp @Inject constructor(
         return dao.getKV(keyName)
     }
 
+    override fun removeCardFromGroup(groupID: String, cardID: String){
+        return dao.removeCardFromGroup(groupID, cardID)
+    }
+
 }

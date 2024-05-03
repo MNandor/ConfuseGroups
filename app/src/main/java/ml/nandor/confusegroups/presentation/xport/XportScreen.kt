@@ -1,5 +1,6 @@
 package ml.nandor.confusegroups.presentation.xport
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,9 +38,11 @@ fun XportScreen(commonViewModel: CommonViewModel){
                 Text("Export to Text")
 
             }
-            Button(onClick = { ExportDatabaseFile.exportDBToStorage(context) }) {
+            Button(onClick = {
+                val fileName = ExportDatabaseFile.exportDBToStorage(context)
+                fileName?.let { Toast.makeText(context, "Exported database to Downloads.", Toast.LENGTH_SHORT).show() }
+            }) {
                 Text("Export Entire DB")
-
             }
 
         }

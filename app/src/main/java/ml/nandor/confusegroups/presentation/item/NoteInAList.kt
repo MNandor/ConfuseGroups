@@ -2,6 +2,7 @@ package ml.nandor.confusegroups.presentation.item
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -13,11 +14,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -70,6 +73,31 @@ fun NoteInAList(it: AtomicNote, callback: (AtomicNote) -> Unit = {}) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun AddNoteToList(callback: (Unit) -> Unit = {}){
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp)
+            .combinedClickable(
+                onClick = {
+                    callback(Unit)
+                }
+            )
+            .height(IntrinsicSize.Min)
+    ) {
+        Text(
+            "+",
+            fontSize = 24.sp,
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true, name = "Dark Mode")
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true, name = "Light Mode")
 @Composable
@@ -86,6 +114,7 @@ fun SampleNoteInAList() {
                 NoteInAList(it = note, {})
                 NoteInAList(it = longNote, {})
                 NoteInAList(it = superLongNote, {})
+                AddNoteToList()
             }
         }
     }

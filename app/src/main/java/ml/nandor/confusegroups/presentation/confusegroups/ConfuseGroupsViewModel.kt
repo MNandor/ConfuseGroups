@@ -30,6 +30,7 @@ import ml.nandor.confusegroups.domain.usecase.InsertReviewUseCase
 import ml.nandor.confusegroups.domain.usecase.JoinConfuseGroupUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsFromDeckUseCase
 import ml.nandor.confusegroups.domain.usecase.ListCardsGroupedFromDeckUseCase
+import ml.nandor.confusegroups.domain.usecase.RemoveCardFromGroupUseCase
 import ml.nandor.confusegroups.domain.usecase.RenameConfuseGroupUseCase
 import ml.nandor.confusegroups.presentation.MainViewModel
 import timber.log.Timber
@@ -38,7 +39,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ConfuseGroupsViewModel @Inject constructor(
     private val listCardsGroupedFromDeckUseCase: ListCardsGroupedFromDeckUseCase,
-    private val renameConfuseGroupUseCase: RenameConfuseGroupUseCase
+    private val renameConfuseGroupUseCase: RenameConfuseGroupUseCase,
+    private val removeCardFromGroupUseCase: RemoveCardFromGroupUseCase
 ): ViewModel() {
 
     // Define a coroutinescope so we don't run on main thread
@@ -67,6 +69,32 @@ class ConfuseGroupsViewModel @Inject constructor(
 
         Timber.d("renaming $groupID to $newName")
         renameConfuseGroupUseCase(Pair(groupID, newName)).launchIn(viewModelScope)
+
+    }
+
+    private val _groupToDeleteFrom:MutableState<String?> = mutableStateOf(null)
+    private val _cardToDeleteFromGroup:MutableState<String?> = mutableStateOf(null)
+    val isADeletionPending = derivedStateOf { _groupToDeleteFrom.value != null && _cardToDeleteFromGroup.value != null }
+    fun selectCardForRemovalFromGroup(groupID: String, cardID: String){
+        _groupToDeleteFrom.value = groupID
+        _cardToDeleteFromGroup.value = cardID
+
+    }
+
+    fun decideOnRemovalFromGroup(doTheRemoval: Boolean){
+
+        _groupToDeleteFrom.value ?: return
+        _cardToDeleteFromGroup.value ?: return
+
+        if (doTheRemoval){
+            removeCardFromGroupUseCase(RemoveCardFromGroupUseCase.Input(_groupToDeleteFrom.value!!, _cardToDeleteFromGroup.value!!)).onEach {
+
+            }.launchIn(viewModelScope)
+
+        }
+
+        _groupToDeleteFrom.value = null
+        _cardToDeleteFromGroup.value = null
 
     }
 
