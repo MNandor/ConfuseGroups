@@ -113,4 +113,7 @@ interface DataAccessObject {
 
     @Query("DELETE FROM groupmembership WHERE cardID = :cardID AND groupID = :groupID")
     fun removeCardFromGroup(groupID: String, cardID: String)
+
+    @Query("UPDATE Deck SET newCardsPerLevel = :newCardsPerLevel WHERE name = :deckName")
+    fun setDeckNewCardsPerLevelValue(deckName: String, newCardsPerLevel: Int)
 }

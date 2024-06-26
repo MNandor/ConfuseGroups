@@ -61,4 +61,6 @@ interface LocalStorageRepository {
 
     fun getKV(keyName: String): SettingKV
     fun removeCardFromGroup(groupID: String, cardID: String)
+
+    fun setDeckNewCardsPerLevelValue(deckName: String, newCardsPerLevel: Int)
 }

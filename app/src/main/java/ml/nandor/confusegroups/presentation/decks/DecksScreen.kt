@@ -346,6 +346,8 @@ fun EditDeckSettingsPopup(viewModel: DecksViewModel) {
         val corPref = remember { mutableStateOf("") }
         val grpPref = remember { mutableStateOf("") }
         val ranPref = remember { mutableStateOf("") }
+        var newCardsPerLevel by remember{ mutableStateOf("") }
+
         Dialog(onDismissRequest = { viewModel.enterDeckActionMode() }) {
             Card(
                 modifier = Modifier
@@ -370,6 +372,7 @@ fun EditDeckSettingsPopup(viewModel: DecksViewModel) {
                     ) {
                         Text("New cards per level: ")
                         Text(viewModel.editedDeckState.value?.newCardsPerLevel.toString())
+                        TextField(value = newCardsPerLevel, onValueChange = { newCardsPerLevel = it })
                     }
                     Row(
                         modifier = Modifier
@@ -414,7 +417,9 @@ fun EditDeckSettingsPopup(viewModel: DecksViewModel) {
                             .padding(4.dp)
                     ) {
                         Button(onClick = {
-                            viewModel.setPreferences(corPref.value, grpPref.value, ranPref.value)
+                            viewModel.setPreferences(corPref.value, grpPref.value, ranPref.value, newCardsPerLevel)
+                            // close popup so we don't have to check for successful update and redraw UI
+                            viewModel.enterDeckActionMode()
                         }) {
                             Text("Update!")
                         }

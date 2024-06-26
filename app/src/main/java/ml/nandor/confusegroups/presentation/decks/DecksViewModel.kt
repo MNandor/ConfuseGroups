@@ -226,14 +226,15 @@ class DecksViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun setPreferences(cor: String, grp: String, ran: String){
+    fun setPreferences(cor: String, grp: String, ran: String, newCardsPerLevel: String){
         if (_deckBeingAccessed.value == null) return
 
         val input = UpdateDeckPreferencesUseCase.InputDC(
             deckName = deckBeingAccessed.value!!,
             correlationPreference = cor,
             groupPreference = grp,
-            randomPreference = ran
+            randomPreference = ran,
+            newCardsPerLevel = newCardsPerLevel
         )
 
         updateDeckPreferencesUseCase(input).onEach {

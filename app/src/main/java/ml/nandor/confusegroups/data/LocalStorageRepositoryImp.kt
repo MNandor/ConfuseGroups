@@ -150,4 +150,8 @@ class LocalStorageRepositoryImp @Inject constructor(
         return dao.removeCardFromGroup(groupID, cardID)
     }
 
+    override fun setDeckNewCardsPerLevelValue(deckName: String, newCardsPerLevel: Int){
+        return dao.setDeckNewCardsPerLevelValue(deckName, newCardsPerLevel)
+    }
+
 }

@@ -24,12 +24,18 @@ class UpdateDeckPreferencesUseCase @Inject constructor(
             repository.setDeckRandomPreferenceValue(input.deckName, num)
         }
 
+        if (input.newCardsPerLevel.isNotEmpty()){
+            val num = input.newCardsPerLevel.toInt()
+            repository.setDeckNewCardsPerLevelValue(input.deckName, num)
+        }
+
     }
 
     data class InputDC(
         val deckName: String,
         val correlationPreference: String,
         val groupPreference: String,
-        val randomPreference: String
+        val randomPreference: String,
+        val newCardsPerLevel: String
     )
 }
