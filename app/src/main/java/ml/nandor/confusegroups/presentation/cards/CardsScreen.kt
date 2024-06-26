@@ -51,7 +51,7 @@ fun CardsScreen(commonViewModel: CommonViewModel){
     Surface() {
         Column() {
             if (localViewModel.readyToCompose.value)
-                TheColumn(cards = localViewModel.deckCards.value, localViewModel = localViewModel, commonViewModel = commonViewModel)
+                TheColumn(cards = localViewModel.deckCards, localViewModel = localViewModel, commonViewModel = commonViewModel)
         }
     }
 }

@@ -2,7 +2,9 @@ package ml.nandor.confusegroups.presentation.cards
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -33,8 +35,9 @@ class CardsViewModel @Inject constructor(
     // Define a coroutinescope so we don't run on main thread
     private val viewModelScope = CoroutineScope(Dispatchers.Default)
 
-    private val _deckCards: MutableState<List<AtomicNote>> = mutableStateOf(listOf())
-    val deckCards: State<List<AtomicNote>> = _deckCards
+    var deckCards:  List<AtomicNote> by mutableStateOf(listOf())
+        private set
+
 
     var currentDeck = ""
 
@@ -49,7 +52,7 @@ class CardsViewModel @Inject constructor(
         listCardsFromDeckUseCase(deckName).onEach {
             if (it is Resource.Success){
                 withContext(Dispatchers.Main) {
-                    _deckCards.value = it.data!!
+                    deckCards = it.data!!
                     _readyToCompose.value=true
                 }
             }

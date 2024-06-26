@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -46,6 +47,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +66,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
 import ml.nandor.confusegroups.R
 import ml.nandor.confusegroups.Util
 import ml.nandor.confusegroups.domain.model.AtomicNote
@@ -698,8 +701,13 @@ fun InitialTutorialPopup(viewModel: DecksViewModel) {
                     .fillMaxWidth()
                     .fillMaxHeight(0.8f)
             ) {
+                val pagerState = rememberPagerState(initialPage = 0)
+                val scope = rememberCoroutineScope()
+                val pageCount = 7
                 HorizontalPager(
-                    pageCount = 7, modifier = Modifier
+                    pageCount = pageCount,
+                    state = pagerState,
+                    modifier = Modifier
                         .padding(8.dp)
                         .fillMaxHeight(.9f)
                 ) { page ->
@@ -924,21 +932,34 @@ fun InitialTutorialPopup(viewModel: DecksViewModel) {
                     }
 
                 }
-                Row() {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     TextButton(
                         onClick = {
                             viewModel.hideInitialPopup()
                         },
                     ) {
-                        Text("Skip")
+                        if (pagerState.currentPage != pageCount -1)
+                            Text("Skip")
+                        
                     }
 
                     TextButton(
                         onClick = {
-                            viewModel.hideInitialPopup()
+                            if (pagerState.currentPage != pageCount -1)
+                                scope.launch {
+                                    pagerState.animateScrollToPage((pagerState.currentPage + 1) % pageCount)
+                                }
+                            else
+                                viewModel.hideInitialPopup()
                         },
                     ) {
-                        Text("Next")
+                        if (pagerState.currentPage == pageCount -1)
+                            Text("Close")
+                        else
+                            Text("Next")
                     }
 
                 }
